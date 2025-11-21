@@ -1,0 +1,16 @@
+.headerText{
+    color: white;
+    font-size: 1.4em;
+    text-align: center;
+}
+
+.searchBarContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.searchBar{
+    font-size: 1em;
+    width: 70%;
+}

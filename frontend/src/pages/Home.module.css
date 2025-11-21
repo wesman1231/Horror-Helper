@@ -1,0 +1,52 @@
+/*mobile styling*/
+
+body{
+    background-color: rgb(3, 3, 3);
+}
+
+.buttonContainer{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 5px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 50%;
+}
+
+.menuButton{
+    width: 100%;
+    border-radius: 15px;
+    font-family: "Metal Mania", system-ui;
+    font-size: 1.5em;
+    color: #ffffff;
+    border-color: #59cc0c;
+    text-shadow: 0 0 4px #59cc0c, 0 0 8px #000;
+}
+
+.newReleases{
+    background-image: url('/buttonImages/istockphoto-531360565-612x612.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.provenClassics{
+    background-image: url('/buttonImages/61VPzAtzVrL._AC_UF894,1000_QL80_.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.hiddenGems{
+    background-image: url('/buttonImages/IGXFgI5PulNUIH2YZNE3IMg44hLAlZ_large.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.surpriseMe{
+    background-image: url('/buttonImages/question-mark-paint.png');
+    background-size: cover;
+    background-position: center;
+}

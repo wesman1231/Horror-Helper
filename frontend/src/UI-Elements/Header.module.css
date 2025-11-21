@@ -1,0 +1,22 @@
+/*mobile styling*/
+body{
+    font-family: "Nosifer", sans-serif;
+}
+
+
+h1{    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgb(124, 10, 10);
+}
+
+nav{
+    display: flex;
+    justify-content: space-around;
+}
+
+.headerLink{
+    text-decoration: none;
+}
+
