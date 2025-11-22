@@ -14,3 +14,9 @@
     font-size: 1em;
     width: 70%;
 }
+
+.resultsContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
