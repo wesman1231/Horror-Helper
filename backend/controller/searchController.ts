@@ -25,17 +25,16 @@ class searchController{
         res.status(200).send(moviesArray);
     }
 
-
+    //search for movies
     public async searchMovies(req: Request, res: Response){
         const searchQuery = String(req.query.query || '').trim();
-
+        const formatSearchQuery = searchQuery.replaceAll('+', ' ');
         try{
-            const callTMBD = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${process.env.TMDB_API_KEY}&with_genres=27&query=${searchQuery}`);
-            if(callTMBD.ok){
-                const result = await callTMBD.json();
-                res.status(200).send(result);
-                console.log(result);
+            const [findResult] = await db.execute('SELECT * FROM MOVIES WHERE title LIKE ?', [`%${formatSearchQuery}%`]);
+            if((findResult as any[]).length === 0){
+                res.status(404).json({message: 'no results found'});
             }
+            res.status(200).json({message: 'results found', findResult: findResult});
         }catch(error){
             console.error('error searching: ', error);
         }
