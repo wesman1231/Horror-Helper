@@ -11,12 +11,11 @@ export default function Movies(){
     }
 
     async function search(){
-        console.log("Button clicked!", searchValue);
         const formatSearch = searchValue.replaceAll(' ', "+");
         console.log(formatSearch);
         try{
             const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}`);
-            const response = await request.json();
+            const response: object[] = await request.json();
             console.log(response);
         } catch(error){
             console.error('Error searching: ', error);
