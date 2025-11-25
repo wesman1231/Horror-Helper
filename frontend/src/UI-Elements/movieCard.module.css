@@ -8,6 +8,7 @@
     padding: 1rem;
     background: black;
     color: red;
+    margin-bottom: 5px;   
 }
 
 .posterContainer{
@@ -25,6 +26,7 @@
     flex-direction: column;
     align-items: center;
     width: 50%;
+    padding: 0;
 }
 
 .movieTitle{
