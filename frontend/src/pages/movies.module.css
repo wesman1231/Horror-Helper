@@ -8,11 +8,26 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 
 .searchBar{
     font-size: 1em;
     width: 70%;
+}
+
+.sortBy{
+    cursor: pointer;
+}
+
+.searchButton{
+    font-size: 1.2em;
+    border-radius: 15px;
+}
+
+.searchButton:hover{
+    background-image: url('https://www.freeiconspng.com/thumbs/blood-png/blood-png-1.png');
+    background-size: contain;
 }
 
 .resultsContainer{
@@ -27,4 +42,22 @@
     justify-content: center;
     align-items: center;
     padding: 0;
+}
+
+.dropdown{
+    color: #FFF6E5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: "Creepster", system-ui;
+}
+
+.sortOptions{
+    list-style: none;
+    text-decoration: underline;
+    display: flex;
+    gap: 10px;
+    padding: 0;
+    cursor: pointer;
 }

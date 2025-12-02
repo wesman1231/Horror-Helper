@@ -4,10 +4,11 @@ export interface Movie{
     tmdbId: number;
     title: string,
     poster: string|null,
-    subgenre: string|null
-    director: string|null,
-    releasedate: string|null,
-    franchise: string|null
+    keywords: string|null
+    director: string,
+    releasedate: string,
+    franchise: string,
+    synopsis: string|null
 }
 
 export default function MovieCard(movie: Movie){
@@ -18,11 +19,12 @@ export default function MovieCard(movie: Movie){
                 <img className={styles.poster} src={`https://media.themoviedb.org/t/p/w260_and_h390_face${movie.poster}`}></img>
             </div>
             <div className={styles.infoContainer}>
-                <h3 className={styles.movieTitle}>Title: {movie.title}</h3>
+                <h3 className={styles.movieTitle}>Title: <span className={styles.titleText}>{movie.title}</span></h3>
                 <ul className={styles.info}>
-                    <li className={styles.releaseDate}>Release date: {movie.releasedate}</li>
-                    <li className={styles.subgenre}>Subgenre: {movie.subgenre}</li>
+                    <li className={styles.releaseDate}><span className={styles.infoHeader}>Release date: </span> {movie.releasedate}</li>
+                    <li className={styles.subgenre}><span className={styles.infoHeader}>Tags: </span>{movie.keywords}</li>
                     <li className={styles.director}>Director: {movie.director}</li>
+                    <li className={styles.synopsis}>Synopsis: {movie.synopsis}</li>
                     <li className={styles.franchise}>Franchise: {movie.franchise}</li>
                 </ul>
             </div>
