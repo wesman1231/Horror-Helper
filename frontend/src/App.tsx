@@ -3,6 +3,7 @@ import Header from './UI-Elements/Header';
 import Home from "./pages/Home";
 
 import Movies from './pages/movies';
+import MoviePage from './pages/moviePage';
 import Television from './pages/television';
 
 import NewReleases from './pages/newReleases';
@@ -26,6 +27,8 @@ function App() {
           <Route path="/new-releases" element={<NewReleases />} />
           <Route path="/proven-classics" element={<ProvenClassics />} />
           <Route path="/hidden-gems" element={<HiddenGems />} />
+          
+          <Route path='/movies/:id' element={<MoviePage/>}/>
         </Routes>
       </BrowserRouter>
     </>
