@@ -1,5 +1,5 @@
 import styles from './movies.module.css';
-import type {Movie} from '../UI-Elements/movieCard'
+import type {Movie} from '../UI-Elements/movieCard';
 import MovieCard from '../UI-Elements/movieCard';
 import { useState } from 'react';
 
@@ -8,11 +8,10 @@ export default function Movies(){
     const [movies, setMovies] = useState<Movie[]>([]);
     const [defaultMovies, setDefaultMovies] = useState<Movie[]>([]);
     const [sortOptionsToggle, setSortOptionsToggle] = useState(false);
-    const [oldestHighlight, setOldestHighlight] = useState(false);
-    const [newestHighlight, setNewestHighlight] = useState(false);
-    const [titleHighlight, setTitleHighlight] = useState(false);
-    const [directorHighlight, setDirectorHighlight] = useState(false);
-    const [franchiseHighlight, setFranchiseHighlight] = useState(false);
+    
+    type SortMode = 'default' | 'newest' | 'title' | 'director' | 'franchise';
+    const [sortMode, setSortMode] = useState<SortMode>('default');
+
     
 
     function handleInput(event: React.ChangeEvent<HTMLInputElement>){
@@ -20,6 +19,7 @@ export default function Movies(){
     }
 
     async function search(){
+        //search for movies
         const formatSearch = searchValue.replaceAll(' ', "+");
         try{
             const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}`);
@@ -42,39 +42,11 @@ export default function Movies(){
         }
     }
 
-    //render sort options if sort options are toggled on
-    function SortOptions(){
-        if(sortOptionsToggle === true){
-            return(
-                <>
-                <h2 className={styles.sortBy} onClick={sortMenuToggle}>Sort by {String.fromCodePoint(128315)}</h2>
-                <ul className={styles.sortOptions}>
-                    <li onClick={defaultSort} style={{ textShadow: oldestHighlight ? '2px 1px red' : 'transparent'}}>Oldest</li>
-                    <li onClick={releaseDateSort} style={{ textShadow: newestHighlight ? '2px 1px red' : 'transparent'}}>Newest</li>
-                    <li onClick={titleSort} style={{ textShadow: titleHighlight ? '2px 1px red' : 'transparent'}}>Title</li>
-                    <li onClick={directorSort} style={{ textShadow: directorHighlight ? '2px 1px red' : 'transparent'}}>Director</li>
-                    <li onClick={franchiseSort} style={{ textShadow: franchiseHighlight ? '2px 1px red' : 'transparent'}}>Franchise</li>
-                </ul>
-                </>
-                
-            )
-        }
-        else if(sortOptionsToggle === false){
-            return(
-                <h2 className={styles.sortBy} onClick={sortMenuToggle}>Sort by {String.fromCodePoint(128314)}</h2>
-            )
-        }
-    }
-
     //sorts
     function defaultSort(){
         //sort from oldest to newest
         setMovies(defaultMovies);
-        setOldestHighlight(true);
-        setNewestHighlight(false);
-        setTitleHighlight(false);
-        setDirectorHighlight(false);
-        setFranchiseHighlight(false);
+        setSortMode('default');
     }
 
     function releaseDateSort(){
@@ -82,12 +54,7 @@ export default function Movies(){
          const shallowCopyMovies: Movie[] = [...defaultMovies];
          const sortByReleaseDate = shallowCopyMovies.sort((movie, nextMovie) => nextMovie.releasedate.localeCompare(movie.releasedate));
          setMovies(sortByReleaseDate);
-         setOldestHighlight(false);
-         setNewestHighlight(true);
-         setTitleHighlight(false);
-         setDirectorHighlight(false);
-         setFranchiseHighlight(false);
-         console.log(sortByReleaseDate);
+         setSortMode('newest');
     }
 
     function titleSort(){
@@ -95,12 +62,7 @@ export default function Movies(){
         const shallowCopyMovies: Movie[] = [...defaultMovies];
         const sortByTitle = shallowCopyMovies.sort((movie, nextmovie) => movie.title.localeCompare(nextmovie.title));
         setMovies(sortByTitle);
-        setOldestHighlight(false);
-        setNewestHighlight(false);
-        setTitleHighlight(true);
-        setDirectorHighlight(false);
-        setFranchiseHighlight(false);
-        console.log(sortByTitle);
+        setSortMode('title');
     }
 
     function directorSort(){
@@ -108,12 +70,7 @@ export default function Movies(){
         const shallowCopyMovies: Movie[] = [...defaultMovies];
         const sortByDirector = shallowCopyMovies.sort((movie, nextMovie) => movie.director.localeCompare(nextMovie.director));
         setMovies(sortByDirector);
-        setOldestHighlight(false);
-        setNewestHighlight(false);
-        setTitleHighlight(false);
-        setDirectorHighlight(true);
-        setFranchiseHighlight(false);
-        console.log(sortByDirector);
+        setSortMode('director');
     }
 
     function franchiseSort(){
@@ -125,12 +82,7 @@ export default function Movies(){
             return fmovie.localeCompare(fnextMovie);
         });
         setMovies(sortByFranchise);
-        setOldestHighlight(false);
-        setNewestHighlight(false);
-        setTitleHighlight(false);
-        setDirectorHighlight(false);
-        setFranchiseHighlight(true);
-        console.log(sortByFranchise);
+        setSortMode('franchise');
     }
 
     return(
@@ -138,8 +90,35 @@ export default function Movies(){
             <div className={styles.searchBarContainer}>
                 <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
                 <div className={styles.dropdown}>
-                    
-                    <SortOptions/>
+                    {sortOptionsToggle ? (
+                    <>
+                        <h2 className={styles.sortBy} onClick={sortMenuToggle}>
+                            Sort by {String.fromCodePoint(128315)}
+                        </h2>
+
+                        <ul className={styles.sortOptions}>
+                            <li onClick={defaultSort} style={{ textShadow: sortMode === 'default' ? '2px 1px red' : 'none' }}>
+                                Oldest
+                            </li>
+                            <li onClick={releaseDateSort} style={{ textShadow: sortMode === 'newest' ? '2px 1px red' : 'none' }}>
+                                Newest
+                            </li>
+                            <li onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
+                                Title
+                            </li>
+                            <li onClick={directorSort} style={{ textShadow: sortMode === 'director' ? '2px 1px red' : 'none' }}>
+                                Director
+                            </li>
+                            <li onClick={franchiseSort} style={{ textShadow: sortMode === 'franchise' ? '2px 1px red' : 'none' }}>
+                                Franchise
+                            </li>
+                        </ul>
+                    </>
+                    ) : (
+                        <h2 className={styles.sortBy} onClick={sortMenuToggle}>
+                            Sort by {String.fromCodePoint(128314)}
+                        </h2>
+                )}
                 </div>
                 <button type='button' className={styles.searchButton} onClick={search}>search</button>
             </div>
@@ -156,7 +135,7 @@ export default function Movies(){
                             director={movie.director ? movie.director: "unknown"}
                             synopsis={movie.synopsis}
                             franchise={movie.franchise ? movie.franchise: "none"}
-                    />
+                        />
                 ))}
                 </ul>
             </div>
