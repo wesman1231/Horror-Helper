@@ -4,10 +4,11 @@ import MovieCard from '../UI-Elements/movieCard';
 import { useState } from 'react';
 
 export default function Movies(){
-    const [searchValue, setSearchValue] = useState('');
+    const [searchValue, setSearchValue] = useState<string>('');
     const [movies, setMovies] = useState<Movie[]>([]);
     const [defaultMovies, setDefaultMovies] = useState<Movie[]>([]);
-    const [sortOptionsToggle, setSortOptionsToggle] = useState(false);
+    const [sortOptionsToggle, setSortOptionsToggle] = useState<boolean>(false);
+    const [error, setError] = useState<boolean>(false);
     
     type SortMode = 'default' | 'newest' | 'title' | 'director' | 'franchise';
     const [sortMode, setSortMode] = useState<SortMode>('default');
@@ -24,11 +25,13 @@ export default function Movies(){
         try{
             const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}`);
             const response = await request.json();
+            setError(false);
             setMovies(response.findResult);
             setDefaultMovies([...response.findResult]);
             console.log(response);
         } catch(error){
-            console.error('Error searching: ', error);
+            setError(true);
+            console.error(error);
         }
     }
 
@@ -85,6 +88,51 @@ export default function Movies(){
         setSortMode('franchise');
     }
 
+
+    //if there are no results found, render no results found header
+    if(error === true){
+        return(
+            <div className={styles.searchBarContainer}>
+                <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
+                <div className={styles.dropdown}>
+                    {sortOptionsToggle ? (
+                    <>
+                        <h2 className={styles.sortBy} onClick={sortMenuToggle}>
+                            Sort by {String.fromCodePoint(128315)}
+                        </h2>
+
+                        <ul className={styles.sortOptions}>
+                            <li onClick={defaultSort} style={{ textShadow: sortMode === 'default' ? '2px 1px red' : 'none' }}>
+                                Oldest
+                            </li>
+                            <li onClick={releaseDateSort} style={{ textShadow: sortMode === 'newest' ? '2px 1px red' : 'none' }}>
+                                Newest
+                            </li>
+                            <li onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
+                                Title
+                            </li>
+                            <li onClick={directorSort} style={{ textShadow: sortMode === 'director' ? '2px 1px red' : 'none' }}>
+                                Director
+                            </li>
+                            <li onClick={franchiseSort} style={{ textShadow: sortMode === 'franchise' ? '2px 1px red' : 'none' }}>
+                                Franchise
+                            </li>
+                        </ul>
+                    </>
+                    ) : (
+                        <h2 className={styles.sortBy} onClick={sortMenuToggle}>
+                            Sort by {String.fromCodePoint(128314)}
+                        </h2>
+                )}
+                </div>
+                <button type='button' className={styles.searchButton} onClick={search}>search</button>
+                <h2 className={styles.noResultsFound}>No Results Found</h2>
+            </div>
+        );
+    }
+
+
+    //otherwise, render results
     return(
         <>
             <div className={styles.searchBarContainer}>
@@ -135,6 +183,7 @@ export default function Movies(){
                             director={movie.director ? movie.director: "unknown"}
                             synopsis={movie.synopsis}
                             franchise={movie.franchise ? movie.franchise: "none"}
+                            cast={movie.cast}
                         />
                 ))}
                 </ul>

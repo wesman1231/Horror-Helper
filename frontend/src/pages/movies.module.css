@@ -61,3 +61,7 @@
     padding: 0;
     cursor: pointer;
 }
+
+.noResultsFound{
+    color: #FFF6E5;;
+}
