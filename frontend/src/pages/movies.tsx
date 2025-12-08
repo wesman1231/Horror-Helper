@@ -25,11 +25,13 @@ export default function Movies(){
         try{
             const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}`);
             const response = await request.json();
+            
             setError(false);
             setMovies(response.findResult);
             setDefaultMovies([...response.findResult]);
             console.log(response);
-        } catch(error){
+        } 
+        catch(error){
             setError(true);
             console.error(error);
         }
@@ -56,6 +58,7 @@ export default function Movies(){
         //sort from newest to oldest
          const shallowCopyMovies: Movie[] = [...defaultMovies];
          const sortByReleaseDate = shallowCopyMovies.sort((movie, nextMovie) => nextMovie.releasedate.localeCompare(movie.releasedate));
+         
          setMovies(sortByReleaseDate);
          setSortMode('newest');
     }
@@ -64,6 +67,7 @@ export default function Movies(){
         //sort title from A-Z
         const shallowCopyMovies: Movie[] = [...defaultMovies];
         const sortByTitle = shallowCopyMovies.sort((movie, nextmovie) => movie.title.localeCompare(nextmovie.title));
+        
         setMovies(sortByTitle);
         setSortMode('title');
     }
@@ -72,6 +76,7 @@ export default function Movies(){
         //sort director from A-Z
         const shallowCopyMovies: Movie[] = [...defaultMovies];
         const sortByDirector = shallowCopyMovies.sort((movie, nextMovie) => movie.director.localeCompare(nextMovie.director));
+        
         setMovies(sortByDirector);
         setSortMode('director');
     }
@@ -84,10 +89,10 @@ export default function Movies(){
             const fnextMovie = nextMovie.franchise || "";
             return fmovie.localeCompare(fnextMovie);
         });
+        
         setMovies(sortByFranchise);
         setSortMode('franchise');
     }
-
 
     //if there are no results found, render no results found header
     if(error === true){
@@ -131,7 +136,6 @@ export default function Movies(){
         );
     }
 
-
     //otherwise, render results
     return(
         <>
@@ -174,8 +178,8 @@ export default function Movies(){
                 <ul className={styles.movieCardList}>
                     {movies.map(movie => (
                         <MovieCard
-                            key={movie.tmdbId}
-                            tmdbId={movie.tmdbId}
+                            key={movie.tmdbid}
+                            tmdbid={movie.tmdbid}
                             poster={movie.poster}
                             title={movie.title}
                             releasedate={movie.releasedate}

@@ -87,17 +87,88 @@ class searchController{
 
     //used to get shows from TMBD into local DB
     public async getAllShows(req: Request, res: Response){
-        const batch: any[] = [];
         const keywordArray: string[] = [];
-        
-    }    
+        //loop through all tv show pages
+        for(let i = 1; i <= 10511 ; i++){
+            const callTMBD = await fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${process.env.TMDB_API_KEY}&page=${i}`);
+            const callTMBDResult = await callTMBD.json();
+
+            //check if result has the results property (the array of shows)
+            if(Object.hasOwn(callTMBDResult, 'results')){
+                for(let j = 0; j < callTMBDResult.results.length; j++){
+                const keywords = await fetch(`https://api.themoviedb.org/3/tv/${callTMBDResult.results[j].id}/keywords?api_key=${process.env.TMDB_API_KEY}`);
+                const keywordsResult = await keywords.json();
+                
+
+                //check if keywords exist and if show has the horror keyword
+                if(Object.hasOwn(keywordsResult, 'results')){
+                    const findHorrorTag = keywordsResult.results.find((keyword: { name: string; }) => keyword.name === 'horror');
+                    
+                    if(findHorrorTag){
+                        for(const keywords of keywordsResult.results){
+                            keywordArray.push(keywords.name);
+                        }
+                        const stringKeywords = keywordArray.join(', ');
+                        await db.execute(`INSERT IGNORE INTO shows(tmdbid, title, poster, keywords, firstairdate, synopsis) VALUES(?, ?, ?, ?, ?, ?)`, [callTMBDResult.results[j].id, callTMBDResult.results[j].name, callTMBDResult.results[j].poster_path, stringKeywords, callTMBDResult.results[j].first_air_date, callTMBDResult.results[j].overview]);
+                        keywordArray.length = 0;
+                    }
+                }
+            }
+            }
+            
+        }
+        res.status(200).send('finished import');
+    }
+
+    //get number of episodes and seasons, final episode date, and creator
+    public async getAdditionalShowInfo(req: Request, res: Response){
+        const creators = [];
+        const [getShowIds]: any[] = await db.execute(`SELECT tmdbid FROM shows`);
+        for(let i = 0; i < getShowIds.length; i++){
+            const getCredits = await fetch(`https://api.themoviedb.org/3/tv/${getShowIds[i].tmdbid}?append_to_response=credits&api_key=${process.env.TMDB_API_KEY}`);
+            const creditsResult = await getCredits.json();
+                
+            if(Object.hasOwn(creditsResult, 'created_by')){
+                for(let j = 0; j < creditsResult.created_by.length; j++){
+                    creators.push(creditsResult.created_by[j].name);
+                }
+                const stringCreators = creators.join(', ');
+                await db.execute(`UPDATE shows SET lastairdate = ?, seasons = ?, episodes = ?, creator = ? WHERE tmdbid = ?`, [creditsResult.last_air_date, creditsResult.number_of_seasons, creditsResult.number_of_episodes, stringCreators, getShowIds[i].tmdbid]);
+                creators.length = 0;
+            }
+            else if(!Object.hasOwn(creditsResult, 'created_by')){
+                await db.execute(`UPDATE shows SET lastairdate = ?, seasons = ?, episodes = ?, creator = ? WHERE tmdbid = ?`, [creditsResult.last_air_date, creditsResult.number_of_seasons, creditsResult.number_of_episodes, 'N/A', getShowIds[i].tmdbid]);
+            }
+        }
+        res.status(200).send('finished importing');
+    }
 
     //search for movies
     public async searchMovies(req: Request, res: Response){
         const searchQuery = String(req.query.query || '').trim();
         const formatSearchQuery = searchQuery.replaceAll('+', ' ');
         try{
-            const [findResult]: any[] = await db.execute('SELECT * FROM MOVIES WHERE title LIKE ? OR keywords LIKE ? OR franchise LIKE ?', [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
+            const [findResult]: any[] = await db.execute('SELECT * FROM movies WHERE title LIKE ? OR keywords LIKE ? OR franchise LIKE ?', [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
+            
+            if(findResult.length === 0){
+                res.status(404).json({message: 'no results found'});
+            }
+            
+            else{
+                res.status(200).json({message: 'results found', findResult: findResult});
+            }
+        
+        }catch(error){
+            console.error('error searching: ', error);
+        }
+    }
+
+    //search for shows
+    public async searchTV(req: Request, res: Response){
+        const searchQuery = String(req.query.query || '').trim();
+        const formatSearchQuery = searchQuery.replaceAll('+', ' ');
+        try{
+            const [findResult]: any[] = await db.execute('SELECT * FROM shows WHERE title LIKE ? OR keywords LIKE ?', [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
             
             if(findResult.length === 0){
                 res.status(404).json({message: 'no results found'});

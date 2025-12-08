@@ -1,12 +1,12 @@
 import styles from './television.module.css';
-import type {Movie} from '../UI-Elements/movieCard';
-import MovieCard from '../UI-Elements/movieCard';
+import type {Show} from '../UI-Elements/tvCard';
+import TVCard from '../UI-Elements/tvCard';
 import { useState } from 'react';
 
 export default function Television(){
     const [searchValue, setSearchValue] = useState<string>('');
-    const [movies, setMovies] = useState<Movie[]>([]);
-    const [defaultMovies, setDefaultMovies] = useState<Movie[]>([]);
+    const [shows, setShows] = useState<Show[]>([]);
+    const [defaultShows, setDefaultShows] = useState<Show[]>([]);
     const [sortOptionsToggle, setSortOptionsToggle] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
     
@@ -20,16 +20,18 @@ export default function Television(){
     }
 
     async function search(){
-        //search for movies
+        //search for shows
         const formatSearch = searchValue.replaceAll(' ', "+");
         try{
-            const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}`);
+            const request = await fetch(`http://localhost:3000/api/search/shows?query=${formatSearch}`);
             const response = await request.json();
+            
             setError(false);
-            setMovies(response.findResult);
-            setDefaultMovies([...response.findResult]);
+            setShows(response.findResult);
+            setDefaultShows([...response.findResult]);
             console.log(response);
-        } catch(error){
+        } 
+        catch(error){
             setError(true);
             console.error(error);
         }
@@ -40,6 +42,7 @@ export default function Television(){
         if(sortOptionsToggle === false){
             setSortOptionsToggle(true);
         }
+        
         else if(sortOptionsToggle === true){
             setSortOptionsToggle(false);
         }
@@ -48,44 +51,26 @@ export default function Television(){
     //sorts
     function defaultSort(){
         //sort from oldest to newest
-        setMovies(defaultMovies);
+        setShows(defaultShows);
         setSortMode('default');
     }
 
     function releaseDateSort(){
         //sort from newest to oldest
-         const shallowCopyMovies: Movie[] = [...defaultMovies];
-         const sortByReleaseDate = shallowCopyMovies.sort((movie, nextMovie) => nextMovie.releasedate.localeCompare(movie.releasedate));
-         setMovies(sortByReleaseDate);
+         const shallowCopyShows: Show[] = [...defaultShows];
+         const sortByReleaseDate = shallowCopyShows.sort((show, nextShow) => nextShow.firstairdate.localeCompare(show.firstairdate));
+         
+         setShows(sortByReleaseDate);
          setSortMode('newest');
     }
 
     function titleSort(){
         //sort title from A-Z
-        const shallowCopyMovies: Movie[] = [...defaultMovies];
-        const sortByTitle = shallowCopyMovies.sort((movie, nextmovie) => movie.title.localeCompare(nextmovie.title));
-        setMovies(sortByTitle);
+        const shallowCopyShows: Show[] = [...defaultShows];
+        const sortByTitle = shallowCopyShows.sort((show, nextShow) => show.title.localeCompare(nextShow.title));
+        
+        setShows(sortByTitle);
         setSortMode('title');
-    }
-
-    function directorSort(){
-        //sort director from A-Z
-        const shallowCopyMovies: Movie[] = [...defaultMovies];
-        const sortByDirector = shallowCopyMovies.sort((movie, nextMovie) => movie.director.localeCompare(nextMovie.director));
-        setMovies(sortByDirector);
-        setSortMode('director');
-    }
-
-    function franchiseSort(){
-        //sort franchise from A-Z
-        const shallowCopyMovies: Movie[] = [...defaultMovies];
-        const sortByFranchise = shallowCopyMovies.sort((movie, nextMovie) => {
-            const fmovie = movie.franchise || "";
-            const fnextMovie = nextMovie.franchise || "";
-            return fmovie.localeCompare(fnextMovie);
-        });
-        setMovies(sortByFranchise);
-        setSortMode('franchise');
     }
 
 
@@ -110,12 +95,6 @@ export default function Television(){
                             </li>
                             <li onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
                                 Title
-                            </li>
-                            <li onClick={directorSort} style={{ textShadow: sortMode === 'director' ? '2px 1px red' : 'none' }}>
-                                Director
-                            </li>
-                            <li onClick={franchiseSort} style={{ textShadow: sortMode === 'franchise' ? '2px 1px red' : 'none' }}>
-                                Franchise
                             </li>
                         </ul>
                     </>
@@ -154,12 +133,6 @@ export default function Television(){
                             <li onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
                                 Title
                             </li>
-                            <li onClick={directorSort} style={{ textShadow: sortMode === 'director' ? '2px 1px red' : 'none' }}>
-                                Director
-                            </li>
-                            <li onClick={franchiseSort} style={{ textShadow: sortMode === 'franchise' ? '2px 1px red' : 'none' }}>
-                                Franchise
-                            </li>
                         </ul>
                     </>
                     ) : (
@@ -171,19 +144,20 @@ export default function Television(){
                 <button type='button' className={styles.searchButton} onClick={search}>search</button>
             </div>
             <div className={styles.resultsContainer}>
-                <ul className={styles.movieCardList}>
-                    {movies.map(movie => (
-                        <MovieCard
-                            key={movie.tmdbId}
-                            tmdbId={movie.tmdbId}
-                            poster={movie.poster}
-                            title={movie.title}
-                            releasedate={movie.releasedate}
-                            keywords={movie.keywords}
-                            director={movie.director ? movie.director: "unknown"}
-                            synopsis={movie.synopsis}
-                            franchise={movie.franchise ? movie.franchise: "none"}
-                            cast={movie.cast}
+                <ul className={styles.showCardList}>
+                    {shows.map(show => (
+                        <TVCard
+                            key={show.tmdbid}
+                            tmdbid={show.tmdbid}
+                            title={show.title}
+                            poster={show.poster}
+                            keywords={show.keywords}
+                            firstairdate={show.firstairdate}
+                            lastairdate={show.lastairdate}
+                            seasons={show.seasons}
+                            episodes={show.episodes}
+                            creator={show.creator}
+                            synopsis={show.synopsis}
                         />
                 ))}
                 </ul>

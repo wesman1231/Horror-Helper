@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import styles from './movieCard.module.css';
 
 export interface Movie{
-    tmdbId: number;
+    tmdbid: number;
     title: string,
     poster: string|null,
     keywords: string|null
@@ -21,7 +21,7 @@ export default function MovieCard(props: Movie){
                 <img className={styles.poster} src={`https://media.themoviedb.org/t/p/w260_and_h390_face${props.poster}`} />
             </div>
             <div className={styles.infoContainer}>
-                <h3 className={styles.movieTitle}> Title: <span className={styles.titleText}><Link to={`/movies/${props.tmdbId}`}>{props.title}</Link></span></h3>
+                <h3 className={styles.movieTitle}> Title: <span className={styles.titleText}><Link to={`/movies/${props.tmdbid}`}>{props.title}</Link></span></h3>
                 <ul className={styles.info}>
                     <li className={styles.releaseDate}><span className={styles.infoHeader}>Release date: </span> {props.releasedate}</li>
                     <li className={styles.subgenre}><span className={styles.infoHeader}>Tags: </span>{props.keywords}</li>
