@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Movies from './pages/movies';
 import MoviePage from './pages/moviePage';
 import Television from './pages/television';
+import ShowPage from './pages/showPage';
 
 import NewReleases from './pages/newReleases';
 import ProvenClassics from './pages/provenClassics';
@@ -29,6 +30,7 @@ function App() {
           <Route path="/hidden-gems" element={<HiddenGems />} />
           
           <Route path='/movies/:id' element={<MoviePage/>}/>
+          <Route path='/shows/:id' element={<ShowPage/>}/>
         </Routes>
       </BrowserRouter>
     </>

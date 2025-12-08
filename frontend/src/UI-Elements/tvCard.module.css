@@ -1,0 +1,57 @@
+.showCard{
+    width: 90%;
+    border: 2px solid white;
+    border-radius: 15px;
+    box-shadow: 2px 2px 3px green;
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: black;
+    color: #FFF6E5;
+    margin-bottom: 5px;   
+}
+
+.posterContainer{
+    width: 50%;
+}
+
+.poster{
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+}
+
+.infoContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    padding: 0;
+    font-family: "Creepster", system-ui;
+}
+
+.showTitle{
+    font-size: 1.2em;
+    margin: 0;
+}
+
+.titleText{
+    font-size: 0.8em;
+}
+
+.releaseDate{
+    margin-top: 12px;
+}
+
+.infoHeader{
+    font-size: 1.3em;
+}
+
+li{
+    margin-bottom: 20px;
+}
+
+.info{
+    padding: 0;
+    list-style: none;
+}

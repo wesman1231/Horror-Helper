@@ -33,3 +33,31 @@
     padding: 0;
     cursor: pointer;
 }
+
+.searchButton{
+    font-size: 1.2em;
+    border-radius: 15px;
+}
+
+.searchButton:hover{
+    background-image: url('https://www.freeiconspng.com/thumbs/blood-png/blood-png-1.png');
+    background-size: contain;
+}
+
+.resultsContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.showCardList{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.noResultsFound{
+    color: #FFF6E5;;
+}
