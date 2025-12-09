@@ -9,6 +9,7 @@ export default function Television(){
     const [defaultShows, setDefaultShows] = useState<Show[]>([]);
     const [sortOptionsToggle, setSortOptionsToggle] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
+    const [sortButtonVisible, setSortButtonVisible] = useState<boolean>(false);
     
     type SortMode = 'default' | 'newest' | 'title' | 'director' | 'franchise';
     const [sortMode, setSortMode] = useState<SortMode>('default');
@@ -27,8 +28,9 @@ export default function Television(){
             const response = await request.json();
             
             setError(false);
-            setShows(response.findResult);
-            setDefaultShows([...response.findResult]);
+            setSortButtonVisible(true);
+            setShows(response.findResult.sort((show: { firstairdate: string; }, nextShow: { firstairdate: string; }) => show.firstairdate.localeCompare(nextShow.firstairdate)));
+            setDefaultShows([...response.findResult.sort((show: { firstairdate: string; }, nextShow: { firstairdate: string; }) => show.firstairdate.localeCompare(nextShow.firstairdate))]);
             console.log(response);
         } 
         catch(error){
@@ -51,7 +53,8 @@ export default function Television(){
     //sorts
     function defaultSort(){
         //sort from oldest to newest
-        setShows(defaultShows);
+        const sortByReleaseDate = shows.sort((show, nextShow) => show.firstairdate.localeCompare(nextShow.firstairdate));
+        setShows(sortByReleaseDate);
         setSortMode('default');
     }
 
@@ -82,26 +85,32 @@ export default function Television(){
                 <div className={styles.dropdown}>
                     {sortOptionsToggle ? (
                     <>
-                        <h2 className={styles.sortBy} onClick={sortMenuToggle}>
+                        <button className={styles.sortBy} onClick={sortMenuToggle}>
                             Sort by {String.fromCodePoint(128315)}
-                        </h2>
+                        </button>
 
                         <ul className={styles.sortOptions}>
-                            <li onClick={defaultSort} style={{ textShadow: sortMode === 'default' ? '2px 1px red' : 'none' }}>
-                                Oldest
+                            <li>
+                                <button onClick={defaultSort} style={{ textShadow: sortMode === 'default' ? '2px 1px red' : 'none' }}>
+                                    Oldest
+                                </button>
                             </li>
-                            <li onClick={releaseDateSort} style={{ textShadow: sortMode === 'newest' ? '2px 1px red' : 'none' }}>
-                                Newest
+                            <li>
+                                <button onClick={releaseDateSort} style={{ textShadow: sortMode === 'newest' ? '2px 1px red' : 'none' }}>
+                                    Newest
+                                </button>
                             </li>
-                            <li onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
-                                Title
+                            <li>
+                                <button onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
+                                    Title
+                                </button>
                             </li>
                         </ul>
                     </>
                     ) : (
-                        <h2 className={styles.sortBy} onClick={sortMenuToggle}>
+                        <button className={styles.sortBy} onClick={sortMenuToggle}>
                             Sort by {String.fromCodePoint(128314)}
-                        </h2>
+                        </button>
                 )}
                 </div>
                 <button type='button' className={styles.searchButton} onClick={search}>search</button>
@@ -110,35 +119,40 @@ export default function Television(){
         );
     }
 
-
-    //otherwise, render results
-    return(
+    if(sortButtonVisible){
+        return(
         <>
             <div className={styles.searchBarContainer}>
                 <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
                 <div className={styles.dropdown}>
                     {sortOptionsToggle ? (
                     <>
-                        <h2 className={styles.sortBy} onClick={sortMenuToggle}>
+                        <button className={styles.sortBy} onClick={sortMenuToggle}>
                             Sort by {String.fromCodePoint(128315)}
-                        </h2>
+                        </button>
 
                         <ul className={styles.sortOptions}>
-                            <li onClick={defaultSort} style={{ textShadow: sortMode === 'default' ? '2px 1px red' : 'none' }}>
-                                Oldest
+                            <li>
+                                <button onClick={defaultSort} style={{ textShadow: sortMode === 'default' ? '2px 1px red' : 'none' }}>
+                                    Oldest
+                                </button>
                             </li>
-                            <li onClick={releaseDateSort} style={{ textShadow: sortMode === 'newest' ? '2px 1px red' : 'none' }}>
-                                Newest
+                            <li>
+                                <button onClick={releaseDateSort} style={{ textShadow: sortMode === 'newest' ? '2px 1px red' : 'none' }}>
+                                    Newest
+                                </button>
                             </li>
-                            <li onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
-                                Title
+                            <li>
+                                <button onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
+                                    Title
+                                </button>
                             </li>
                         </ul>
                     </>
                     ) : (
-                        <h2 className={styles.sortBy} onClick={sortMenuToggle}>
+                        <button className={styles.sortBy} onClick={sortMenuToggle}>
                             Sort by {String.fromCodePoint(128314)}
-                        </h2>
+                        </button>
                 )}
                 </div>
                 <button type='button' className={styles.searchButton} onClick={search}>search</button>
@@ -161,6 +175,19 @@ export default function Television(){
                         />
                 ))}
                 </ul>
+            </div>
+            <ul className={styles.pages}></ul>
+        </>
+    );
+    }
+
+
+    //otherwise, render default page
+    return(
+        <>
+            <div className={styles.searchBarContainer}>
+                <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
+                <button type='button' className={styles.searchButton} onClick={search}>search</button>
             </div>
         </>
     );

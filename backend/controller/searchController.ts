@@ -148,14 +148,30 @@ class searchController{
         const searchQuery = String(req.query.query || '').trim();
         const formatSearchQuery = searchQuery.replaceAll('+', ' ');
         try{
-            const [findResult]: any[] = await db.execute('SELECT * FROM movies WHERE title LIKE ? OR keywords LIKE ? OR franchise LIKE ?', [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
+            const [findResult]: any[] = await db.execute('SELECT * FROM movies WHERE title LIKE ? OR keywords LIKE ?', [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
+            const pageinatedResults: any[][] = [];
             
             if(findResult.length === 0){
                 res.status(404).json({message: 'no results found'});
             }
             
             else{
-                res.status(200).json({message: 'results found', findResult: findResult});
+                for(let i = 0; i < findResult.length; i += 10){
+                    const page: object[] = []; 
+                    if(i + 10 <= findResult.length){
+                        for(let j = i; j < i + 10; j++){
+                            page.push(findResult[j]);                   
+                        }
+                        pageinatedResults.push(page);
+                    }
+                    else if(i + 10 > findResult.length){
+                        for(let j = i; j < findResult.length; j++){
+                            page.push(findResult[j]);    
+                        }
+                        pageinatedResults.push(page);
+                    }
+                }
+                res.status(200).json({message: 'results found', pageinatedResults: pageinatedResults});
             }
         
         }catch(error){
@@ -169,13 +185,29 @@ class searchController{
         const formatSearchQuery = searchQuery.replaceAll('+', ' ');
         try{
             const [findResult]: any[] = await db.execute('SELECT * FROM shows WHERE title LIKE ? OR keywords LIKE ?', [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
+            const pageinatedResults: any[][] = [];
             
             if(findResult.length === 0){
                 res.status(404).json({message: 'no results found'});
             }
             
             else{
-                res.status(200).json({message: 'results found', findResult: findResult});
+                for(let i = 0; i < findResult.length; i += 10){
+                    const page: object[] = []; 
+                    if(i + 10 < findResult.length){
+                        for(let j = i; j < j + 10; j++){
+                            page.push(findResult[j]);                   
+                        }
+                    }
+                    else if(i + 10 > findResult.length){
+                        for(let j = i; j < findResult.length; j++){
+                            page.push(findResult[j]);    
+                        }
+                    }    
+                
+                    pageinatedResults.push(page);
+                }
+                res.status(200).json({message: 'results found', pageinatedResults: pageinatedResults});
             }
         
         }catch(error){

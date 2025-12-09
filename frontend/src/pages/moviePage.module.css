@@ -25,20 +25,30 @@
     margin-bottom: 7%;
 }
 
+.dropdown{
+    font-size: 1.5em;
+    margin-top: 0;
+    text-align: center;
+}
+
+.dropdown:hover{
+    cursor: pointer;
+}
+
 .franchise{
     padding-left: 20%;
     padding-right: 20%;
     margin-top: 0;
     text-align: center;
     font-size: 1.5em;
-    margin-bottom: 7%;
+    margin-bottom: 2%;
 }
 
 .tagsHeader{
-    margin-top: 0;
     margin-bottom: 0;
     font-size: 1.5em;
     text-align: center;
+    margin-top: 2%;
 }
 
 .tags{
@@ -80,6 +90,10 @@
     font-size: 1.1em;
     text-align: center;
     margin-bottom: 7%;
+}
+
+.reviewInput{
+    margin-top: 10px;
 }
 
 .errorWrapper{

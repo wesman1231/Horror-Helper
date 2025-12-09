@@ -1,7 +1,8 @@
+import { useState, lazy, Suspense, useEffect } from 'react';
 import styles from './movies.module.css';
 import type {Movie} from '../UI-Elements/movieCard';
-import MovieCard from '../UI-Elements/movieCard';
-import { useState } from 'react';
+const MovieCard = lazy(() => import("../UI-Elements/movieCard"));
+import LoadingCard from '../UI-Elements/loadingCard';
 
 export default function Movies(){
     const [searchValue, setSearchValue] = useState<string>('');
@@ -9,12 +10,22 @@ export default function Movies(){
     const [defaultMovies, setDefaultMovies] = useState<Movie[]>([]);
     const [sortOptionsToggle, setSortOptionsToggle] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
+    const [sortButtonVisible, setSortButtonVisible] = useState<boolean>(false);
+    const [currentPage, setCurrentPage] = useState<number>(0);
+    const [numberOfPages, setNumberOfPages] = useState<number[]>([]);
+    const [fullResults, setFullResults] = useState<Movie[][]>([]);
     
     type SortMode = 'default' | 'newest' | 'title' | 'director' | 'franchise';
     const [sortMode, setSortMode] = useState<SortMode>('default');
 
+    //rerender new page elements when page changes
+    useEffect(() => {
+        const page = fullResults[currentPage] || [];
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setMovies(page);
+        setDefaultMovies(page);
+    }, [fullResults, currentPage])
     
-
     function handleInput(event: React.ChangeEvent<HTMLInputElement>){
         setSearchValue(event.target.value);
     }
@@ -27,8 +38,10 @@ export default function Movies(){
             const response = await request.json();
             
             setError(false);
-            setMovies(response.findResult);
-            setDefaultMovies([...response.findResult]);
+            setSortButtonVisible(true);
+            setNumberOfPages(response.pageinatedResults.map((movie: object) => response.pageinatedResults.indexOf(movie) + 1));
+            setFullResults(response.pageinatedResults)
+            setCurrentPage(0);
             console.log(response);
         } 
         catch(error){
@@ -99,98 +112,96 @@ export default function Movies(){
         return(
             <div className={styles.searchBarContainer}>
                 <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
-                <div className={styles.dropdown}>
-                    {sortOptionsToggle ? (
-                    <>
-                        <h2 className={styles.sortBy} onClick={sortMenuToggle}>
-                            Sort by {String.fromCodePoint(128315)}
-                        </h2>
-
-                        <ul className={styles.sortOptions}>
-                            <li onClick={defaultSort} style={{ textShadow: sortMode === 'default' ? '2px 1px red' : 'none' }}>
-                                Oldest
-                            </li>
-                            <li onClick={releaseDateSort} style={{ textShadow: sortMode === 'newest' ? '2px 1px red' : 'none' }}>
-                                Newest
-                            </li>
-                            <li onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
-                                Title
-                            </li>
-                            <li onClick={directorSort} style={{ textShadow: sortMode === 'director' ? '2px 1px red' : 'none' }}>
-                                Director
-                            </li>
-                            <li onClick={franchiseSort} style={{ textShadow: sortMode === 'franchise' ? '2px 1px red' : 'none' }}>
-                                Franchise
-                            </li>
-                        </ul>
-                    </>
-                    ) : (
-                        <h2 className={styles.sortBy} onClick={sortMenuToggle}>
-                            Sort by {String.fromCodePoint(128314)}
-                        </h2>
-                )}
-                </div>
                 <button type='button' className={styles.searchButton} onClick={search}>search</button>
                 <h2 className={styles.noResultsFound}>No Results Found</h2>
             </div>
         );
     }
 
-    //otherwise, render results
+    //if a search has been performed, include sorting options in render result
+    if(sortButtonVisible){
+        return(
+            <>
+                <div className={styles.searchBarContainer}>
+                    <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
+                    <div className={styles.dropdown}>
+                        {sortOptionsToggle ? (
+                        <>
+                            <button className={styles.sortBy} onClick={sortMenuToggle}>
+                                Sort by {String.fromCodePoint(128315)}
+                            </button>
+
+                            <ul className={styles.sortOptions}>
+                                <li>
+                                    <button onClick={defaultSort} style={{ textShadow: sortMode === 'default' ? '2px 1px red' : 'none' }}>
+                                        Oldest
+                                    </button>
+                                </li>
+                                <li>
+                                    <button onClick={releaseDateSort} style={{ textShadow: sortMode === 'newest' ? '2px 1px red' : 'none' }}>
+                                        Newest
+                                    </button>
+                                </li>
+                                <li>
+                                    <button onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
+                                        Title
+                                    </button>
+                                </li>
+                                <li>
+                                    <button onClick={directorSort} style={{ textShadow: sortMode === 'director' ? '2px 1px red' : 'none' }}>
+                                        Director
+                                    </button>
+                                </li>
+                                <li>
+                                    <button onClick={franchiseSort} style={{ textShadow: sortMode === 'franchise' ? '2px 1px red' : 'none' }}>
+                                        franchise
+                                    </button>
+                                </li>
+                            </ul>
+                        </>
+                        ) : (
+                            <button className={styles.sortBy} onClick={sortMenuToggle}>
+                                Sort by {String.fromCodePoint(128314)}
+                            </button>
+                    )}
+                    </div>
+                    <button type='button' className={styles.searchButton} onClick={search}>search</button>
+                </div>
+                <div className={styles.resultsContainer}>
+                    <Suspense fallback={<LoadingCard/>}>
+                        <ul className={styles.movieCardList}>
+                        {movies.map(movie => (
+                            <MovieCard
+                                key={movie.tmdbid}
+                                tmdbid={movie.tmdbid}
+                                poster={movie.poster}
+                                title={movie.title}
+                                releasedate={movie.releasedate}
+                                keywords={movie.keywords}
+                                director={movie.director ? movie.director: "unknown"}
+                                synopsis={movie.synopsis}
+                                franchise={movie.franchise ? movie.franchise: "none"}
+                                cast={movie.cast}
+                            />
+                        ))}
+                        </ul>  
+                    </Suspense>
+                </div>
+                <ul className={styles.pageButtons}>
+                    {numberOfPages.map((page) => (
+                        <button key={page} onClick={() => setCurrentPage(page - 1)}>{page}</button>
+                    ))}
+                </ul>
+            </>
+        );
+    }
+
+    //otherwise, render default page
     return(
         <>
             <div className={styles.searchBarContainer}>
                 <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
-                <div className={styles.dropdown}>
-                    {sortOptionsToggle ? (
-                    <>
-                        <h2 className={styles.sortBy} onClick={sortMenuToggle}>
-                            Sort by {String.fromCodePoint(128315)}
-                        </h2>
-
-                        <ul className={styles.sortOptions}>
-                            <li onClick={defaultSort} style={{ textShadow: sortMode === 'default' ? '2px 1px red' : 'none' }}>
-                                Oldest
-                            </li>
-                            <li onClick={releaseDateSort} style={{ textShadow: sortMode === 'newest' ? '2px 1px red' : 'none' }}>
-                                Newest
-                            </li>
-                            <li onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
-                                Title
-                            </li>
-                            <li onClick={directorSort} style={{ textShadow: sortMode === 'director' ? '2px 1px red' : 'none' }}>
-                                Director
-                            </li>
-                            <li onClick={franchiseSort} style={{ textShadow: sortMode === 'franchise' ? '2px 1px red' : 'none' }}>
-                                Franchise
-                            </li>
-                        </ul>
-                    </>
-                    ) : (
-                        <h2 className={styles.sortBy} onClick={sortMenuToggle}>
-                            Sort by {String.fromCodePoint(128314)}
-                        </h2>
-                )}
-                </div>
                 <button type='button' className={styles.searchButton} onClick={search}>search</button>
-            </div>
-            <div className={styles.resultsContainer}>
-                <ul className={styles.movieCardList}>
-                    {movies.map(movie => (
-                        <MovieCard
-                            key={movie.tmdbid}
-                            tmdbid={movie.tmdbid}
-                            poster={movie.poster}
-                            title={movie.title}
-                            releasedate={movie.releasedate}
-                            keywords={movie.keywords}
-                            director={movie.director ? movie.director: "unknown"}
-                            synopsis={movie.synopsis}
-                            franchise={movie.franchise ? movie.franchise: "none"}
-                            cast={movie.cast}
-                        />
-                ))}
-                </ul>
             </div>
         </>
     );
