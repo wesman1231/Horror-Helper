@@ -18,7 +18,13 @@ export default function Movies(){
     type SortMode = 'default' | 'newest' | 'title' | 'director' | 'franchise';
     const [sortMode, setSortMode] = useState<SortMode>('default');
 
-
+    //rerender new page elements when page changes
+    useEffect(() => {
+        const page = fullResults[currentPage] || [];
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setMovies(page);
+        setDefaultMovies(page);
+    }, [fullResults, currentPage])
     
     function handleInput(event: React.ChangeEvent<HTMLInputElement>){
         setSearchValue(event.target.value);
@@ -100,30 +106,6 @@ export default function Movies(){
         setMovies(sortByFranchise);
         setSortMode('franchise');
     }
-
-        //rerender new page elements when page changes
-    useEffect(() => {
-        const page = fullResults[currentPage] || [];
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setDefaultMovies(page);
-        switch(sortMode){
-                    case 'default':
-            defaultSort();
-            break;
-        case 'newest':
-            releaseDateSort();
-            break;
-        case 'title':
-            titleSort();
-            break;
-        case 'director':
-            directorSort();
-            break;
-        case 'franchise':
-            franchiseSort();
-            break;
-        }
-    }, [fullResults, currentPage, sortMode])
 
     //if there are no results found, render no results found header
     if(error === true){
