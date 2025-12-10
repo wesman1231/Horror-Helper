@@ -1,19 +1,19 @@
-import { useState, lazy, Suspense, useEffect } from 'react';
+import { useState, lazy, Suspense, useEffect, useCallback } from 'react';
 import styles from './movies.module.css';
 import type {Movie} from '../UI-Elements/movieCard';
 const MovieCard = lazy(() => import("../UI-Elements/movieCard"));
 import LoadingCard from '../UI-Elements/loadingCard';
 
 export default function Movies(){
-    const [searchValue, setSearchValue] = useState<string>('');
-    const [movies, setMovies] = useState<Movie[]>([]);
-    const [defaultMovies, setDefaultMovies] = useState<Movie[]>([]);
-    const [sortOptionsToggle, setSortOptionsToggle] = useState<boolean>(false);
-    const [error, setError] = useState<boolean>(false);
-    const [sortButtonVisible, setSortButtonVisible] = useState<boolean>(false);
-    const [currentPage, setCurrentPage] = useState<number>(0);
-    const [numberOfPages, setNumberOfPages] = useState<number[]>([]);
-    const [fullResults, setFullResults] = useState<Movie[][]>([]);
+    const [searchValue, setSearchValue] = useState<string>(''); //search bar state
+    const [movies, setMovies] = useState<Movie[]>([]); //displayed movies
+    const [defaultMovies, setDefaultMovies] = useState<Movie[]>([]); //default sorted movies(oldest to newest)
+    const [sortOptionsToggle, setSortOptionsToggle] = useState<boolean>(false); //sort options toggle
+    const [error, setError] = useState<boolean>(false); //check for an error
+    const [sortButtonVisible, setSortButtonVisible] = useState<boolean>(false); //checks if sort button should be visible
+    const [currentPage, setCurrentPage] = useState<number>(0); //tracks the current oage number
+    const [numberOfPages, setNumberOfPages] = useState<number[]>([]); //defines the number of pages as an array of numbers, from 0 to the length of the fullResults
+    const [fullResults, setFullResults] = useState<Movie[][]>([]); //the full array of results with subarrays for each page
     
     type SortMode = 'default' | 'newest' | 'title' | 'director' | 'franchise';
     const [sortMode, setSortMode] = useState<SortMode>('default');
@@ -22,8 +22,7 @@ export default function Movies(){
     useEffect(() => {
         const page = fullResults[currentPage] || [];
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setMovies(page);
-        setDefaultMovies(page);
+        setDefaultMovies(page.sort((movie, nextMovie) => (movie.releasedate.localeCompare(nextMovie.releasedate)))); //when page changes, defaultMovies is assigned to the currentPage index of fullResults, which is always in the base sort of oldest-newest movies
     }, [fullResults, currentPage])
     
     function handleInput(event: React.ChangeEvent<HTMLInputElement>){
@@ -61,51 +60,75 @@ export default function Movies(){
     }
 
     //sorts
-    function defaultSort(){
-        //sort from oldest to newest
+    const defaultSort = useCallback(() => {
         setMovies(defaultMovies);
         setSortMode('default');
-    }
+    }, [defaultMovies]);
 
-    function releaseDateSort(){
-        //sort from newest to oldest
-         const shallowCopyMovies: Movie[] = [...defaultMovies];
-         const sortByReleaseDate = shallowCopyMovies.sort((movie, nextMovie) => nextMovie.releasedate.localeCompare(movie.releasedate));
-         
-         setMovies(sortByReleaseDate);
-         setSortMode('newest');
-    }
-
-    function titleSort(){
-        //sort title from A-Z
+    const releaseDateSort = useCallback(() => {
         const shallowCopyMovies: Movie[] = [...defaultMovies];
-        const sortByTitle = shallowCopyMovies.sort((movie, nextmovie) => movie.title.localeCompare(nextmovie.title));
-        
+        const sortByReleaseDate = shallowCopyMovies.sort((movie, nextMovie) =>
+            nextMovie.releasedate.localeCompare(movie.releasedate)
+        );
+        setMovies(sortByReleaseDate);
+        setSortMode('newest');
+    }, [defaultMovies]);
+
+    const titleSort = useCallback(() => {
+        const shallowCopyMovies: Movie[] = [...defaultMovies];
+        const sortByTitle = shallowCopyMovies.sort((movie, nextmovie) =>
+            movie.title.localeCompare(nextmovie.title)
+        );
         setMovies(sortByTitle);
         setSortMode('title');
-    }
+    }, [defaultMovies]);
 
-    function directorSort(){
-        //sort director from A-Z
+    const directorSort = useCallback(() => {
         const shallowCopyMovies: Movie[] = [...defaultMovies];
-        const sortByDirector = shallowCopyMovies.sort((movie, nextMovie) => movie.director.localeCompare(nextMovie.director));
-        
+        const sortByDirector = shallowCopyMovies.sort((movie, nextMovie) =>
+            movie.director.localeCompare(nextMovie.director)
+        );
         setMovies(sortByDirector);
         setSortMode('director');
-    }
+    }, [defaultMovies]);
 
-    function franchiseSort(){
-        //sort franchise from A-Z
+    const franchiseSort = useCallback(() => {
         const shallowCopyMovies: Movie[] = [...defaultMovies];
         const sortByFranchise = shallowCopyMovies.sort((movie, nextMovie) => {
             const fmovie = movie.franchise || "";
             const fnextMovie = nextMovie.franchise || "";
             return fmovie.localeCompare(fnextMovie);
         });
-        
         setMovies(sortByFranchise);
         setSortMode('franchise');
-    }
+    }, [defaultMovies]);
+
+
+    //sort page elements when sortMode changes, when page changes, this will automatically set the correct sort on the new page since it is initially always the default sort
+    useEffect(() => {
+        switch(sortMode){
+            case 'default':
+                // eslint-disable-next-line react-hooks/set-state-in-effect
+                defaultSort();
+            break;
+
+            case 'newest':
+                releaseDateSort();
+            break;
+
+            case 'title':
+                titleSort();
+            break;
+
+            case 'director':
+                directorSort();
+            break;
+
+            case 'franchise':
+                franchiseSort();
+            break
+        }
+    }, [sortMode, directorSort, releaseDateSort, titleSort, franchiseSort, defaultSort]);
 
     //if there are no results found, render no results found header
     if(error === true){
