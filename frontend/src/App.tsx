@@ -12,6 +12,8 @@ import ProvenClassics from './pages/provenClassics';
 import HiddenGems from './pages/hiddenGems';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+
+
 function App() {
   return (
     <>
@@ -37,4 +39,5 @@ function App() {
   );
 }
 
-export default App
+export default App;
+

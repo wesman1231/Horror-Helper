@@ -1,232 +1,101 @@
-import { useState, lazy, Suspense, useEffect, useCallback } from 'react';
-import styles from './movies.module.css';
-import type {Movie} from '../UI-Elements/movieCard';
-const MovieCard = lazy(() => import("../UI-Elements/movieCard"));
-import LoadingCard from '../UI-Elements/loadingCard';
+import { useEffect, useState } from "react";
+import type { Movie } from "../UI-Elements/movieCard";
+import CardList from "../UI-Elements/cardList";
+import NoResultsFound from "../UI-Elements/noResultsFound";
+import SearchBar from "../UI-Elements/searcBar";
+import PageButtons from "../UI-Elements/pageButtons";
+import SortMenu from "../UI-Elements/sortMenu";
 
 export default function Movies(){
     const [searchValue, setSearchValue] = useState<string>(''); //search bar state
-    const [movies, setMovies] = useState<Movie[]>([]); //displayed movies
-    const [defaultMovies, setDefaultMovies] = useState<Movie[]>([]); //default sorted movies(oldest to newest)
-    const [sortOptionsToggle, setSortOptionsToggle] = useState<boolean>(false); //sort options toggle
     const [error, setError] = useState<boolean>(false); //check for an error
-    const [sortButtonVisible, setSortButtonVisible] = useState<boolean>(false); //checks if sort button should be visible
-    const [currentPage, setCurrentPage] = useState<number>(0); //tracks the current oage number
-    const [numberOfPages, setNumberOfPages] = useState<number[]>([]); //defines the number of pages as an array of numbers, from 0 to the length of the fullResults
-    const [fullResults, setFullResults] = useState<Movie[][]>([]); //the full array of results with subarrays for each page
-    
-    type SortMode = 'default' | 'newest' | 'title' | 'director' | 'franchise';
-    const [sortMode, setSortMode] = useState<SortMode>('default');
+    const [displayedMovies, setDisplayedMovies] = useState<Movie[]>([]);
+    const [currentPage, setCurrentPage] = useState<number>(0);
+    const [allPages, setAllPages] = useState<Movie[][]>([]);
+    const [sortMenuVisible, setSortMenuVisible] = useState<boolean>(false);
+    const [sortMode, setSortMode] = useState<sortMode>('default');
 
-    //rerender new page elements when page changes
+    //update displayed movies when changing pages
     useEffect(() => {
-        const page = fullResults[currentPage] || [];
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setDefaultMovies(page.sort((movie, nextMovie) => (movie.releasedate.localeCompare(nextMovie.releasedate)))); //when page changes, defaultMovies is assigned to the currentPage index of fullResults, which is always in the base sort of oldest-newest movies
-    }, [fullResults, currentPage])
+        setDisplayedMovies(allPages[currentPage]|| [])
+    }, [allPages, currentPage]);
+
     
+
+    return(
+        <>
+            <SearchBar searchValue={searchValue} handleInput={handleInput} search={search} />
+            {sortMenuVisible ? <SortMenu sortMode={sortMode} defaultSort={defaultSort} newesttSort={newestSort} titleSort={titleSort} directorSort={directorSort} franchiseSort={franchiseSort} /> : null}
+            {error ? <NoResultsFound /> : <CardList displayedMovies={displayedMovies} />}            
+            {displayedMovies ? <PageButtons allPages={allPages} currentPage={currentPage} setCurrentPage={setCurrentPage} /> : null} 
+        </>
+        
+    )
+    
+     //track search bar value
     function handleInput(event: React.ChangeEvent<HTMLInputElement>){
         setSearchValue(event.target.value);
     }
-
+    
+    //search for movies
     async function search(){
-        //search for movies
         const formatSearch = searchValue.replaceAll(' ', "+");
-        try{
-            const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}`);
-            const response = await request.json();
-            
-            setError(false);
-            setSortButtonVisible(true);
-            setNumberOfPages(response.pageinatedResults.map((movie: object) => response.pageinatedResults.indexOf(movie) + 1));
-            setFullResults(response.pageinatedResults)
-            setCurrentPage(0);
-            console.log(response);
-        } 
-        catch(error){
-            setError(true);
-            console.error(error);
-        }
+            try{
+                const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}`);
+                const response = await request.json();
+                setError(false);
+                setAllPages(response.paginatedResults)
+                setDisplayedMovies(response.paginatedResults[currentPage].sort((a: Movie, b: Movie) => (a.releasedate.localeCompare(b.releasedate))));
+                setSortMenuVisible(true);
+                console.log(displayedMovies);
+                console.log(response);
+            } 
+            catch(error){
+                setError(true);
+                console.error(error);
+            }
     }
 
-    //toggle sort options menu
-    function sortMenuToggle(){
-        if(sortOptionsToggle === false){
-            setSortOptionsToggle(true);
-        }
-        else if(sortOptionsToggle === true){
-            setSortOptionsToggle(false);
-        }
-    }
+    //sort options
 
-    //sorts
-    const defaultSort = useCallback(() => {
-        setMovies(defaultMovies);
+    //sort from oldest to newest
+    function defaultSort(){
+        const shallowCopyPage = [...displayedMovies];
+        const defaultSort = shallowCopyPage.sort((a, b) => (a.releasedate.localeCompare(b.releasedate)));
+        setDisplayedMovies(defaultSort);
         setSortMode('default');
-    }, [defaultMovies]);
+    }
 
-    const releaseDateSort = useCallback(() => {
-        const shallowCopyMovies: Movie[] = [...defaultMovies];
-        const sortByReleaseDate = shallowCopyMovies.sort((movie, nextMovie) =>
-            nextMovie.releasedate.localeCompare(movie.releasedate)
-        );
-        setMovies(sortByReleaseDate);
+    function newestSort(){
+        const shallowCopyPage = [...displayedMovies];
+        const newestSort = shallowCopyPage.sort((a, b) => (b.releasedate.localeCompare(a.releasedate)));
+        setDisplayedMovies(newestSort)
         setSortMode('newest');
-    }, [defaultMovies]);
+    }
 
-    const titleSort = useCallback(() => {
-        const shallowCopyMovies: Movie[] = [...defaultMovies];
-        const sortByTitle = shallowCopyMovies.sort((movie, nextmovie) =>
-            movie.title.localeCompare(nextmovie.title)
-        );
-        setMovies(sortByTitle);
+    function titleSort(){
+        const shallowCopyPage = [...displayedMovies];
+        const titleSort = shallowCopyPage.sort((a, b) => (a.title.localeCompare(b.title)));
+        setDisplayedMovies(titleSort);
         setSortMode('title');
-    }, [defaultMovies]);
+    }
 
-    const directorSort = useCallback(() => {
-        const shallowCopyMovies: Movie[] = [...defaultMovies];
-        const sortByDirector = shallowCopyMovies.sort((movie, nextMovie) =>
-            movie.director.localeCompare(nextMovie.director)
-        );
-        setMovies(sortByDirector);
+    function directorSort(){
+        const shallowCopyPage = [...displayedMovies];
+        const directorSort = shallowCopyPage.sort((a, b) => (a.director.localeCompare(b.director)));
+        setDisplayedMovies(directorSort);
         setSortMode('director');
-    }, [defaultMovies]);
+    }
 
-    const franchiseSort = useCallback(() => {
-        const shallowCopyMovies: Movie[] = [...defaultMovies];
-        const sortByFranchise = shallowCopyMovies.sort((movie, nextMovie) => {
-            const fmovie = movie.franchise || "";
-            const fnextMovie = nextMovie.franchise || "";
-            return fmovie.localeCompare(fnextMovie);
-        });
-        setMovies(sortByFranchise);
+    function franchiseSort(){
+        const shallowCopyPage = [...displayedMovies];
+        const franchiseSort = shallowCopyPage.sort((a, b) => (a.franchise.localeCompare(b.franchise)));
+        setDisplayedMovies(franchiseSort);
         setSortMode('franchise');
-    }, [defaultMovies]);
-
-
-    //sort page elements when sortMode changes, when page changes, this will automatically set the correct sort on the new page since it is initially always the default sort
-    useEffect(() => {
-        switch(sortMode){
-            case 'default':
-                // eslint-disable-next-line react-hooks/set-state-in-effect
-                defaultSort();
-            break;
-
-            case 'newest':
-                releaseDateSort();
-            break;
-
-            case 'title':
-                titleSort();
-            break;
-
-            case 'director':
-                directorSort();
-            break;
-
-            case 'franchise':
-                franchiseSort();
-            break
-        }
-    }, [sortMode, directorSort, releaseDateSort, titleSort, franchiseSort, defaultSort]);
-
-    //if there are no results found, render no results found header
-    if(error === true){
-        return(
-            <div className={styles.searchBarContainer}>
-                <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
-                <button type='button' className={styles.searchButton} onClick={search}>search</button>
-                <h2 className={styles.noResultsFound}>No Results Found</h2>
-            </div>
-        );
     }
-
-    //if a search has been performed, include sorting options in render result
-    if(sortButtonVisible){
-        return(
-            <>
-                <div className={styles.searchBarContainer}>
-                    <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
-                    <div className={styles.dropdown}>
-                        {sortOptionsToggle ? (
-                        <>
-                            <button className={styles.sortBy} onClick={sortMenuToggle}>
-                                Sort by {String.fromCodePoint(128315)}
-                            </button>
-
-                            <ul className={styles.sortOptions}>
-                                <li>
-                                    <button onClick={defaultSort} style={{ textShadow: sortMode === 'default' ? '2px 1px red' : 'none' }}>
-                                        Oldest
-                                    </button>
-                                </li>
-                                <li>
-                                    <button onClick={releaseDateSort} style={{ textShadow: sortMode === 'newest' ? '2px 1px red' : 'none' }}>
-                                        Newest
-                                    </button>
-                                </li>
-                                <li>
-                                    <button onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
-                                        Title
-                                    </button>
-                                </li>
-                                <li>
-                                    <button onClick={directorSort} style={{ textShadow: sortMode === 'director' ? '2px 1px red' : 'none' }}>
-                                        Director
-                                    </button>
-                                </li>
-                                <li>
-                                    <button onClick={franchiseSort} style={{ textShadow: sortMode === 'franchise' ? '2px 1px red' : 'none' }}>
-                                        franchise
-                                    </button>
-                                </li>
-                            </ul>
-                        </>
-                        ) : (
-                            <button className={styles.sortBy} onClick={sortMenuToggle}>
-                                Sort by {String.fromCodePoint(128314)}
-                            </button>
-                    )}
-                    </div>
-                    <button type='button' className={styles.searchButton} onClick={search}>search</button>
-                </div>
-                <div className={styles.resultsContainer}>
-                    <Suspense fallback={<LoadingCard/>}>
-                        <ul className={styles.movieCardList}>
-                        {movies.map(movie => (
-                            <MovieCard
-                                key={movie.tmdbid}
-                                tmdbid={movie.tmdbid}
-                                poster={movie.poster}
-                                title={movie.title}
-                                releasedate={movie.releasedate}
-                                keywords={movie.keywords}
-                                director={movie.director ? movie.director: "unknown"}
-                                synopsis={movie.synopsis}
-                                franchise={movie.franchise ? movie.franchise: "none"}
-                                cast={movie.cast}
-                            />
-                        ))}
-                        </ul>  
-                    </Suspense>
-                </div>
-                <ul className={styles.pageButtons}>
-                    {numberOfPages.map((page) => (
-                        <button key={page} onClick={() => setCurrentPage(page - 1)}>{page}</button>
-                    ))}
-                </ul>
-            </>
-        );
-    }
-
-    //otherwise, render default page
-    return(
-        <>
-            <div className={styles.searchBarContainer}>
-                <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
-                <button type='button' className={styles.searchButton} onClick={search}>search</button>
-            </div>
-        </>
-    );
+    
 }
 
+export type sortMode = 'default' | 'newest' | 'title' | 'director' | 'franchise';
+
+    

@@ -1,0 +1,16 @@
+.searchBarContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.searchBar{
+    font-size: 1em;
+    width: 70%;
+}
+
+.searchButton{
+    font-size: 1.2em;
+    border-radius: 15px;
+}

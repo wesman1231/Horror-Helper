@@ -149,29 +149,34 @@ class searchController{
         const formatSearchQuery = searchQuery.replaceAll('+', ' ');
         try{
             const [findResult]: any[] = await db.execute('SELECT * FROM movies WHERE title LIKE ? OR keywords LIKE ?', [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
-            const pageinatedResults: any[][] = [];
+            const paginatedResults: any[][] = []; //full results with subarrays as pages of content
             
             if(findResult.length === 0){
                 res.status(404).json({message: 'no results found'});
             }
             
             else{
+                //jump through results in segments of 10 and create a page array each loop
                 for(let i = 0; i < findResult.length; i += 10){
                     const page: object[] = []; 
+
+                    //if there are 10 or more elements to go, loop through them and push them to the page array
                     if(i + 10 <= findResult.length){
                         for(let j = i; j < i + 10; j++){
                             page.push(findResult[j]);                   
                         }
-                        pageinatedResults.push(page);
+                        paginatedResults.push(page); //push the pages to the paginatedResults on each loop of 10
                     }
+
+                    //if there are less than 10 elements remaining in the results, loop through the remaining elements and push them to the page array
                     else if(i + 10 > findResult.length){
                         for(let j = i; j < findResult.length; j++){
                             page.push(findResult[j]);    
                         }
-                        pageinatedResults.push(page);
+                        paginatedResults.push(page); //push the page to the paginatedResults
                     }
                 }
-                res.status(200).json({message: 'results found', pageinatedResults: pageinatedResults});
+                res.status(200).json({message: 'results found', paginatedResults: paginatedResults});
             }
         
         }catch(error){
@@ -185,7 +190,7 @@ class searchController{
         const formatSearchQuery = searchQuery.replaceAll('+', ' ');
         try{
             const [findResult]: any[] = await db.execute('SELECT * FROM shows WHERE title LIKE ? OR keywords LIKE ?', [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
-            const pageinatedResults: any[][] = [];
+            const paginatedResults: any[][] = [];
             
             if(findResult.length === 0){
                 res.status(404).json({message: 'no results found'});
@@ -205,9 +210,9 @@ class searchController{
                         }
                     }    
                 
-                    pageinatedResults.push(page);
+                    paginatedResults.push(page);
                 }
-                res.status(200).json({message: 'results found', pageinatedResults: pageinatedResults});
+                res.status(200).json({message: 'results found', paginatedResults: paginatedResults});
             }
         
         }catch(error){
