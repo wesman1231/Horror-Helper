@@ -9,6 +9,7 @@ interface SortProps{
     titleSort: () => void;
     directorSort: () => void;
     franchiseSort: () => void;
+    sort: () => void;
 }
 
 export default function SortMenu(props: SortProps){

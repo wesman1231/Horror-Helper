@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState} from "react";
 import type { Movie } from "../UI-Elements/movieCard";
 import CardList from "../UI-Elements/cardList";
 import NoResultsFound from "../UI-Elements/noResultsFound";
@@ -12,6 +12,7 @@ export default function Movies(){
     const [displayedMovies, setDisplayedMovies] = useState<Movie[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(0);
     const [allPages, setAllPages] = useState<Movie[][]>([]);
+    const [defaultResults, setDefaultResults] = useState<Movie[][]>([])
     const [sortMenuVisible, setSortMenuVisible] = useState<boolean>(false);
     const [sortMode, setSortMode] = useState<sortMode>('default');
 
@@ -20,12 +21,17 @@ export default function Movies(){
         setDisplayedMovies(allPages[currentPage]|| [])
     }, [allPages, currentPage]);
 
-    
+    //run sort function when sortMode changes
+    useEffect(() => {
+    if (sortMode) {
+        sort();
+    }
+}, [sortMode]);
 
     return(
         <>
             <SearchBar searchValue={searchValue} handleInput={handleInput} search={search} />
-            {sortMenuVisible ? <SortMenu sortMode={sortMode} defaultSort={defaultSort} newesttSort={newestSort} titleSort={titleSort} directorSort={directorSort} franchiseSort={franchiseSort} /> : null}
+            {sortMenuVisible ? <SortMenu sortMode={sortMode} defaultSort={defaultSort} newesttSort={newestSort} titleSort={titleSort} directorSort={directorSort} franchiseSort={franchiseSort} sort={sort} /> : null}
             {error ? <NoResultsFound /> : <CardList displayedMovies={displayedMovies} />}            
             {displayedMovies ? <PageButtons allPages={allPages} currentPage={currentPage} setCurrentPage={setCurrentPage} /> : null} 
         </>
@@ -43,10 +49,13 @@ export default function Movies(){
             try{
                 const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}`);
                 const response = await request.json();
+                
                 setError(false);
+                setDefaultResults(response.paginatedResults);
                 setAllPages(response.paginatedResults)
                 setDisplayedMovies(response.paginatedResults[currentPage].sort((a: Movie, b: Movie) => (a.releasedate.localeCompare(b.releasedate))));
                 setSortMenuVisible(true);
+                
                 console.log(displayedMovies);
                 console.log(response);
             } 
@@ -56,46 +65,45 @@ export default function Movies(){
             }
     }
 
-    //sort options
+//sort options
+function defaultSort() {
+    setSortMode(() => 'default');
+    setAllPages(() => defaultResults);
+}
 
-    //sort from oldest to newest
-    function defaultSort(){
-        const shallowCopyPage = [...displayedMovies];
-        const defaultSort = shallowCopyPage.sort((a, b) => (a.releasedate.localeCompare(b.releasedate)));
-        setDisplayedMovies(defaultSort);
-        setSortMode('default');
-    }
+function newestSort() {
+    setSortMode(() => 'newest');
+}
 
-    function newestSort(){
-        const shallowCopyPage = [...displayedMovies];
-        const newestSort = shallowCopyPage.sort((a, b) => (b.releasedate.localeCompare(a.releasedate)));
-        setDisplayedMovies(newestSort)
-        setSortMode('newest');
-    }
+function titleSort() {
+    setSortMode(() => 'title');
+}
 
-    function titleSort(){
-        const shallowCopyPage = [...displayedMovies];
-        const titleSort = shallowCopyPage.sort((a, b) => (a.title.localeCompare(b.title)));
-        setDisplayedMovies(titleSort);
-        setSortMode('title');
-    }
+function directorSort() {
+    setSortMode(() => 'director');
+}
 
-    function directorSort(){
-        const shallowCopyPage = [...displayedMovies];
-        const directorSort = shallowCopyPage.sort((a, b) => (a.director.localeCompare(b.director)));
-        setDisplayedMovies(directorSort);
-        setSortMode('director');
-    }
+function franchiseSort() {
+    setSortMode(() => 'franchise');
+}
 
-    function franchiseSort(){
-        const shallowCopyPage = [...displayedMovies];
-        const franchiseSort = shallowCopyPage.sort((a, b) => (a.franchise.localeCompare(b.franchise)));
-        setDisplayedMovies(franchiseSort);
-        setSortMode('franchise');
+    async function sort(){
+        try{
+            const request = await fetch(`http://localhost:3000/api/sort/movies?sortMode=${sortMode}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({arrayToSort: defaultResults})
+        });
+            const response = await request.json();
+            const sortedResults = response.paginatedResults;
+            setAllPages(sortedResults);
+        }
+        catch(error){
+            console.error(error);
+        }
     }
-    
 }
 
 export type sortMode = 'default' | 'newest' | 'title' | 'director' | 'franchise';
-
-    

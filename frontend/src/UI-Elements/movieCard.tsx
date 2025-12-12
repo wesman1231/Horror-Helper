@@ -6,9 +6,9 @@ export interface Movie{
     title: string,
     poster: string|null,
     keywords: string|null
-    director: string,
+    director: string| null,
     releasedate: string,
-    franchise: string,
+    franchise: string | null,
     synopsis: string|null,
     cast: string
 }
