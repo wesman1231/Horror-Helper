@@ -184,6 +184,8 @@ class searchController{
         }
     }
 
+    
+
     //search for shows
     public async searchTV(req: Request, res: Response){
         const searchQuery = String(req.query.query || '').trim();

@@ -1,5 +1,5 @@
-import { Suspense } from "react";
-import MovieCard from "./movieCard";
+import { Suspense, lazy } from "react";
+const MovieCard = lazy(() => import('../UI-Elements/movieCard'));
 import LoadingCard from "./loadingCard";
 import type { Movie } from "./movieCard";
 import styles from './cardList.module.css';
