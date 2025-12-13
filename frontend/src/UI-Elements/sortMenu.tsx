@@ -4,12 +4,11 @@ import styles from './sortMenu.module.css';
 
 interface SortProps{
     sortMode: sortMode;
-    defaultSort: () => void;
-    newesttSort: () => void;
+    oldestSort: () => void;
+    newestSort: () => void;                                                                                                                                                        
     titleSort: () => void;
     directorSort: () => void;
     franchiseSort: () => void;
-    sort: () => void;
 }
 
 export default function SortMenu(props: SortProps){
@@ -27,12 +26,12 @@ export default function SortMenu(props: SortProps){
 
                             <ul className={styles.sortOptions}>
                                 <li>
-                                    <button onClick={props.defaultSort} style={{ textShadow: props.sortMode === 'default' ? '2px 1px red' : 'none' }}>
+                                    <button onClick={props.oldestSort} style={{ textShadow: props.sortMode === 'releasedate' ? '2px 1px red' : 'none' }}>
                                         Oldest
                                     </button>
                                 </li>
                                 <li>
-                                    <button onClick={props.newesttSort} style={{ textShadow: props.sortMode === 'newest' ? '2px 1px red' : 'none' }}>
+                                    <button onClick={props.newestSort} style={{ textShadow: props.sortMode === 'newest' ? '2px 1px red' : 'none' }}>
                                         Newest
                                     </button>
                                 </li>
@@ -64,4 +63,6 @@ export default function SortMenu(props: SortProps){
      function toggleSortOptions(){
         setSortOptionsToggle((prev => !prev));
     }
+
+    
 }

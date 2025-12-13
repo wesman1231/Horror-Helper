@@ -4,8 +4,8 @@ import styles from './searchBar.module.css';
 
 interface SearchBarProps {
   searchValue: string;
-  handleInput: (event: React.ChangeEvent<HTMLInputElement>) => void
-  search: () => void
+  handleInput: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  search: () => void;
 }
 
 export default function SearchBar(props: SearchBarProps){

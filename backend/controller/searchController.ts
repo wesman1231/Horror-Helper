@@ -144,41 +144,34 @@ class searchController{
     }
 
     //search for movies
-    public async searchMovies(req: Request, res: Response){
+        public async searchMovies(req: Request, res: Response){
         const searchQuery = String(req.query.query || '').trim();
         const formatSearchQuery = searchQuery.replaceAll('+', ' ');
+        const sortMode = String(req.query.sortMode);
         try{
-            const [findResult]: any[] = await db.execute('SELECT * FROM movies WHERE title LIKE ? OR keywords LIKE ?', [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
-            const paginatedResults: any[][] = []; //full results with subarrays as pages of content
-            
-            if(findResult.length === 0){
-                res.status(404).json({message: 'no results found'});
+            const currentPage = Number(req.params.page);
+            const pagesArray: number[] = [];
+            const elementsPerPage = 10;
+            const offset = (currentPage - 1) * 10;
+           
+            const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM movies WHERE title LIKE ? OR keywords LIKE ?`, [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
+            const numberOfResults: number = totalResultsQuery[0].total;
+           
+            const numberOfPages: number = Math.ceil(numberOfResults / elementsPerPage);
+            for(let i = 1; i <= numberOfPages; i++){    
+                pagesArray.push(i);
             }
             
+            if(sortMode === 'newest'){
+                const [searchResult]: any[] = await db.execute(`SELECT * FROM movies WHERE title LIKE ? OR keywords LIKE ? ORDER BY releasedate DESC LIMIT ${elementsPerPage} OFFSET ${offset}`, [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
+                res.status(200).json({searchResult: searchResult, pagesArray: pagesArray}); 
+            }
             else{
-                //jump through results in segments of 10 and create a page array each loop
-                for(let i = 0; i < findResult.length; i += 10){
-                    const page: object[] = []; 
-
-                    //if there are 10 or more elements to go, loop through them and push them to the page array
-                    if(i + 10 <= findResult.length){
-                        for(let j = i; j < i + 10; j++){
-                            page.push(findResult[j]);                   
-                        }
-                        paginatedResults.push(page); //push the pages to the paginatedResults on each loop of 10
-                    }
-
-                    //if there are less than 10 elements remaining in the results, loop through the remaining elements and push them to the page array
-                    else if(i + 10 > findResult.length){
-                        for(let j = i; j < findResult.length; j++){
-                            page.push(findResult[j]);    
-                        }
-                        paginatedResults.push(page); //push the page to the paginatedResults
-                    }
-                }
-                res.status(200).json({message: 'results found', paginatedResults: paginatedResults});
+                const [searchResult]: any[] = await db.execute(`SELECT * FROM movies WHERE title LIKE ? OR keywords LIKE ? ORDER BY ${sortMode} LIMIT ${elementsPerPage} OFFSET ${offset}`, [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
+                res.status(200).json({searchResult: searchResult, pagesArray: pagesArray});   
             }
-        
+            
+
         }catch(error){
             console.error('error searching: ', error);
         }
