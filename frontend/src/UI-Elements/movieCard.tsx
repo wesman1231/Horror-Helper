@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import styles from './movieCard.module.css';
+import styles from '../UI-Elements/UI_css/movieCard.module.css';
 
 export interface Movie{
     tmdbid: number;

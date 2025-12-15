@@ -6,6 +6,8 @@ import SearchBar from "../UI-Elements/searcBar";
 import PageButtons from "../UI-Elements/pageButtons";
 import SortMenu from "../UI-Elements/sortMenu";
 
+export type sortMode = 'releasedate' | 'newest' | 'title' | 'director' | 'franchise';
+
 export default function Movies(){
     const [searchValue, setSearchValue] = useState<string>(''); //search bar state
     const [error, setError] = useState<boolean>(false); //check for an error
@@ -14,20 +16,10 @@ export default function Movies(){
     const [sortMode, setSortMode] = useState<sortMode>('releasedate');
     const [pages, setPages] = useState<number[]>([]);
 
-    //when sortMode changes, sort results
     useEffect(() => {
         sort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[sortMode])
-
-    return(
-        <>
-            <SearchBar searchValue={searchValue} handleInput={handleInput} search={search} />
-            {sortMenuVisible ? <SortMenu sortMode={sortMode} oldestSort={oldestSort} newestSort={newestSort} titleSort={titleSort} directorSort={directorSort} franchiseSort={franchiseSort}  /> : null}
-            {error ? <NoResultsFound /> : <CardList displayedMovies={displayedMovies} />}            
-            {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} /> : null}
-        </>
-        
-    )
 
     //track search bar value
     function handleInput(event: React.ChangeEvent<HTMLInputElement>){
@@ -39,15 +31,15 @@ export default function Movies(){
         if(searchValue != ''){
             const formatSearch = searchValue.replaceAll(' ', "+");
             try{
-                const request = await fetch(`http://localhost:3000/api/search/movies/${1}?query=${formatSearch}&sortMode=${sortMode}`);
+                const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}&sortMode=${sortMode}&page=1`);
                 const response = await request.json();
                 
                 setError(false);
+                setPages(response.pagesArray);
                 setSortMenuVisible(true);
                 setDisplayedMovies(response.searchResult);
-                setPages(response.pagesArray);
+                
                 console.log('pagesArray from backend:', response.pagesArray);
-                console.log(displayedMovies);
                 console.log(response);
             } 
             catch(error){
@@ -57,16 +49,16 @@ export default function Movies(){
         }
     }
 
+    //sort results
     async function sort(){
         if(searchValue != ''){
             const formatSearch = searchValue.replaceAll(' ', "+"); 
             try{
-                    const request = await fetch(`http://localhost:3000/api/search/movies/${1}?query=${formatSearch}&sortMode=${sortMode}`);
+                    const request = await fetch(`http://localhost:3000/api/search/movies/?query=${formatSearch}&sortMode=${sortMode}&page=1`);
                     const response = await request.json();
                     
                     setError(false);
                     setDisplayedMovies(response.searchResult);
-                    console.log(displayedMovies);
                     console.log(response);
                 } 
                 catch(error){
@@ -76,16 +68,16 @@ export default function Movies(){
         }
     }
 
+    //move to next or previous page
     async function changePage(page: number){
         if(searchValue != ''){
             const formatSearch = searchValue.replaceAll(' ', "+"); 
         try{
-                const request = await fetch(`http://localhost:3000/api/search/movies/${page}?query=${formatSearch}&sortMode=${sortMode}`);
+                const request = await fetch(`http://localhost:3000/api/search/movies/?query=${formatSearch}&sortMode=${sortMode}&page=${page}`);
                 const response = await request.json();
                 
                 setError(false);
                 setDisplayedMovies(response.searchResult);
-                console.log(displayedMovies);
                 console.log(response);
             } 
             catch(error){
@@ -115,6 +107,13 @@ export default function Movies(){
         setSortMode(() => 'franchise');
     }
 
+    return(
+        <>
+            <SearchBar searchValue={searchValue} handleInput={handleInput} search={search} />
+            {sortMenuVisible ? <SortMenu sortMode={sortMode} oldestSort={oldestSort} newestSort={newestSort} titleSort={titleSort} directorSort={directorSort} franchiseSort={franchiseSort} sort={sort} /> : null}
+            {error ? <NoResultsFound /> : <CardList displayedMovies={displayedMovies} />}            
+            {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} /> : null}
+        </>
+    );
 }
 
-export type sortMode = 'releasedate' | 'newest' | 'title' | 'director' | 'franchise';

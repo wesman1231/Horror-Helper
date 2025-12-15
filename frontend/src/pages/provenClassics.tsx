@@ -1,4 +1,4 @@
-import styles from './provenClassics.module.css';
+import styles from '../pages/pages_css/provenClassics.module.css';
 
 export default function ProvenClassics(){
     return(

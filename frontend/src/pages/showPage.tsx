@@ -1,4 +1,4 @@
-import styles from './showPage.module.css';
+import styles from '../pages/pages_css/showPage.module.css';
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type {Show} from '../UI-Elements/tvCard';

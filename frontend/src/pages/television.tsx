@@ -1,4 +1,4 @@
-import styles from './television.module.css';
+import styles from '../pages/pages_css/television.module.css';
 import type {Show} from '../UI-Elements/tvCard';
 import TVCard from '../UI-Elements/tvCard';
 import { useState } from 'react';
