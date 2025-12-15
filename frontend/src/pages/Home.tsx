@@ -1,4 +1,4 @@
-import styles from './Home.module.css'
+import styles from '../pages/pages_css/Home.module.css';
 import { useNavigate } from 'react-router'
 
 

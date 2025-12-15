@@ -1,4 +1,4 @@
-import styles from './hiddenGems.module.css';
+import styles from '../pages/pages_css/hiddenGems.module.css';
 
 export default function HiddenGems(){
     return(

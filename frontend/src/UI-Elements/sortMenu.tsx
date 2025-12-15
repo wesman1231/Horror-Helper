@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { sortMode } from '../pages/movies';
-import styles from './sortMenu.module.css';
+import styles from '../UI-Elements/UI_css/sortMenu.module.css';
 
 interface SortProps{
     sortMode: sortMode;

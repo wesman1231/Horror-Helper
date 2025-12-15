@@ -149,7 +149,7 @@ class searchController{
         const formatSearchQuery = searchQuery.replaceAll('+', ' ');
         const sortMode = String(req.query.sortMode);
         try{
-            const currentPage = Number(req.params.page);
+            const currentPage = Number(req.query.page);
             const pagesArray: number[] = [];
             const elementsPerPage = 10;
             const offset = (currentPage - 1) * 10;
@@ -168,7 +168,7 @@ class searchController{
             }
             else{
                 const [searchResult]: any[] = await db.execute(`SELECT * FROM movies WHERE title LIKE ? OR keywords LIKE ? ORDER BY ${sortMode} LIMIT ${elementsPerPage} OFFSET ${offset}`, [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
-                res.status(200).json({searchResult: searchResult, pagesArray: pagesArray});   
+                res.status(200).json({searchResult: searchResult, pagesArray: pagesArray, totalPages: numberOfPages});   
             }
             
 

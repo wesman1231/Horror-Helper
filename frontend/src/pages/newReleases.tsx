@@ -1,4 +1,4 @@
-import styles from './newReleases.module.css'
+import styles from '../pages/pages_css/newReleases.module.css'
 
 export default function NewReleases(){
     const currentDate: Date = new Date();    

@@ -1,0 +1,47 @@
+.tagsHeader{
+    margin-bottom: 0;
+    font-size: 2em;
+    text-align: center;
+    margin-top: 2%;
+}
+
+.tags{
+    padding-left: 10%;
+    padding-right: 10%;
+    margin-top: 0;
+    font-size: 1.1em;
+    text-align: center;
+    margin-bottom: 7%;
+}
+
+.synopsisHeader{
+    font-size: 2em;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-align: center;
+}
+
+.synopsis{
+    margin-top: 0;
+    padding-left: 10%;
+    padding-right: 10%;
+    font-size: 1.1em;
+    text-align: center;
+    margin-bottom: 7%;
+}
+
+.castHeader{
+    font-size: 2em;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-align: center;
+}
+
+.castText{
+    margin-top: 0;
+    padding-left: 10%;
+    padding-right: 10%;
+    font-size: 1.1em;
+    text-align: center;
+    margin-bottom: 7%;
+}

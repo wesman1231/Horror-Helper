@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import styles from './tvCard.module.css';
+import styles from '../UI-Elements/UI_css/tvCard.module.css';
 
 export interface Show{
     tmdbid: number;

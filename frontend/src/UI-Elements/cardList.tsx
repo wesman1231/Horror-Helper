@@ -2,7 +2,7 @@ import { Suspense, lazy } from "react";
 const MovieCard = lazy(() => import('../UI-Elements/movieCard'));
 import LoadingCard from "./loadingCard";
 import type { Movie } from "./movieCard";
-import styles from './cardList.module.css';
+import styles from '../UI-Elements/UI_css/cardList.module.css';
 
 export default function CardList(props: { displayedMovies: Movie[]; }){
     

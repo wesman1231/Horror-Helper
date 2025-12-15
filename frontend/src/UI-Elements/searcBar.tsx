@@ -1,4 +1,4 @@
-import styles from './searchBar.module.css';
+import styles from '../UI-Elements/UI_css/searchBar.module.css';
 
 
 
