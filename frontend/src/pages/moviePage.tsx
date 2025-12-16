@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Movie } from '../UI-Elements/movieCard';
 import MovieInfo from '../UI-Elements/movieInfo';
-import MoviePageError from "../UI-Elements/moviePageError";
+import MovieShowPageError from "../UI-Elements/movieShowPageError";
 
 export default function MoviePage(){
     const { id } = useParams();
@@ -42,7 +42,7 @@ export default function MoviePage(){
 
         return(
             <>
-                {errorState ? <MoviePageError errorMessage={errorMessage} /> : <MovieInfo movieData={movieData} franchiseNull={franchiseNull} />}
+                {errorState ? <MovieShowPageError errorMessage={errorMessage} /> : <MovieInfo movieData={movieData} franchiseNull={franchiseNull} />}
             </>
         );
     

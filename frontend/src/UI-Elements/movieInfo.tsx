@@ -13,6 +13,15 @@ export default function MovieInfo(props: movieData){
 
     const [infoDropdown, setInfoDropdown] = useState<boolean>(false);
 
+    function toggleInfo(){
+        if(infoDropdown === false){
+            setInfoDropdown(true);
+        }
+        else{
+            setInfoDropdown(false);
+        }
+    }
+
     return(
         <section className={styles.movieWrapper}>
             <h2 className={styles.movieTitle}>{props.movieData?.title}</h2>
@@ -24,13 +33,4 @@ export default function MovieInfo(props: movieData){
             {infoDropdown ? <ExtraMovieInfo movieData={props.movieData} /> : null}
         </section>
     );
-
-    function toggleInfo(){
-        if(infoDropdown === false){
-            setInfoDropdown(true);
-        }
-        else{
-            setInfoDropdown(false);
-        }
-    }
 }
