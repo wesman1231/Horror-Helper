@@ -1,0 +1,39 @@
+.showWrapper{
+    font-family: "Creepster", system-ui;
+    color: #FFF6E5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.showTitle{
+    font-size: 3em;
+    text-align: center;
+}
+
+.releaseDate{
+    margin-top: 7%;;
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 7%;
+}
+
+.seasons{
+    margin-top: 4%;
+    font-size: 2em;
+    text-align: center;
+}
+
+.episodes{
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 9%;
+    margin-top: 4%;
+}
+
+.dropdown{
+    font-size: 1.5em;
+    margin-top: 0;
+    text-align: center;
+}

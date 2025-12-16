@@ -4,7 +4,7 @@ interface errorMessage{
     errorMessage: string;
 }
 
-export default function MoviePageError(props: errorMessage){
+export default function MovieShowPageError(props: errorMessage){
     return(
         <h2 className={styles.error} >{props.errorMessage}</h2>
     );

@@ -1,194 +1,117 @@
-import styles from '../pages/pages_css/television.module.css';
-import type {Show} from '../UI-Elements/tvCard';
-import TVCard from '../UI-Elements/tvCard';
-import { useState } from 'react';
+import { useEffect, useState } from "react";
+import type { Show } from "../UI-Elements/tvCard";
+import CardList from "../UI-Elements/cardList";
+import NoResultsFound from "../UI-Elements/noResultsFound";
+import SearchBar from "../UI-Elements/searcBar";
+import PageButtons from "../UI-Elements/pageButtons";
+import SortMenu from "../UI-Elements/sortMenu";
 
-export default function Television(){
-    const [searchValue, setSearchValue] = useState<string>('');
-    const [shows, setShows] = useState<Show[]>([]);
-    const [defaultShows, setDefaultShows] = useState<Show[]>([]);
-    const [sortOptionsToggle, setSortOptionsToggle] = useState<boolean>(false);
-    const [error, setError] = useState<boolean>(false);
-    const [sortButtonVisible, setSortButtonVisible] = useState<boolean>(false);
-    
-    type SortMode = 'default' | 'newest' | 'title' | 'director' | 'franchise';
-    const [sortMode, setSortMode] = useState<SortMode>('default');
+export type sortModeShows = 'firstairdate' | 'lastairdate' | 'title' | 'creator';
 
-    
+export default function Shows(){
+    const [searchValue, setSearchValue] = useState<string>(''); //search bar state
+    const [error, setError] = useState<boolean>(false); //check for an error
+    const [displayedShows, setDisplayedShows] = useState<Show[]>([]);
+    const [sortMenuVisible, setSortMenuVisible] = useState<boolean>(false);
+    const [sortMode, setSortMode] = useState<sortModeShows>('firstairdate');
+    const [pages, setPages] = useState<number[]>([]);
 
+    useEffect(() => {
+        sort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[sortMode])
+
+    //track search bar value
     function handleInput(event: React.ChangeEvent<HTMLInputElement>){
         setSearchValue(event.target.value);
     }
-
+    
+    //search for movies
     async function search(){
-        //search for shows
-        const formatSearch = searchValue.replaceAll(' ', "+");
+        if(searchValue != ''){
+            const formatSearch = searchValue.replaceAll(' ', "+");
+            try{
+                const request = await fetch(`http://localhost:3000/api/search/shows?query=${formatSearch}&sortMode=${sortMode}&page=1`);
+                const response = await request.json();
+                
+                setError(false);
+                setPages(response.pagesArray);
+                setSortMenuVisible(true);
+                setDisplayedShows(response.searchResult);
+                
+                console.log('pagesArray from backend:', response.pagesArray);
+                console.log(response);
+            } 
+            catch(error){
+                setError(true);
+                console.error(error);
+            }
+        }
+    }
+
+    //sort results
+    async function sort(){
+        if(searchValue != ''){
+            const formatSearch = searchValue.replaceAll(' ', "+"); 
+            try{
+                    const request = await fetch(`http://localhost:3000/api/search/shows?query=${formatSearch}&sortMode=${sortMode}&page=1`);
+                    const response = await request.json();
+                    
+                    setError(false);
+                    setDisplayedShows(response.searchResult);
+                    console.log(response);
+                } 
+                catch(error){
+                    setError(true);
+                    console.error(error);
+                }
+        }
+    }
+
+    //move to next or previous page
+    async function changePage(page: number){
+        if(searchValue != ''){
+            const formatSearch = searchValue.replaceAll(' ', "+"); 
         try{
-            const request = await fetch(`http://localhost:3000/api/search/shows?query=${formatSearch}`);
-            const response = await request.json();
-            
-            setError(false);
-            setSortButtonVisible(true);
-            setShows(response.findResult.sort((show: { firstairdate: string; }, nextShow: { firstairdate: string; }) => show.firstairdate.localeCompare(nextShow.firstairdate)));
-            setDefaultShows([...response.findResult.sort((show: { firstairdate: string; }, nextShow: { firstairdate: string; }) => show.firstairdate.localeCompare(nextShow.firstairdate))]);
-            console.log(response);
-        } 
-        catch(error){
-            setError(true);
-            console.error(error);
+                const request = await fetch(`http://localhost:3000/api/search/shows?query=${formatSearch}&sortMode=${sortMode}&page=${page}`);
+                const response = await request.json();
+                
+                setError(false);
+                setDisplayedShows(response.searchResult);
+                console.log(response);
+            } 
+            catch(error){
+                setError(true);
+                console.error(error);
+            }
         }
     }
 
-    //toggle sort options menu
-    function sortMenuToggle(){
-        if(sortOptionsToggle === false){
-            setSortOptionsToggle(true);
-        }
-        
-        else if(sortOptionsToggle === true){
-            setSortOptionsToggle(false);
-        }
+    function firstAiredSort() {
+        setSortMode(() => 'firstairdate');
     }
 
-    //sorts
-    function defaultSort(){
-        //sort from oldest to newest
-        const sortByReleaseDate = shows.sort((show, nextShow) => show.firstairdate.localeCompare(nextShow.firstairdate));
-        setShows(sortByReleaseDate);
-        setSortMode('default');
+    function lastAiredSort() {
+        setSortMode(() => 'lastairdate');
     }
 
-    function releaseDateSort(){
-        //sort from newest to oldest
-         const shallowCopyShows: Show[] = [...defaultShows];
-         const sortByReleaseDate = shallowCopyShows.sort((show, nextShow) => nextShow.firstairdate.localeCompare(show.firstairdate));
-         
-         setShows(sortByReleaseDate);
-         setSortMode('newest');
+    function titleSort() {
+        setSortMode(() => 'title');
     }
 
-    function titleSort(){
-        //sort title from A-Z
-        const shallowCopyShows: Show[] = [...defaultShows];
-        const sortByTitle = shallowCopyShows.sort((show, nextShow) => show.title.localeCompare(nextShow.title));
-        
-        setShows(sortByTitle);
-        setSortMode('title');
+    function creatorSort() {
+        setSortMode(() => 'creator');
     }
 
 
-    //if there are no results found, render no results found header
-    if(error === true){
-        return(
-            <div className={styles.searchBarContainer}>
-                <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
-                <div className={styles.dropdown}>
-                    {sortOptionsToggle ? (
-                    <>
-                        <button className={styles.sortBy} onClick={sortMenuToggle}>
-                            Sort by {String.fromCodePoint(128315)}
-                        </button>
 
-                        <ul className={styles.sortOptions}>
-                            <li>
-                                <button onClick={defaultSort} style={{ textShadow: sortMode === 'default' ? '2px 1px red' : 'none' }}>
-                                    Oldest
-                                </button>
-                            </li>
-                            <li>
-                                <button onClick={releaseDateSort} style={{ textShadow: sortMode === 'newest' ? '2px 1px red' : 'none' }}>
-                                    Newest
-                                </button>
-                            </li>
-                            <li>
-                                <button onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
-                                    Title
-                                </button>
-                            </li>
-                        </ul>
-                    </>
-                    ) : (
-                        <button className={styles.sortBy} onClick={sortMenuToggle}>
-                            Sort by {String.fromCodePoint(128314)}
-                        </button>
-                )}
-                </div>
-                <button type='button' className={styles.searchButton} onClick={search}>search</button>
-                <h2 className={styles.noResultsFound}>No Results Found</h2>
-            </div>
-        );
-    }
-
-    if(sortButtonVisible){
-        return(
-        <>
-            <div className={styles.searchBarContainer}>
-                <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
-                <div className={styles.dropdown}>
-                    {sortOptionsToggle ? (
-                    <>
-                        <button className={styles.sortBy} onClick={sortMenuToggle}>
-                            Sort by {String.fromCodePoint(128315)}
-                        </button>
-
-                        <ul className={styles.sortOptions}>
-                            <li>
-                                <button onClick={defaultSort} style={{ textShadow: sortMode === 'default' ? '2px 1px red' : 'none' }}>
-                                    Oldest
-                                </button>
-                            </li>
-                            <li>
-                                <button onClick={releaseDateSort} style={{ textShadow: sortMode === 'newest' ? '2px 1px red' : 'none' }}>
-                                    Newest
-                                </button>
-                            </li>
-                            <li>
-                                <button onClick={titleSort} style={{ textShadow: sortMode === 'title' ? '2px 1px red' : 'none' }}>
-                                    Title
-                                </button>
-                            </li>
-                        </ul>
-                    </>
-                    ) : (
-                        <button className={styles.sortBy} onClick={sortMenuToggle}>
-                            Sort by {String.fromCodePoint(128314)}
-                        </button>
-                )}
-                </div>
-                <button type='button' className={styles.searchButton} onClick={search}>search</button>
-            </div>
-            <div className={styles.resultsContainer}>
-                <ul className={styles.showCardList}>
-                    {shows.map(show => (
-                        <TVCard
-                            key={show.tmdbid}
-                            tmdbid={show.tmdbid}
-                            title={show.title}
-                            poster={show.poster}
-                            keywords={show.keywords}
-                            firstairdate={show.firstairdate}
-                            lastairdate={show.lastairdate}
-                            seasons={show.seasons}
-                            episodes={show.episodes}
-                            creator={show.creator}
-                            synopsis={show.synopsis}
-                        />
-                ))}
-                </ul>
-            </div>
-            <ul className={styles.pages}></ul>
-        </>
-    );
-    }
-
-
-    //otherwise, render default page
     return(
         <>
-            <div className={styles.searchBarContainer}>
-                <input type='text' id="search-bar"className={styles.searchBar} value={searchValue} onChange={handleInput} placeholder='Enter a film title, actor, director, etc.'></input>
-                <button type='button' className={styles.searchButton} onClick={search}>search</button>
-            </div>
+            <SearchBar searchValue={searchValue} handleInput={handleInput} search={search} />
+            {sortMenuVisible ? <SortMenu variant="shows" sortType={{ sortMode: sortMode, firstAiredSort, lastAiredSort, titleSort, creatorSort}} /> : null}
+            {error ? <NoResultsFound /> : <CardList variant={'shows'} results={displayedShows} />}            
+            {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} /> : null}
         </>
     );
 }
+
