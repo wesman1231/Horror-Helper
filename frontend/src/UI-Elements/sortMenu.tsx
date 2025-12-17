@@ -33,6 +33,7 @@ export default function SortMenu(props: sortProps){
     }
 
      return(
+        //checks if sortOptionsToggle is active and if the page is sorting movies or shows and renders the correct sort list accordingly
         <div className={styles.dropdown}>
             {sortOptionsToggle
             ? props.variant === 'movies'

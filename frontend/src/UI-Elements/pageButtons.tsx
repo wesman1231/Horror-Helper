@@ -4,6 +4,7 @@ import styles from '../UI-Elements/UI_css/pageButtons.module.css';
 interface PageProps{
     pages: number[];
     changePage: (page: number) => void;
+    previousSearch: string;
 }
 
 export default function PageButtons(props: PageProps){
@@ -12,7 +13,7 @@ export default function PageButtons(props: PageProps){
     const [visiblePages, setVisiblePages] = useState<number>(0); //sets how many page numbers are visible
     const [lowestVisiblePage, setLowestVisiblePage] = useState(0); //sets the lowest visible page number
     const [maxVisiblePage, setMaxVisiblePage] = useState(visiblePages); //sets the highest visible page number
-    const [highlightedPage, setHighlightedPage] = useState<number>(0);
+    const [highlightedPage, setHighlightedPage] = useState<number>(0); //display which page user is currently on with a highlight
 
     //when window is resized, run handleResize to set current window with
     useEffect(() => {
@@ -36,7 +37,6 @@ export default function PageButtons(props: PageProps){
 
     //when width changes, handle visible page buttons
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         handleVisiblePages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [width]);
@@ -55,6 +55,11 @@ export default function PageButtons(props: PageProps){
     useEffect(() => {
         setMaxVisiblePage(visiblePages);
     }, [visiblePages]);
+
+    //when previous search changes (when the user clicks search) set the highlighted page to page 1
+    useEffect(() => {
+        setHighlightedPage(1);
+    }, [props.previousSearch]);
 
     
 

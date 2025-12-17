@@ -10,6 +10,7 @@ export type sortModeShows = 'firstairdate' | 'lastairdate' | 'title' | 'creator'
 
 export default function Shows(){
     const [searchValue, setSearchValue] = useState<string>(''); //search bar state
+    const [previousSearch, setPreviousSearch] = useState<string>('') //store the previously searched value for use in sorting and page changing
     const [error, setError] = useState<boolean>(false); //check for an error
     const [displayedShows, setDisplayedShows] = useState<Show[]>([]);
     const [sortMenuVisible, setSortMenuVisible] = useState<boolean>(false);
@@ -36,6 +37,7 @@ export default function Shows(){
                 
                 setError(false);
                 setPages(response.pagesArray);
+                setPreviousSearch(searchValue);
                 setSortMenuVisible(true);
                 setDisplayedShows(response.searchResult);
                 
@@ -51,8 +53,8 @@ export default function Shows(){
 
     //sort results
     async function sort(){
-        if(searchValue != ''){
-            const formatSearch = searchValue.replaceAll(' ', "+"); 
+        if(previousSearch != ''){
+            const formatSearch = previousSearch.replaceAll(' ', "+"); 
             try{
                     const request = await fetch(`http://localhost:3000/api/search/shows?query=${formatSearch}&sortMode=${sortMode}&page=1`);
                     const response = await request.json();
@@ -70,8 +72,8 @@ export default function Shows(){
 
     //move to next or previous page
     async function changePage(page: number){
-        if(searchValue != ''){
-            const formatSearch = searchValue.replaceAll(' ', "+"); 
+        if(previousSearch != ''){
+            const formatSearch = previousSearch.replaceAll(' ', "+"); 
         try{
                 const request = await fetch(`http://localhost:3000/api/search/shows?query=${formatSearch}&sortMode=${sortMode}&page=${page}`);
                 const response = await request.json();
@@ -110,7 +112,7 @@ export default function Shows(){
             <SearchBar searchValue={searchValue} handleInput={handleInput} search={search} />
             {sortMenuVisible ? <SortMenu variant="shows" sortType={{ sortMode: sortMode, firstAiredSort, lastAiredSort, titleSort, creatorSort}} /> : null}
             {error ? <NoResultsFound /> : <CardList variant={'shows'} results={displayedShows} />}            
-            {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} /> : null}
+            {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} previousSearch={previousSearch} /> : null}
         </>
     );
 }

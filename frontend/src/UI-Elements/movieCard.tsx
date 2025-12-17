@@ -18,7 +18,7 @@ export default function MovieCard(props: Movie){
      return(
         <div className={styles.movieCard}>
             <div className={styles.posterContainer}>
-                <img className={styles.poster} src={`https://media.themoviedb.org/t/p/w260_and_h390_face${props.poster}`} />
+                <img className={styles.poster} src={`https://media.themoviedb.org/t/p/w260_and_h390_face${props.poster}`} alt={`Poster for ${props.title}`} loading='lazy' />
             </div>
             <div className={styles.infoContainer}>
                 <h3 className={styles.movieTitle}> Title: <span className={styles.titleText}><Link to={`/movies/${props.tmdbid}`}>{props.title}</Link></span></h3>
@@ -27,7 +27,7 @@ export default function MovieCard(props: Movie){
                     <li className={styles.subgenre}><span className={styles.infoHeader}>Tags: </span>{props.keywords}</li>
                     <li className={styles.director}><span className={styles.infoHeader}>Director: </span>{props.director}</li>
                     <li className={styles.synopsis}><span className={styles.infoHeader}>Synopsis: </span> {props.synopsis}</li>
-                    <li className={styles.franchise}><span className={styles.infoHeader}>Franchise: </span>{props.franchise}</li>
+                    {props.franchise === null ? <li className={styles.franchise}><span className={styles.infoHeader}>Franchise: </span>none</li> : <li className={styles.franchise}><span className={styles.infoHeader}>Franchise: </span>{props.franchise}</li>}
                 </ul>
             </div>
         </div>
