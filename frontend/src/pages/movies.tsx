@@ -10,6 +10,7 @@ export type sortModeMovies = 'releasedate' | 'newest' | 'title' | 'director' | '
 
 export default function Movies(){
     const [searchValue, setSearchValue] = useState<string>(''); //search bar state
+    const [previousSearch, setPreviousSearch] = useState<string>('') //store the previously searched value for use in sorting and page changing
     const [error, setError] = useState<boolean>(false); //check for an error
     const [displayedMovies, setDisplayedMovies] = useState<Movie[]>([]);
     const [sortMenuVisible, setSortMenuVisible] = useState<boolean>(false);
@@ -37,6 +38,7 @@ export default function Movies(){
                 setError(false);
                 setPages(response.pagesArray);
                 setSortMenuVisible(true);
+                setPreviousSearch(searchValue);
                 setDisplayedMovies(response.searchResult);
                 
                 console.log('pagesArray from backend:', response.pagesArray);
@@ -51,8 +53,8 @@ export default function Movies(){
 
     //sort results
     async function sort(){
-        if(searchValue != ''){
-            const formatSearch = searchValue.replaceAll(' ', "+"); 
+        if(previousSearch != ''){
+            const formatSearch = previousSearch.replaceAll(' ', "+"); 
             try{
                     const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}&sortMode=${sortMode}&page=1`);
                     const response = await request.json();
@@ -70,9 +72,9 @@ export default function Movies(){
 
     //move to next or previous page
     async function changePage(page: number){
-        if(searchValue != ''){
-            const formatSearch = searchValue.replaceAll(' ', "+"); 
-        try{
+        if(previousSearch != ''){
+            const formatSearch = previousSearch.replaceAll(' ', "+"); 
+            try{
                 const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}&sortMode=${sortMode}&page=${page}`);
                 const response = await request.json();
                 
@@ -112,7 +114,7 @@ export default function Movies(){
             <SearchBar searchValue={searchValue} handleInput={handleInput} search={search} />
             {sortMenuVisible ? <SortMenu variant="movies" sortType={{ sortMode: sortMode, oldestSort, newestSort, titleSort, directorSort, franchiseSort }} /> : null}
             {error ? <NoResultsFound /> : <CardList variant={'movies'} results={displayedMovies} />}            
-            {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} /> : null}
+            {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} previousSearch={previousSearch} /> : null}
         </>
     );
 }

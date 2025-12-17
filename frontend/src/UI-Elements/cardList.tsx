@@ -25,9 +25,9 @@ export default function CardList(props: CardListProps){
                             title={movie.title}
                             releasedate={movie.releasedate}
                             keywords={movie.keywords}
-                            director={movie.director ? movie.director: "unknown"}
+                            director={movie.director ? movie.director : "unknown"}
                             synopsis={movie.synopsis}
-                            franchise={movie.franchise ? movie.franchise: "none"}
+                            franchise={movie.franchise ? movie.franchise : "none"}
                             cast={movie.cast}
                         />
                         )): props.results.map(show => (

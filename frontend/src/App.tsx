@@ -6,6 +6,7 @@ import Movies from './pages/movies';
 import MoviePage from './pages/moviePage';
 import Television from './pages/television';
 import ShowPage from './pages/showPage';
+import Director from './pages/director';
 
 import NewReleases from './pages/newReleases';
 import ProvenClassics from './pages/provenClassics';
@@ -33,6 +34,7 @@ function App() {
           
           <Route path='/movies/:id' element={<MoviePage/>}/>
           <Route path='/shows/:id' element={<ShowPage/>}/>
+          <Route path='/directors/:directorName' element={<Director />}></Route>
         </Routes>
       </BrowserRouter>
     </>

@@ -145,47 +145,49 @@ class searchController{
 
     //search for movies
         public async searchMovies(req: Request, res: Response){
-        const searchQuery = String(req.query.query || '').trim();
-        const formatSearchQuery = searchQuery.replaceAll('+', ' ');
-        const validSortMode: string[] = ['releasedate', 'newest', 'title', 'director', 'franchise'];
-        const sortMode = String(req.query.sortMode);
-        if(validSortMode.includes(sortMode)){
-            try{
-                const currentPage = Number(req.query.page);
-                const pagesArray: number[] = [];
-                const elementsPerPage = 10;
-                const offset = (currentPage - 1) * 10;
-            
-                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM movies WHERE title LIKE ? OR keywords LIKE ?`, [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
-                const numberOfResults: number = totalResultsQuery[0].total;
-            
-                const numberOfPages: number = Math.ceil(numberOfResults / elementsPerPage);
-                for(let i = 1; i <= numberOfPages; i++){    
-                    pagesArray.push(i);
-                }
+        
+            const searchQuery = String(req.query.query || '').trim();
+            const formatSearchQuery = searchQuery.replaceAll('+', ' ');
+            const validSortMode: string[] = ['releasedate', 'newest', 'title', 'director', 'franchise'];
+            const sortMode = String(req.query.sortMode);
+            if(validSortMode.includes(sortMode)){
+                try{
+                    const currentPage = Number(req.query.page);
+                    const pagesArray: number[] = [];
+                    const elementsPerPage = 10;
+                    const offset = (currentPage - 1) * 10;
                 
-                if(sortMode === 'newest'){
-                    const [searchResult]: any[] = await db.execute(`SELECT * FROM movies WHERE title LIKE ? OR keywords LIKE ? ORDER BY releasedate DESC LIMIT ${elementsPerPage} OFFSET ${offset}`, [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
-                    res.status(200).json({searchResult: searchResult, pagesArray: pagesArray}); 
+                    const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM movies WHERE title LIKE ? OR keywords LIKE ?`, [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
+                    const numberOfResults: number = totalResultsQuery[0].total;
+                
+                    const numberOfPages: number = Math.ceil(numberOfResults / elementsPerPage);
+                    for(let i = 1; i <= numberOfPages; i++){    
+                        pagesArray.push(i);
+                    }
+                    
+                    if(sortMode === 'newest'){
+                        const [searchResult]: any[] = await db.execute(`SELECT * FROM movies WHERE title LIKE ? OR keywords LIKE ? ORDER BY releasedate DESC LIMIT ${elementsPerPage} OFFSET ${offset}`, [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
+                        res.status(200).json({searchResult: searchResult, pagesArray: pagesArray}); 
+                    }
+                    else{
+                        const [searchResult]: any[] = await db.execute(`SELECT * FROM movies WHERE title LIKE ? OR keywords LIKE ? ORDER BY ${sortMode} LIMIT ${elementsPerPage} OFFSET ${offset}`, [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
+                        res.status(200).json({searchResult: searchResult, pagesArray: pagesArray, totalPages: numberOfPages});   
+                    }
+                
+                }catch(error){
+                    console.error('error searching: ', error);
                 }
-                else{
-                    const [searchResult]: any[] = await db.execute(`SELECT * FROM movies WHERE title LIKE ? OR keywords LIKE ? ORDER BY ${sortMode} LIMIT ${elementsPerPage} OFFSET ${offset}`, [`%${formatSearchQuery}%`, `%${formatSearchQuery}%`]);
-                    res.status(200).json({searchResult: searchResult, pagesArray: pagesArray, totalPages: numberOfPages});   
-                }
-            
-            }catch(error){
-                console.error('error searching: ', error);
             }
-        }
-        else{
-            return res.status(400).json({error: 'Invalid sort mode', validSortModes: validSortMode});
-        }
+            else{
+                return res.status(400).json({error: 'Invalid sort mode', validSortModes: validSortMode});
+            }
     }
 
     
 
     //search for shows
     public async searchTV(req: Request, res: Response){
+        
         const searchQuery = String(req.query.query || '').trim();
         const formatSearchQuery = searchQuery.replaceAll('+', ' ');
         const validSortMode: string[] = ['firstairdate', 'lastairdate', 'title', 'creator'];
