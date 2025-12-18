@@ -20,7 +20,7 @@ export default function Director(){
                 console.error(error);
             }
         }
-    getDirectorInfo();
+        getDirectorInfo();
     }, []);
 
     return(
