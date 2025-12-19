@@ -36,7 +36,7 @@ export default function Movies(){
                 const response = await request.json();
                 
                 setError(false);
-                setPages(response.pagesArray);
+                setPages(response.pages);
                 setSortMenuVisible(true);
                 setPreviousSearch(searchValue);
                 setDisplayedMovies(response.searchResult);
