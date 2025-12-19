@@ -6,7 +6,7 @@ import SearchBar from "../UI-Elements/searcBar";
 import PageButtons from "../UI-Elements/pageButtons";
 import SortMenu from "../UI-Elements/sortMenu";
 
-export type sortModeShows = 'firstairdate' | 'lastairdate' | 'title' | 'creator';
+export type sortModeShows = 'relevance' | 'firstairdate' | 'lastairdate' | 'title' | 'creator';
 
 export default function Shows(){
     const [searchValue, setSearchValue] = useState<string>(''); //search bar state
@@ -14,7 +14,7 @@ export default function Shows(){
     const [error, setError] = useState<boolean>(false); //check for an error
     const [displayedShows, setDisplayedShows] = useState<Show[]>([]);
     const [sortMenuVisible, setSortMenuVisible] = useState<boolean>(false);
-    const [sortMode, setSortMode] = useState<sortModeShows>('firstairdate');
+    const [sortMode, setSortMode] = useState<sortModeShows>('relevance');
     const [pages, setPages] = useState<number[]>([]);
 
     useEffect(() => {
@@ -89,6 +89,10 @@ export default function Shows(){
         }
     }
 
+    function relevanceSort(){
+        setSortMode(() => 'relevance');
+    }
+
     function firstAiredSort() {
         setSortMode(() => 'firstairdate');
     }
@@ -110,7 +114,7 @@ export default function Shows(){
     return(
         <>
             <SearchBar searchValue={searchValue} handleInput={handleInput} search={search} />
-            {sortMenuVisible ? <SortMenu variant="shows" sortType={{ sortMode: sortMode, firstAiredSort, lastAiredSort, titleSort, creatorSort}} /> : null}
+            {sortMenuVisible ? <SortMenu variant="shows" sortType={{sortMode: sortMode, relevanceSort, firstAiredSort, lastAiredSort, titleSort, creatorSort}} /> : null}
             {error ? <NoResultsFound /> : <CardList variant={'shows'} results={displayedShows} />}            
             {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} previousSearch={previousSearch} /> : null}
         </>

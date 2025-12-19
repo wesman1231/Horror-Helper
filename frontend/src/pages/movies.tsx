@@ -6,7 +6,7 @@ import SearchBar from "../UI-Elements/searcBar";
 import PageButtons from "../UI-Elements/pageButtons";
 import SortMenu from "../UI-Elements/sortMenu";
 
-export type sortModeMovies = 'releasedate' | 'newest' | 'title' | 'director' | 'franchise';
+export type sortModeMovies = 'relevance' | 'releasedate' | 'newest' | 'title' | 'director' | 'franchise';
 
 export default function Movies(){
     const [searchValue, setSearchValue] = useState<string>(''); //search bar state
@@ -14,7 +14,7 @@ export default function Movies(){
     const [error, setError] = useState<boolean>(false); //check for an error
     const [displayedMovies, setDisplayedMovies] = useState<Movie[]>([]);
     const [sortMenuVisible, setSortMenuVisible] = useState<boolean>(false);
-    const [sortMode, setSortMode] = useState<sortModeMovies>('releasedate');
+    const [sortMode, setSortMode] = useState<sortModeMovies>('relevance');
     const [pages, setPages] = useState<number[]>([]);
 
     useEffect(() => {
@@ -32,7 +32,7 @@ export default function Movies(){
         if(searchValue != ''){
             const formatSearch = searchValue.replaceAll(' ', "+");
             try{
-                const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}&sortMode=${sortMode}&page=1`);
+                const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
                 const response = await request.json();
                 
                 setError(false);
@@ -56,7 +56,7 @@ export default function Movies(){
         if(previousSearch != ''){
             const formatSearch = previousSearch.replaceAll(' ', "+"); 
             try{
-                    const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}&sortMode=${sortMode}&page=1`);
+                    const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
                     const response = await request.json();
                     
                     setError(false);
@@ -75,7 +75,7 @@ export default function Movies(){
         if(previousSearch != ''){
             const formatSearch = previousSearch.replaceAll(' ', "+"); 
             try{
-                const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}&sortMode=${sortMode}&page=${page}`);
+                const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}&sortMode=${sortMode}&keywords=&page=${page}`);
                 const response = await request.json();
                 
                 setError(false);
@@ -87,6 +87,10 @@ export default function Movies(){
                 console.error(error);
             }
         }
+    }
+
+    function relevanceSort(){
+        setSortMode(() => 'relevance');
     }
 
     function oldestSort() {
@@ -112,7 +116,7 @@ export default function Movies(){
     return(
         <>
             <SearchBar searchValue={searchValue} handleInput={handleInput} search={search} />
-            {sortMenuVisible ? <SortMenu variant="movies" sortType={{ sortMode: sortMode, oldestSort, newestSort, titleSort, directorSort, franchiseSort }} /> : null}
+            {sortMenuVisible ? <SortMenu variant="movies" sortType={{sortMode: sortMode, relevanceSort, oldestSort, newestSort, titleSort, directorSort, franchiseSort}} /> : null}
             {error ? <NoResultsFound /> : <CardList variant={'movies'} results={displayedMovies} />}            
             {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} previousSearch={previousSearch} /> : null}
         </>

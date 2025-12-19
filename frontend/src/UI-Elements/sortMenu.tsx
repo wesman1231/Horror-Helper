@@ -5,6 +5,7 @@ import styles from '../UI-Elements/UI_css/sortMenu.module.css';
 
 interface movieSortProps{
     sortMode: sortModeMovies;
+    relevanceSort: () => void;
     oldestSort: () => void;
     newestSort: () => void;                                                                                                                                                        
     titleSort: () => void;
@@ -14,6 +15,7 @@ interface movieSortProps{
 
 interface showSortProps{
     sortMode: sortModeShows;
+    relevanceSort: () => void;
     firstAiredSort: () => void;
     lastAiredSort: () => void;
     titleSort: () => void;
@@ -40,6 +42,7 @@ export default function SortMenu(props: sortProps){
                 ?   <>
                         <button className={styles.sortBy} onClick={toggleSortOptions}>Sort by {String.fromCodePoint(128315)}</button>
                         <ul className={styles.sortOptions}>
+                            <button onClick={props.sortType.relevanceSort} style={{ textShadow: props.sortType.sortMode === 'relevance' ? '2px 1px red' : 'none' }}>Relevance</button>
                             <button onClick={props.sortType.oldestSort} style={{ textShadow: props.sortType.sortMode === 'releasedate' ? '2px 1px red' : 'none' }}>Oldest</button>
                             <button onClick={props.sortType.newestSort} style={{ textShadow: props.sortType.sortMode === 'newest' ? '2px 1px red' : 'none' }}>Newest</button>
                             <button onClick={props.sortType.titleSort} style={{ textShadow: props.sortType.sortMode === 'title' ? '2px 1px red' : 'none' }}>Title</button>
@@ -50,6 +53,7 @@ export default function SortMenu(props: sortProps){
                 : <>
                         <button className={styles.sortBy} onClick={toggleSortOptions}>Sort by {String.fromCodePoint(128315)}</button>
                         <ul className={styles.sortOptions}>
+                            <button onClick={props.sortType.relevanceSort} style={{ textShadow: props.sortType.sortMode === 'relevance' ? '2px 1px red' : 'none' }}>Relevance</button>
                             <button onClick={props.sortType.firstAiredSort} style={{ textShadow: props.sortType.sortMode === 'firstairdate' ? '2px 1px red' : 'none' }}>First Aired</button>
                             <button onClick={props.sortType.lastAiredSort} style={{ textShadow: props.sortType.sortMode === 'lastairdate' ? '2px 1px red' : 'none' }}>Last Aired</button>
                             <button onClick={props.sortType.titleSort} style={{ textShadow: props.sortType.sortMode === 'title' ? '2px 1px red' : 'none' }}>Title</button>
