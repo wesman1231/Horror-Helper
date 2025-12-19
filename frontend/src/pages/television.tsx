@@ -36,7 +36,7 @@ export default function Shows(){
                 const response = await request.json();
                 
                 setError(false);
-                setPages(response.pagesArray);
+                setPages(response.pages);
                 setPreviousSearch(searchValue);
                 setSortMenuVisible(true);
                 setDisplayedShows(response.searchResult);
