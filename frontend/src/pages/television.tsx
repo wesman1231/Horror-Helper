@@ -32,7 +32,7 @@ export default function Shows(){
         if(searchValue != ''){
             const formatSearch = searchValue.replaceAll(' ', "+");
             try{
-                const request = await fetch(`http://localhost:3000/api/search/shows?query=${formatSearch}&sortMode=${sortMode}&page=1`);
+                const request = await fetch(`http://localhost:3000/api/search/shows?mediaType=shows&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
                 const response = await request.json();
                 
                 setError(false);
@@ -56,7 +56,7 @@ export default function Shows(){
         if(previousSearch != ''){
             const formatSearch = previousSearch.replaceAll(' ', "+"); 
             try{
-                    const request = await fetch(`http://localhost:3000/api/search/shows?query=${formatSearch}&sortMode=${sortMode}&page=1`);
+                    const request = await fetch(`http://localhost:3000/api/search/shows?mediaType=shows&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
                     const response = await request.json();
                     
                     setError(false);
@@ -75,7 +75,7 @@ export default function Shows(){
         if(previousSearch != ''){
             const formatSearch = previousSearch.replaceAll(' ', "+"); 
         try{
-                const request = await fetch(`http://localhost:3000/api/search/shows?query=${formatSearch}&sortMode=${sortMode}&page=${page}`);
+                const request = await fetch(`http://localhost:3000/api/search/shows?mediaType=shows&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=${page}`);
                 const response = await request.json();
                 
                 setError(false);
@@ -116,7 +116,7 @@ export default function Shows(){
             <SearchBar searchValue={searchValue} handleInput={handleInput} search={search} />
             {sortMenuVisible ? <SortMenu variant="shows" sortType={{sortMode: sortMode, relevanceSort, firstAiredSort, lastAiredSort, titleSort, creatorSort}} /> : null}
             {error ? <NoResultsFound /> : <CardList variant={'shows'} results={displayedShows} />}            
-            {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} previousSearch={previousSearch} /> : null}
+            {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} previousSearch={previousSearch} sortMode={sortMode} /> : null}
         </>
     );
 }

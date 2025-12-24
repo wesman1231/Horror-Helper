@@ -32,7 +32,7 @@ export default function Movies(){
         if(searchValue != ''){
             const formatSearch = searchValue.replaceAll(' ', "+");
             try{
-                const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
+                const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=movies&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
                 const response = await request.json();
                 
                 setError(false);
@@ -56,7 +56,7 @@ export default function Movies(){
         if(previousSearch != ''){
             const formatSearch = previousSearch.replaceAll(' ', "+"); 
             try{
-                    const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
+                    const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=movies&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
                     const response = await request.json();
                     
                     setError(false);
@@ -75,7 +75,7 @@ export default function Movies(){
         if(previousSearch != ''){
             const formatSearch = previousSearch.replaceAll(' ', "+"); 
             try{
-                const request = await fetch(`http://localhost:3000/api/search/movies?query=${formatSearch}&sortMode=${sortMode}&keywords=&page=${page}`);
+                const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=movies&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=${page}`);
                 const response = await request.json();
                 
                 setError(false);
@@ -118,7 +118,7 @@ export default function Movies(){
             <SearchBar searchValue={searchValue} handleInput={handleInput} search={search} />
             {sortMenuVisible ? <SortMenu variant="movies" sortType={{sortMode: sortMode, relevanceSort, oldestSort, newestSort, titleSort, directorSort, franchiseSort}} /> : null}
             {error ? <NoResultsFound /> : <CardList variant={'movies'} results={displayedMovies} />}            
-            {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} previousSearch={previousSearch} /> : null}
+            {pages.length > 0 ? <PageButtons pages={pages} changePage={changePage} previousSearch={previousSearch} sortMode={sortMode} /> : null}
         </>
     );
 }

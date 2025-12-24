@@ -5,6 +5,7 @@ interface PageProps{
     pages: number[];
     changePage: (page: number) => void;
     previousSearch: string;
+    sortMode: string;
 }
 
 export default function PageButtons(props: PageProps){
@@ -59,7 +60,7 @@ export default function PageButtons(props: PageProps){
     //when previous search changes (when the user clicks search) set the highlighted page to page 1
     useEffect(() => {
         setHighlightedPage(1);
-    }, [props.previousSearch]);
+    }, [props.previousSearch, props.sortMode]);
 
     
 
