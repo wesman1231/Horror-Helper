@@ -13,7 +13,7 @@ class SearchController{
         this.resultQuery = this.resultQuery.bind(this);
     }
 
-    //search for movies
+    //search for movies and shows
     public async search(req: Request, res: Response){
         
         const titleQuery = String(req.query.query).trim();
@@ -33,11 +33,15 @@ class SearchController{
             const offset: number = (currentPage - 1) * 10;
             const finalPagesArray = await this.pagination(mediaType, pagesArray, elementsPerPage, keywordQuery, titleQuery);
             const searchResult = await this.resultQuery(mediaType, sortMode, offset, elementsPerPage, this.removeStopWords(titleQuery), keywordQuery);
-                    
-             res.status(200).json({pages: finalPagesArray, searchResult: searchResult});
+            if(finalPagesArray !== undefined){
+                if(finalPagesArray.length === 0){
+                   return res.status(404).json({error: 'No Results Found'});
+                }
+            }
+            return res.status(200).json({pages: finalPagesArray, searchResult: searchResult});
         }
         catch(error){
-                console.error('error searching: ', error);
+            console.error('error searching: ', error);
         }
             
     }
