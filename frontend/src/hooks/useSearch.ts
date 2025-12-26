@@ -39,40 +39,20 @@ export default function useSearch(){
     async function search(){
         if(searchValue != ''){
             const formatSearch = searchValue.replaceAll(' ', "+");
-            if(mediaType === 'movies'){
-                try{
-                    const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=movies&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
-                    const response = await request.json();
-                    
-                    setError(false);
-                    setPages(response.pages);
-                    setSortMenuVisible(true);
-                    setPreviousSearch(searchValue);
-                    setDisplayedResults(response.searchResult);
-                    console.log(response);
-                } 
-                catch(error){
-                    setError(true);
-                    console.error(error);
-                }
-            }
-            
-            else if(mediaType === 'shows'){
-                try{
-                const request = await fetch(`http://localhost:3000/api/search/shows?mediaType=shows&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
+            try{
+                const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
                 const response = await request.json();
                 
                 setError(false);
                 setPages(response.pages);
-                setPreviousSearch(searchValue);
                 setSortMenuVisible(true);
+                setPreviousSearch(searchValue);
                 setDisplayedResults(response.searchResult);
                 console.log(response);
             } 
-                catch(error){
-                    setError(true);
-                    console.error(error);
-                }
+            catch(error){
+                setError(true);
+                console.error(error);
             }
         }
     }
@@ -81,34 +61,17 @@ export default function useSearch(){
     async function sort(){
         if(previousSearch != ''){
             const formatSearch = previousSearch.replaceAll(' ', "+"); 
-            if(mediaType === 'movies'){
-                try{
-                    const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=movies&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
-                    const response = await request.json();
-                    
-                    setError(false);
-                    setDisplayedResults(response.searchResult);
-                    console.log(response);
-                } 
-                catch(error){
-                    setError(true);
-                    console.error(error);
-                }
-            }
-
-            else if(mediaType === 'shows'){
-                try{
-                    const request = await fetch(`http://localhost:3000/api/search/shows?mediaType=shows&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
-                    const response = await request.json();
-                    
-                    setError(false);
-                    setDisplayedResults(response.searchResult);
-                    console.log(response);
-                } 
-                catch(error){
-                    setError(true);
-                    console.error(error);
-                }
+            try{
+                const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
+                const response = await request.json();
+                
+                setError(false);
+                setDisplayedResults(response.searchResult);
+                console.log(response);
+            } 
+            catch(error){
+                setError(true);
+                console.error(error);
             }
         }
     }
@@ -117,35 +80,21 @@ export default function useSearch(){
     async function changePage(page: number){
         if(previousSearch != ''){
             const formatSearch = previousSearch.replaceAll(' ', "+"); 
-            if(mediaType === 'movies'){
-                try{
-                const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=movies&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=${page}`);
+            try{
+                const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=${page}`);
                 const response = await request.json();
                 
                 setError(false);
                 setDisplayedResults(response.searchResult);
                 console.log(response);
             } 
-                catch(error){
-                    setError(true);
-                    console.error(error);
-                }
+            catch(error){
+                setError(true);
+                console.error(error);
             }
 
-            else if(mediaType === 'shows'){
-                try{
-                    const request = await fetch(`http://localhost:3000/api/search/shows?mediaType=shows&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=${page}`);
-                    const response = await request.json();
-                    
-                    setError(false);
-                    setDisplayedResults(response.searchResult);
-                    console.log(response);
-            } 
-                catch(error){
-                    setError(true);
-                    console.error(error);
-                }
-            }
+            
+            
         }
     }
 
