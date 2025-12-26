@@ -2,9 +2,8 @@ import './App.css'
 import Header from './UI-Elements/Header';
 import Home from "./pages/Home";
 
-import Movies from './pages/movies';
+import MediaSearch from './pages/mediaSearch';
 import MoviePage from './pages/moviePage';
-import Television from './pages/television';
 import ShowPage from './pages/showPage';
 import Director from './pages/director';
 
@@ -24,8 +23,7 @@ function App() {
           <Route path="/" element={<Home />} />
 
           {/*header routes*/}
-          <Route path="/movies" element={<Movies />} />
-          <Route path="/television" element={<Television />} />
+          <Route path="/search/:mediaType" element={<MediaSearch />} />
 
           {/*button routes*/}
           <Route path="/new-releases" element={<NewReleases />} />

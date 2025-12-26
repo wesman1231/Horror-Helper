@@ -7,8 +7,8 @@ import type { Show } from "./tvCard";
 import styles from '../UI-Elements/UI_css/cardList.module.css';
 
 type CardListProps =
-  | { variant: 'movies'; results: Movie[] }
-  | { variant: 'shows'; results: Show[] };
+  | { mediaType: 'movies'; results: Movie[] }
+  | { mediaType: 'shows'; results: Show[] };
 
 export default function CardList(props: CardListProps){
     
@@ -16,8 +16,8 @@ export default function CardList(props: CardListProps){
         <div className={styles.resultsContainer}>
                 <Suspense fallback={<LoadingCard/>}>
                     <ul className={styles.movieCardList}>
-                        {props.variant === 'movies' 
-                        ? props.results.map(movie => (
+                        {props.mediaType === 'movies' 
+                        ? props.results?.map(movie => (
                         <MovieCard
                             key={movie.tmdbid}
                             tmdbid={movie.tmdbid}
@@ -30,7 +30,7 @@ export default function CardList(props: CardListProps){
                             franchise={movie.franchise ? movie.franchise : "none"}
                             cast={movie.cast}
                         />
-                        )): props.results.map(show => (
+                        )): props.results?.map(show => (
                         <TVCard
                             key={show.tmdbid}
                             tmdbid={show.tmdbid}
