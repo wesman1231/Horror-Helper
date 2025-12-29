@@ -15,7 +15,7 @@ export default function MediaSearch(){
     const searchHook = useSearch();
 
     if (!mediaType) {
-        return <div>Invalid media type</div>; // or redirect somewhere
+        return <div>Invalid media type</div>;
     }
 
     return(

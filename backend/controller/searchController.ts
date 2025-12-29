@@ -31,14 +31,14 @@ class SearchController{
             const pagesArray: number[] = [];
             const elementsPerPage = 10;
             const offset: number = (currentPage - 1) * 10;
-            const finalPagesArray = await this.pagination(mediaType, pagesArray, elementsPerPage, keywordQuery, titleQuery);
-            const searchResult = await this.resultQuery(mediaType, sortMode, offset, elementsPerPage, this.removeStopWords(titleQuery), keywordQuery);
+            const finalPagesArray = await this.pagination(mediaType, pagesArray, elementsPerPage, keywordQuery, titleQuery); //get array of pages
+            const searchResult = await this.resultQuery(mediaType, sortMode, offset, elementsPerPage, this.removeStopWords(titleQuery), keywordQuery); //query database
             if(finalPagesArray !== undefined){
                 if(finalPagesArray.length === 0){
-                   return res.status(404).json({error: 'No Results Found'});
+                   return res.status(404).json({error: 'No Results Found'}); //if no results are found, 404 error
                 }
             }
-            return res.status(200).json({pages: finalPagesArray, searchResult: searchResult});
+            return res.status(200).json({pages: finalPagesArray, searchResult: searchResult}); //return results
         }
         catch(error){
             console.error('error searching: ', error);
