@@ -20,7 +20,7 @@ export default function MediaSearch(){
 
     return(
         <>
-            <SearchBar searchValue={searchHook.searchValue} handleInput={searchHook.handleInput} search={searchHook.search} />
+            <SearchBar searchHook={searchHook}  />
             {searchHook.sortMenuVisible ? <SortMenu mediaType={mediaType} 
                                                     sortMode={searchHook.sortMode} 
                                                     relevanceSort={searchHook.relevanceSort} 
@@ -34,7 +34,7 @@ export default function MediaSearch(){
                                                     creatorSort={searchHook.creatorSort}  /> : null}
             {searchHook.pages === undefined ? <NoResultsFound /> : null}
             {mediaType === "movies" ? <CardList mediaType="movies" results={searchHook.displayedResults as Movie[]} /> : <CardList mediaType="shows" results={searchHook.displayedResults as Show[]} />}       
-            {searchHook.pages === undefined ? <PageButtons pages={searchHook.pages} changePage={searchHook.changePage} previousSearch={searchHook.previousSearch} sortMode={searchHook.sortMode} /> : null}
+            <PageButtons pages={searchHook.pages} changePage={searchHook.changePage} previousSearch={searchHook.previousSearch} sortMode={searchHook.sortMode} />
         </>
     );
 }
