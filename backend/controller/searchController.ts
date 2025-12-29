@@ -13,6 +13,8 @@ class SearchController{
         this.resultQuery = this.resultQuery.bind(this);
     }
 
+    //TO DO: UPDATE TO ALLOW QUERYING MULTIPLE KEYWORDS
+
     //search for movies and shows
     public async search(req: Request, res: Response){
         

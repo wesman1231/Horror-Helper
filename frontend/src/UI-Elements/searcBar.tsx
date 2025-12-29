@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import styles from '../UI-Elements/UI_css/searchBar.module.css';
 import AddKeywords from './UI_css/addKeyWords';
+import type { useSearch } from '../hooks/useSearch';
 
 interface SearchBarProps {
-  searchValue: string;
-  handleInput: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  search: () => void;
+    searchHook: useSearch;
 }
 
 export default function SearchBar(props: SearchBarProps){
@@ -17,11 +16,11 @@ export default function SearchBar(props: SearchBarProps){
 
     return(
         <div className={styles.searchBarContainer}>
-            <input type='text' id="search-bar"className={styles.searchBar} value={props.searchValue} onChange={props.handleInput} placeholder='Search by title'></input>
+            <input type='text' id="search-bar"className={styles.searchBar} value={props.searchHook.searchValue} onChange={props.searchHook.handleInput} placeholder='Search by title'></input>
                 <div className={styles.buttonsWrapper}>
-                    <button type='button' className={styles.searchButton} onClick={props.search}>search</button>
+                    <button type='button' className={styles.searchButton} onClick={props.searchHook.search}>search</button>
                     <button type='button' className={styles.addKeywords} onClick={toggleKeyWords}>+</button>
-                    {toggleAddKeywords ? <AddKeywords/> : null}
+                    {toggleAddKeywords ? <AddKeywords handleCheckboxChange={props.searchHook.handleCheckboxChange}/> : null}
                 </div>
         </div>
     )
