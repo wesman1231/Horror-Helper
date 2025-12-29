@@ -35,11 +35,13 @@ export default function useSearch(){
         setSearchValue(event.target.value);
     }
     
+
+    
     //search for movies
     async function search(){
         if(searchValue != ''){
             const formatSearch = searchValue.replaceAll(' ', "+");
-            try{
+                try{
                 const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
                 const response = await request.json();
                 
