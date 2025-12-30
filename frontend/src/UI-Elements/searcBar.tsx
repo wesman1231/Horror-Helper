@@ -19,9 +19,9 @@ export default function SearchBar(props: SearchBarProps){
             <input type='text' id="search-bar"className={styles.searchBar} value={props.searchHook.searchValue} onChange={props.searchHook.handleInput} placeholder='Search by title'></input>
                 <div className={styles.buttonsWrapper}>
                     <button type='button' className={styles.searchButton} onClick={props.searchHook.search}>search</button>
-                    <button type='button' className={styles.addKeywords} onClick={toggleKeyWords}>+</button>
-                    {toggleAddKeywords ? <AddKeywords handleCheckboxChange={props.searchHook.handleCheckboxChange}/> : null}
+                    <button type='button' className={styles.addKeywords} onClick={toggleKeyWords}>{toggleAddKeywords ? String.fromCodePoint(128315) : String.fromCodePoint(128314)}</button>
                 </div>
+                {toggleAddKeywords ? <AddKeywords handleCheckboxChange={props.searchHook.handleCheckboxChange}/> : null}
         </div>
     )
 }

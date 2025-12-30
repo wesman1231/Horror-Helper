@@ -3,4 +3,8 @@
     margin: 0;
     border: 5px solid white;
     list-style: none;
+    font-size: 0.7em;
+    padding: 10px;
+    max-height: 20vh;
+    overflow: scroll;
 }
