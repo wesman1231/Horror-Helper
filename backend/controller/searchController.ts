@@ -37,10 +37,10 @@ class SearchController{
             const searchResult = await this.resultQuery(mediaType, sortMode, offset, elementsPerPage, this.removeStopWords(titleQuery), keywordQuery); //query database
             if(finalPagesArray !== undefined){
                 if(finalPagesArray.length === 0){
-                   return res.status(404).json({error: 'No Results Found'}); //if no results are found, 404 error
+                   return res.status(404).json({error: 'No Results Found', keywordQuery: keywordQuery}); //if no results are found, 404 error
                 }
             }
-            return res.status(200).json({pages: finalPagesArray, searchResult: searchResult}); //return results
+            return res.status(200).json({pages: finalPagesArray, searchResult: searchResult, keywordQuery: keywordQuery}); //return results
         }
         catch(error){
             console.error('error searching: ', error);
@@ -102,7 +102,7 @@ class SearchController{
         if(mediaType === 'movies'){
             
             if(keywordQuery != null){
-                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM movies WHERE MATCH(title, franchise) AGAINST(? IN BOOLEAN MODE) AND keywords LIKE ?`, [this.removeStopWords(titleQuery) ,`%${keywordQuery}%`]);
+                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM movies WHERE MATCH(title, franchise) AGAINST(? IN BOOLEAN MODE) AND keywords REGEXP ?`, [this.removeStopWords(titleQuery), keywordQuery]);
                 const numberOfResults: number = totalResultsQuery[0].total;
                 const numberOfPages: number = Math.ceil(numberOfResults / elementsPerPage);
             
@@ -128,7 +128,7 @@ class SearchController{
         else if(mediaType === 'shows'){
             
             if(keywordQuery != null){
-                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM shows WHERE MATCH(title) AGAINST(? IN BOOLEAN MODE) AND keywords LIKE ?`, [this.removeStopWords(titleQuery) ,`%${keywordQuery}%`]);
+                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM shows WHERE MATCH(title) AGAINST(? IN BOOLEAN MODE) AND keywords REGEXP ?`, [this.removeStopWords(titleQuery) , keywordQuery]);
                 const numberOfResults: number = totalResultsQuery[0].total;
                 const numberOfPages: number = Math.ceil(numberOfResults / elementsPerPage);
             
@@ -179,7 +179,7 @@ class SearchController{
                         ? "WHERE MATCH(title, franchise) AGAINST(? IN BOOLEAN MODE)"
                         : "WHERE MATCH(title) AGAINST(? IN BOOLEAN MODE)",
 
-            keywordClause: `AND keywords LIKE ?`,
+            keywordClause: `AND keywords REGEXP ?`,
         
             sortMode: sortMode === 'relevance'
                 ? (
@@ -205,7 +205,7 @@ class SearchController{
             }
             
             else{
-                const [searchResult] = await db.execute(`${sqlQuery.select} ${sqlQuery.relevanceMatch} ${sqlQuery.from} ${sqlQuery.where} ${sqlQuery.keywordClause} ${sqlQuery.sortMode} ${sqlQuery.limit} ${sqlQuery.offset}`, [titleQuery, titleQuery, `%${keywordQuery}%`]);
+                const [searchResult] = await db.execute(`${sqlQuery.select} ${sqlQuery.relevanceMatch} ${sqlQuery.from} ${sqlQuery.where} ${sqlQuery.keywordClause} ${sqlQuery.sortMode} ${sqlQuery.limit} ${sqlQuery.offset}`, [titleQuery, titleQuery, keywordQuery]);
                 return searchResult;
             }
         }
@@ -216,7 +216,7 @@ class SearchController{
                 return searchResult;
             }
             else{
-                const [searchResult] = await db.execute(`${sqlQuery.select} ${sqlQuery.from} ${sqlQuery.where} ${sqlQuery.keywordClause} ${sqlQuery.sortMode} ${sqlQuery.limit} ${sqlQuery.offset}`, [titleQuery, `%${keywordQuery}%`]);
+                const [searchResult] = await db.execute(`${sqlQuery.select} ${sqlQuery.from} ${sqlQuery.where} ${sqlQuery.keywordClause} ${sqlQuery.sortMode} ${sqlQuery.limit} ${sqlQuery.offset}`, [titleQuery, keywordQuery]);
                 return searchResult;
             }
         }

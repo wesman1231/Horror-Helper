@@ -73,8 +73,9 @@ export default function useSearch(){
     //search for media
     async function search(){
         if(searchValue != ''){
-            const formatSearch = searchValue.replaceAll(' ', "+");
-            const keywordString = keywordsRef.current.join('+');
+            encodeURIComponent(searchValue);
+            const formatSearch = encodeURIComponent(searchValue);
+            const keywordString = encodeURIComponent(keywordsRef.current.join('|'));
             console.log(keywordString);
             try{
                 const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
@@ -86,6 +87,7 @@ export default function useSearch(){
                 setSortMenuVisible(true);
                 setPreviousSearch(searchValue);
                 setDisplayedResults(response.searchResult);
+                console.log(response.keywordQuery);
                 console.log(response);
             } 
             catch(error){
@@ -96,42 +98,51 @@ export default function useSearch(){
     }
 
     //sort results
-    async function sort(){
-        if(previousSearch != ''){
-            const formatSearch = previousSearch.replaceAll(' ', "+"); 
-                try{
-                    const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=1`);
-                    const response = await request.json();
-                    
-                    setError(false);
-                    setDisplayedResults(response.searchResult);
-                    console.log(response);
-                } 
-                catch(error){
-                    setError(true);
-                    console.error(error);
-                }
-        }
-    }
-
-    //move to next or previous page
-    async function changePage(page: number){
-        if(previousSearch != ''){
-            const formatSearch = previousSearch.replaceAll(' ', "+"); 
-            try{
-                const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=&page=${page}`);
-                const response = await request.json();
+async function sort(){
+    if(previousSearch !== ''){
+        const formatSearch = encodeURIComponent(previousSearch);
+        const keywordString = encodeURIComponent(keywordsRef.current.join('|')); // include keywords
+        try{
+            const request = await fetch(
+                `http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`
+            );
+            const response = await request.json();
             
-                setError(false);
-                setDisplayedResults(response.searchResult);
-                console.log(response);
-            }    
-            catch(error){
-                setError(true);
-                console.error(error);
-            }
+            setError(false);
+            setDisplayedResults(response.searchResult);
+            setPages(response.pages); // optionally update pages
+            console.log(response);
+        } 
+        catch(error){
+            setError(true);
+            console.error(error);
         }
     }
+}
+
+//move to next or previous page
+async function changePage(page: number){
+    if(previousSearch !== ''){
+        const formatSearch = encodeURIComponent(previousSearch);
+        const keywordString = encodeURIComponent(keywordsRef.current.join('|')); // include keywords
+        try{
+            const request = await fetch(
+                `http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=${page}`
+            );
+            const response = await request.json();
+        
+            setError(false);
+            setDisplayedResults(response.searchResult);
+            setPages(response.pages); // update pages
+            console.log(response);
+        }    
+        catch(error){
+            setError(true);
+            console.error(error);
+        }
+    }
+}
+
 
     //shared sort modes
     function relevanceSort(){
