@@ -13,8 +13,6 @@ class SearchController{
         this.resultQuery = this.resultQuery.bind(this);
     }
 
-    //TO DO: UPDATE TO ALLOW QUERYING MULTIPLE KEYWORDS
-
     //search for movies and shows
     public async search(req: Request, res: Response){
         
@@ -99,10 +97,9 @@ class SearchController{
 
     //handle pagination
     async pagination(mediaType: string, pagesArray: number[], elementsPerPage: number, keywordQuery: string | null, titleQuery: string){
-        if(mediaType === 'movies'){
             
             if(keywordQuery != null){
-                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM movies WHERE MATCH(title, franchise) AGAINST(? IN BOOLEAN MODE) AND keywords REGEXP ?`, [this.removeStopWords(titleQuery), keywordQuery]);
+                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM ${mediaType} WHERE MATCH(title, franchise) AGAINST(? IN BOOLEAN MODE) AND keywords REGEXP ?`, [this.removeStopWords(titleQuery), keywordQuery]);
                 const numberOfResults: number = totalResultsQuery[0].total;
                 const numberOfPages: number = Math.ceil(numberOfResults / elementsPerPage);
             
@@ -113,7 +110,7 @@ class SearchController{
             }
             
             else{
-                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM movies WHERE MATCH(title, franchise) AGAINST(? IN BOOLEAN MODE)`, [this.removeStopWords(titleQuery)]);
+                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM ${mediaType} WHERE MATCH(title, franchise) AGAINST(? IN BOOLEAN MODE)`, [this.removeStopWords(titleQuery)]);
                 const numberOfResults: number = totalResultsQuery[0].total;
                 const numberOfPages: number = Math.ceil(numberOfResults / elementsPerPage);
             
@@ -122,34 +119,6 @@ class SearchController{
                 }
                 return pagesArray;
             }
-
-        }
-
-        else if(mediaType === 'shows'){
-            
-            if(keywordQuery != null){
-                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM shows WHERE MATCH(title) AGAINST(? IN BOOLEAN MODE) AND keywords REGEXP ?`, [this.removeStopWords(titleQuery) , keywordQuery]);
-                const numberOfResults: number = totalResultsQuery[0].total;
-                const numberOfPages: number = Math.ceil(numberOfResults / elementsPerPage);
-            
-                for(let i = 1; i <= numberOfPages; i++){    
-                    pagesArray.push(i);
-                }
-                return pagesArray;
-            }
-            
-            else{
-                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM shows WHERE MATCH(title) AGAINST(? IN BOOLEAN MODE)`, [this.removeStopWords(titleQuery)]);
-                const numberOfResults: number = totalResultsQuery[0].total;
-                const numberOfPages: number = Math.ceil(numberOfResults / elementsPerPage);
-            
-                for(let i = 1; i <= numberOfPages; i++){    
-                    pagesArray.push(i);
-                }
-                return pagesArray;
-            }
-
-        }
     }
     
     //handle sql queries
