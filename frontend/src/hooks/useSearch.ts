@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import type { Movie } from "../UI-Elements/movieCard";
 import type { Show } from "../UI-Elements/tvCard";
 import { useParams } from "react-router";
@@ -38,7 +38,7 @@ export default function useSearch(){
     const [sortMenuVisible, setSortMenuVisible] = useState<boolean>(false);
     const [sortMode, setSortMode] = useState<sortModes>('relevance');
     const [pages, setPages] = useState<number[]>([]);
-    const keywordsRef = useRef<string[]>([]);
+    const [keywords, setKeywords] = useState<string[]>([]);
 
     //run sort function when sortMode changes
     useEffect(() => {
@@ -54,6 +54,10 @@ export default function useSearch(){
         setSearchValue('');
     }, [mediaType]);
 
+    useEffect(() => {
+        search();
+    }, [keywords]);
+
     //track search bar value
     function handleInput(event: React.ChangeEvent<HTMLInputElement>){
         setSearchValue(event.target.value);
@@ -62,20 +66,21 @@ export default function useSearch(){
     function handleCheckboxChange(event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value;
 
-    if (event.target.checked) {
-        keywordsRef.current.push(value);
-    } else {
-        keywordsRef.current = keywordsRef.current.filter(k => k !== value);
+        if(event.target.checked) {
+            setKeywords([...keywords, value])
+        } 
+        else {
+            setKeywords(k => k.filter(keyword => keyword !== value));
+        }
     }
-}
 
     
     //search for media
     async function search(){
-        if(searchValue != ''){
+        if(searchValue != '' || keywords.length > 0){
             encodeURIComponent(searchValue);
             const formatSearch = encodeURIComponent(searchValue);
-            const keywordString = encodeURIComponent(keywordsRef.current.join('|'));
+            const keywordString = encodeURIComponent(keywords.join('+'));
             console.log(keywordString);
             try{
                 const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
@@ -98,33 +103,31 @@ export default function useSearch(){
     }
 
     //sort results
-async function sort(){
-    if(previousSearch !== ''){
-        const formatSearch = encodeURIComponent(previousSearch);
-        const keywordString = encodeURIComponent(keywordsRef.current.join('|')); // include keywords
-        try{
-            const request = await fetch(
-                `http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`
-            );
-            const response = await request.json();
-            
-            setError(false);
-            setDisplayedResults(response.searchResult);
-            setPages(response.pages); // optionally update pages
-            console.log(response);
-        } 
-        catch(error){
-            setError(true);
-            console.error(error);
+    async function sort(){
+        if(previousSearch !== '' || keywords.length > 0){
+            const formatSearch = encodeURIComponent(previousSearch);
+            const keywordString = encodeURIComponent(keywords.join('+'));
+            try{
+                const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
+                const response = await request.json();
+                
+                setError(false);
+                setDisplayedResults(response.searchResult);
+                setPages(response.pages); // optionally update pages
+                console.log(response);
+            } 
+            catch(error){
+                setError(true);
+                console.error(error);
+            }
         }
-    }
 }
 
 //move to next or previous page
 async function changePage(page: number){
-    if(previousSearch !== ''){
+    if(previousSearch !== '' || keywords.length > 0){
         const formatSearch = encodeURIComponent(previousSearch);
-        const keywordString = encodeURIComponent(keywordsRef.current.join('|')); // include keywords
+        const keywordString = encodeURIComponent(keywords.join('+'));
         try{
             const request = await fetch(
                 `http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=${page}`
@@ -133,7 +136,7 @@ async function changePage(page: number){
         
             setError(false);
             setDisplayedResults(response.searchResult);
-            setPages(response.pages); // update pages
+            setPages(response.pages);
             console.log(response);
         }    
         catch(error){
