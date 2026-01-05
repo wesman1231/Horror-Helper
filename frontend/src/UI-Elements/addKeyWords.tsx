@@ -1,4 +1,4 @@
-import styles from '../UI_css/addKeyWords.module.css';
+import styles from '../UI-Elements/UI_css/addKeyWords.module.css';
 
 interface keywordsProps{
     handleCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
