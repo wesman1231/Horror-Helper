@@ -54,6 +54,7 @@ export default function useSearch(){
         setSearchValue('');
     }, [mediaType]);
 
+    //run search every time keywords change
     useEffect(() => {
         search();
     }, [keywords]);
@@ -121,30 +122,30 @@ export default function useSearch(){
                 console.error(error);
             }
         }
-}
+    }
 
-//move to next or previous page
-async function changePage(page: number){
-    if(previousSearch !== '' || keywords.length > 0){
-        const formatSearch = encodeURIComponent(previousSearch);
-        const keywordString = encodeURIComponent(keywords.join('+'));
-        try{
-            const request = await fetch(
-                `http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=${page}`
-            );
-            const response = await request.json();
+    //move to next or previous page
+    async function changePage(page: number){
+        if(previousSearch !== '' || keywords.length > 0){
+            const formatSearch = encodeURIComponent(previousSearch);
+            const keywordString = encodeURIComponent(keywords.join('+'));
+            try{
+                const request = await fetch(
+                    `http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=${page}`
+                );
+                const response = await request.json();
         
-            setError(false);
-            setDisplayedResults(response.searchResult);
-            setPages(response.pages);
-            console.log(response);
-        }    
-        catch(error){
-            setError(true);
-            console.error(error);
+                setError(false);
+                setDisplayedResults(response.searchResult);
+                setPages(response.pages);
+                console.log(response);
+            }    
+            catch(error){
+                setError(true);
+                console.error(error);
+            }
         }
     }
-}
 
 
     //shared sort modes

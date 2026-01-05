@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from '../UI-Elements/UI_css/searchBar.module.css';
-import AddKeywords from './UI_css/addKeyWords';
+import AddKeywords from '../UI-Elements/addKeyWords';
 import type { useSearch } from '../hooks/useSearch';
 
 interface SearchBarProps {
