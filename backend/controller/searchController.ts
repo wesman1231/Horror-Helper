@@ -1,53 +1,82 @@
+/**
+ * SearchController
+ * ----------------
+ * Handles full-text search for movies and shows.
+ *
+ * Supports:
+ * - Title search (BOOLEAN MODE, prefix matching)
+ * - Keyword search
+ * - Combined title + keyword search
+ * - Pagination
+ * - Sorting (relevance + metadata fields)
+ *
+ * Uses MySQL FULLTEXT indexes via MATCH ... AGAINST.
+ */
 import dotenv from 'dotenv';
 dotenv.config();
 import type { Request, Response } from "express";
 import { db } from '../db/pool.ts';
 
-class SearchController{
+export default async function SearchController(req: Request, res: Response){
+
+    /**
+     * Query parameters
+     * ----------------
+     * query      → title search string
+     * keywords   → keyword filter string
+     * sortMode   → relevance | releasedate | title | etc
+     * mediaType  → movies | shows
+     * page       → current page number (1-based)
+     */
+    const title = String(req.query.query);
+    const keywords = String(req.query.keywords);
+    const sortMode = String(req.query.sortMode);
+    const mediaType = String(req.query.mediaType);
+    const currentPage = Number(req.query.page);
+     
+    /**
+     * Pagination config
+     */
+    const limit = 10;
+    const offset = (currentPage * limit) - 10;
+
+    /**
+     * Validate media type and sort mode based on media type
+     * Prevents SQL injection via ORDER BY
+     */
+    if(checkSortMode() === false){
+        return (res.status(400).json({message: 'invalid sort mode or media type'}));
+    }
+
+    /**
+     * Prepare BOOLEAN MODE title query
+     * Example:
+     * "Evil Dead" → "+Evil* +Dead*"
+     */
+    const finalizedTitle = removeStopWords(); 
+
+    /**
+     * Fetch pagination metadata and search results
+     */
+    const pages = await pagination();
+    const searchResult = await search();
     
-    constructor() {
-        this.search = this.search.bind(this);
-        this.checkSortMode = this.checkSortMode.bind(this);
-        this.removeStopWords = this.removeStopWords.bind(this);
-        this.pagination = this.pagination.bind(this);
-        this.resultQuery = this.resultQuery.bind(this);
+    if(pages.length === 0){
+        return res.status(404).json({error: 'No Results Found'});        
+    }
+    else{
+        return res.status(200).json({pages: pages, searchResult: searchResult});
     }
 
-    //search for movies and shows
-    public async search(req: Request, res: Response){
-        
-        const titleQuery = String(req.query.query).trim();
-        const keywordQuery = String(req.query.keywords).trim() || null;
-        const sortMode = String(req.query.sortMode);
-        const mediaType = String(req.query.mediaType);
+    // --------------------------------------------------
+    // Helpers
+    // --------------------------------------------------
 
-        //check if sortMode is valid before continuing
-        if(this.checkSortMode(sortMode, mediaType) === false){
-           return res.status(400).json({error: 'Invalid sort mode or media type'});
-        }
-
-        try{
-            const currentPage: number = Number(req.query.page);
-            const pagesArray: number[] = [];
-            const elementsPerPage = 10;
-            const offset: number = (currentPage - 1) * 10;
-            const finalPagesArray = await this.pagination(mediaType, pagesArray, elementsPerPage, keywordQuery, titleQuery); //get array of pages
-            const searchResult = await this.resultQuery(mediaType, sortMode, offset, elementsPerPage, this.removeStopWords(titleQuery), keywordQuery); //query database
-            if(finalPagesArray !== undefined){
-                if(finalPagesArray.length === 0){
-                   return res.status(404).json({error: 'No Results Found', keywordQuery: keywordQuery}); //if no results are found, 404 error
-                }
-            }
-            return res.status(200).json({pages: finalPagesArray, searchResult: searchResult, keywordQuery: keywordQuery}); //return results
-        }
-        catch(error){
-            console.error('error searching: ', error);
-        }
-            
-    }
-
-    //validate sort mode and mediatype
-    checkSortMode(sortMode: string, mediaType: string){
+    /**
+     * Ensures the provided sortMode is valid for the selected media type.
+     * Prevents arbitrary ORDER BY injection.
+     */
+    function checkSortMode(){
         if(mediaType === 'movies'){
             let validSortModes = new Set(['relevance', 'releasedate', 'newest', 'title', 'director', 'franchise']);
             
@@ -76,9 +105,18 @@ class SearchController{
         return false;
     }
 
-    //remove stop words from title query
-    removeStopWords(titleQuery: string){
-        const formatTitleQuery = titleQuery.replaceAll('+', ' ');
+    
+    /**
+     * Removes stop words and formats title input
+     * for MySQL BOOLEAN MODE full-text search.
+     *
+     * - Removes common filler words
+     * - Prefixes each word with "+" for boolean mode strict matching
+     * - Appends "*" for prefix matching
+     */
+    function removeStopWords(){
+        if(title !== ''){
+            const formatTitleQuery = title.replaceAll('+', ' ');
             const stopWords = ['a','about','an','are','as','at','be','by','com','de','en','for','from','how','i','in','is','it','la','of','on','or','that','the','this','to','und','was','what','when','where','who','will','with','www'];
             const split = formatTitleQuery.split(' ');
             const removeStopWords = split.filter(word => !stopWords.includes(word));
@@ -93,104 +131,160 @@ class SearchController{
             }
             const finalTitleQuery = finalTitleQueryArray.join(' ');
             return finalTitleQuery;
+        }
+        
+        return '';
     }
 
-    //handle pagination
-    async pagination(mediaType: string, pagesArray: number[], elementsPerPage: number, keywordQuery: string | null, titleQuery: string){
-            
-            if(keywordQuery != null){
-                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM ${mediaType} WHERE MATCH(title, franchise) AGAINST(? IN BOOLEAN MODE) AND keywords REGEXP ?`, [this.removeStopWords(titleQuery), keywordQuery]);
-                const numberOfResults: number = totalResultsQuery[0].total;
-                const numberOfPages: number = Math.ceil(numberOfResults / elementsPerPage);
-            
-                for(let i = 1; i <= numberOfPages; i++){    
+    
+    /**
+     * Calculates total pages for pagination.
+     * Uses COUNT(*) with the same MATCH condition as the search query.
+     */
+    async function pagination(){
+        //queries
+        const titleQuery = `SELECT COUNT(*) AS total FROM ${mediaType} WHERE MATCH (${mediaType === 'movies' ? 'title, franchise' : 'title'}) AGAINST (? IN BOOLEAN MODE)`;
+        const keywordQuery = `SELECT COUNT(*) AS total FROM ${mediaType} WHERE MATCH (keywords) AGAINST (? IN BOOLEAN MODE)`;
+        const titleAndKeywordQuery = `SELECT COUNT(*) AS total FROM ${mediaType} WHERE MATCH (${mediaType === 'movies' ? 'title, franchise' : 'title'}) AGAINST (? IN BOOLEAN MODE) AND MATCH (keywords) AGAINST (? IN BOOLEAN MODE)`;
+        const formatKeywords = '+' + keywords;
+
+        const pagesArray: number[] = [];
+
+        try{
+            if(title !== '' && keywords === ''){
+                const [pages]: any[] = await db.execute(titleQuery, [finalizedTitle]);
+                const numOfPages = Math.ceil(pages[0].total / limit);
+                
+                for(let i = 1; i <= numOfPages; i++){
                     pagesArray.push(i);
                 }
-                return pagesArray;
             }
-            
-            else{
-                const [totalResultsQuery]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM ${mediaType} WHERE MATCH(title, franchise) AGAINST(? IN BOOLEAN MODE)`, [this.removeStopWords(titleQuery)]);
-                const numberOfResults: number = totalResultsQuery[0].total;
-                const numberOfPages: number = Math.ceil(numberOfResults / elementsPerPage);
-            
-                for(let i = 1; i <= numberOfPages; i++){    
+
+            else if(title === '' && keywords !== ''){
+                const [pages]: any[] = await db.execute(keywordQuery, [formatKeywords]);
+                const numOfPages = Math.ceil(pages[0].total / limit);
+                
+                for(let i = 1; i <= numOfPages; i++){
                     pagesArray.push(i);
                 }
-                return pagesArray;
             }
+
+            else if(title !== '' && keywords !== ''){
+                const [pages]: any[] = await db.execute(titleAndKeywordQuery, [finalizedTitle, formatKeywords]);
+                const numOfPages = Math.ceil(pages[0].total / limit);
+                
+                for(let i = 1; i <= numOfPages; i++){
+                    pagesArray.push(i);
+                }
+            }
+        }
+        catch(error){
+            console.error(error);
+        }
+        return pagesArray;
     }
     
-    //handle sql queries
-    async resultQuery(mediaType: string, sortMode: string, offset: number, elementsPerPage: number, titleQuery: string, keywordQuery: string | null){
-        interface query{
-            select: string,
-            relevanceMatch: string,
-            where: string,
-            keywordClause: string,
-            from: string,
-            sortMode: string,
-            limit: string,
-            offset: string
+    /**
+     * Executes the actual search query.
+     * Uses BOOLEAN MODE relevance scoring when sortMode === 'relevance'.
+     */
+
+    async function search(){
+        //initial search queries
+        const titleQuery = `SELECT *, 
+                            MATCH (${mediaType === 'movies' ? 'title, franchise' : 'title'}) 
+                            AGAINST (? IN BOOLEAN MODE) 
+                            AS relevance 
+                            FROM ${mediaType} 
+                            WHERE MATCH (${mediaType === 'movies' ? 'title, franchise' : 'title'}) 
+                            AGAINST (? IN BOOLEAN MODE) 
+                            ORDER BY relevance DESC 
+                            LIMIT ${limit} 
+                            OFFSET ${offset}`;
+
+        const keywordQuery = `SELECT *
+                              FROM ${mediaType}
+                              WHERE MATCH (keywords) AGAINST (? IN BOOLEAN MODE)
+                              LIMIT ${limit} 
+                              OFFSET ${offset}`;
+
+        const titleAndKeywordQuery = `SELECT *, 
+                                      MATCH (${mediaType === 'movies' ? 'title, franchise' : 'title'}) 
+                                      AGAINST (? IN BOOLEAN MODE) 
+                                      AS relevance 
+                                      FROM ${mediaType} 
+                                      WHERE MATCH (${mediaType === 'movies' ? 'title, franchise' : 'title'}) 
+                                      AGAINST (? IN BOOLEAN MODE) 
+                                      AND MATCH (keywords) AGAINST (? IN BOOLEAN MODE)
+                                      ORDER BY relevance DESC 
+                                      LIMIT ${limit} 
+                                      OFFSET ${offset}`;
+
+        //sort queries
+        const titleSortQuery = `SELECT *
+                                FROM ${mediaType}
+                                WHERE MATCH (${mediaType === 'movies' ? 'title, franchise' : 'title'})
+                                AGAINST (? IN BOOLEAN MODE)
+                                ORDER BY ${sortMode === 'newest' ? 'releasedate DESC' : sortMode}
+                                LIMIT ${limit}
+                                OFFSET ${offset}`;
+
+        const keywordSortQuery = `SELECT *
+                                  FROM ${mediaType}
+                                  WHERE MATCH (keywords)
+                                  AGAINST (? IN BOOLEAN MODE)
+                                  LIMIT ${limit}
+                                  OFFSET ${offset}`;
+
+        const titleAndKeywordSortQuery = `SELECT *
+                                          FROM ${mediaType}
+                                          WHERE MATCH (${mediaType === 'movies' ? 'title, franchise' : 'title'})
+                                          AGAINST (? IN BOOLEAN MODE)
+                                          AND MATCH (keywords)
+                                          AGAINST (? IN BOOLEAN MODE)
+                                          ORDER BY ${sortMode === 'newest' ? 'releasedate DESC' : sortMode}
+                                          LIMIT ${limit}
+                                          OFFSET ${offset}`;
+
+        const formatKeywords = '+' + keywords;
+
+        try{
+            if(sortMode === 'relevance'){
+                if(title !== '' && keywords === ''){
+                    const [searchResult] = await db.execute(titleQuery, [finalizedTitle, finalizedTitle]);
+                    return searchResult;
+                }
+
+                else if(title === '' && keywords !== ''){
+                    const [searchResult] = await db.execute(keywordQuery, [formatKeywords]);
+                    return searchResult;
+                }
+
+                else if(title !== '' && keywordQuery !== ''){
+                    const [searchResult] = await db.execute(titleAndKeywordQuery, [finalizedTitle, finalizedTitle, formatKeywords]);
+                    return searchResult;
+                }
         }
-        
-        //store query strings in an object
-        const sqlQuery: query = {
-            select: sortMode === 'relevance' ? 'SELECT *,' : 'SELECT *',
 
-            relevanceMatch: mediaType === "movies"
-                        ? "MATCH(title, franchise) AGAINST(?) AS relevance"
-                        : "MATCH(title) AGAINST(?) AS relevance",
-
-            from: `FROM ${mediaType}`,
-
-            where: mediaType === "movies"
-                        ? "WHERE MATCH(title, franchise) AGAINST(? IN BOOLEAN MODE)"
-                        : "WHERE MATCH(title) AGAINST(? IN BOOLEAN MODE)",
-
-            keywordClause: `AND keywords REGEXP ?`,
-        
-            sortMode: sortMode === 'relevance'
-                ? (
-                    'ORDER BY relevance DESC'
-                )
-                :
-                sortMode === 'newest'
-                    ? (
-                        'ORDER BY releasedate DESC'
-                    )
-                    :
-                    `ORDER BY ${sortMode}`,
-
-            limit: `LIMIT ${elementsPerPage}`,
-            offset: `OFFSET ${offset}`,
-        }
-        
-        if(sortMode === 'relevance'){
-            
-            if(keywordQuery === null){
-                const [searchResult] = await db.execute(`${sqlQuery.select} ${sqlQuery.relevanceMatch} ${sqlQuery.from} ${sqlQuery.where} ${sqlQuery.sortMode} ${sqlQuery.limit} ${sqlQuery.offset}`, [titleQuery, titleQuery]);
-                return searchResult;
-            }
-            
             else{
-                const [searchResult] = await db.execute(`${sqlQuery.select} ${sqlQuery.relevanceMatch} ${sqlQuery.from} ${sqlQuery.where} ${sqlQuery.keywordClause} ${sqlQuery.sortMode} ${sqlQuery.limit} ${sqlQuery.offset}`, [titleQuery, titleQuery, keywordQuery]);
-                return searchResult;
+                if(title !== '' && keywords === ''){
+                    const [searchResult] = await db.execute(titleSortQuery, [finalizedTitle]);
+                    return searchResult;
+                }
+
+                else if(title === '' && keywords !== ''){
+                    const [searchResult] = await db.execute(keywordSortQuery, [formatKeywords]);
+                    return searchResult;
+                }
+
+                else if(title !== '' && keywordQuery !== ''){
+                    const [searchResult] = await db.execute(titleAndKeywordSortQuery, [finalizedTitle, formatKeywords]);
+                    return searchResult;
+                }
             }
         }
-        
-        else{
-            if(keywordQuery === null){
-                const [searchResult] = await db.execute(`${sqlQuery.select} ${sqlQuery.from} ${sqlQuery.where} ${sqlQuery.sortMode} ${sqlQuery.limit} ${sqlQuery.offset}`, [titleQuery]);
-                return searchResult;
-            }
-            else{
-                const [searchResult] = await db.execute(`${sqlQuery.select} ${sqlQuery.from} ${sqlQuery.where} ${sqlQuery.keywordClause} ${sqlQuery.sortMode} ${sqlQuery.limit} ${sqlQuery.offset}`, [titleQuery, keywordQuery]);
-                return searchResult;
-            }
+        catch(error){
+            console.error(error);
         }
     }
-
 }
-
-export const searchController = new SearchController();
