@@ -3,7 +3,7 @@ import directorDataController from '../controller/directorDataController.ts';
 
 const router = express.Router();
 
-router.get('/getDirectorInfo', directorDataController.getDirectorFromTMDB);
-router.get(`/:directorName`, directorDataController.getDirectorInfo);
+router.get('/getDirectorInfo', directorDataController);
+router.get(`/:directorName`, directorDataController);
 
 export default router;
