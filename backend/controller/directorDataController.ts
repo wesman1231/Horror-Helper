@@ -4,41 +4,48 @@ import { directorDB } from "../db/pool.ts";
 import dotenv from 'dotenv';
 dotenv.config();
 
-class directorDataController{
-    public async getDirectorInfo(req: Request, res: Response){
+export default async function directorDataController(req: Request, res: Response){
+    
+    const fromatDirectorName = String(req.params.directorName).replaceAll('+', ' ');
+
+    const movies = await getDirectorMovies();
+    const image = await getDirectorImage();
+    const profile = await getDirectorProfile();
+
+    if(profile === undefined){
+        return res.status(404).json({error: 'no director found'});
+    }
+    
+    return res.status(200).json({movies: movies, image: image, profile: profile});
+    
+    
+    async function getDirectorMovies(){
+        
         try{
-            const fromatDirectorName = String(req.params.directorName).replaceAll('+', ' ');
-            const [getDirectorMovies] = await db.execute(`SELECT * FROM movies WHERE director = ?`, [fromatDirectorName]);
-            res.status(200).json(getDirectorMovies);
-        }catch(error){  
+            const [getMovies] = await db.execute(`SELECT * FROM movies WHERE director = ? ORDER BY releasedate`, [fromatDirectorName]);
+            return getMovies;
+        }
+        catch(error){  
+            console.error(error);
+        }
+    }
+    
+    async function getDirectorImage(){
+        try{
+            const [directorImagePath]: any[] = await directorDB.execute(`SELECT tmdbprofile AS imgpath FROM directors WHERE name = ?`, [fromatDirectorName]);
+            const image = `https://image.tmdb.org/t/p/w300${directorImagePath[0].imgpath}`;
+            return image
+        }
+        catch(error){
             console.error(error);
         }
     }
 
-    public async getDirectorFromTMDB(req: Request, res: Response){
-        const [directors]: any[] = await db.execute(`SELECT DISTINCT director FROM movies WHERE director IS NOT NULL;`);
-        for(let i = 0; i < directors.length; i++){
-            const formatQuery = directors[i].director.replaceAll(' ', '+');
-            const getDirectorInfo = await fetch(`https://api.themoviedb.org/3/search/person?api_key=${process.env.TMDB_API_KEY}&query=${formatQuery}`);
-            const directorInfo = await getDirectorInfo.json();
-
-            if(directorInfo.results[0] === undefined){
-                continue;
-            }
-            if(directorInfo.results[0].id === null || directorInfo.results[0].name === null || directorInfo.results[0].profile_path === null || directorInfo.results[0].id === undefined || directorInfo.results[0].name === undefined || directorInfo.results[0].profile_path === undefined ){
-                continue
-            }
-            else{
-                if(Object.hasOwn(directorInfo.results[0], 'id') && Object.hasOwn(directorInfo.results[0], 'name') && Object.hasOwn(directorInfo.results[0], 'profile_path')){
-                    await directorDB.execute(`INSERT IGNORE INTO directors(tmdbid, name, imgpath) VALUES(?, ?, ?)`, [directorInfo.results[0].id, directorInfo.results[0].name, directorInfo.results[0].profile_path]);
-                }
-            }
-
-            
-                
-        }
-        res.status(200).send('done');
+    async function getDirectorProfile(){
+        const [directorID]: any[] = await directorDB.execute(`SELECT tmdbid FROM directors WHERE name = ?`, [fromatDirectorName]);
+        const directorProfileRequest = await fetch(`https://api.themoviedb.org/3/person/${directorID[0].tmdbid}?api_key=${process.env.TMDB_API_KEY}`);
+        const directorProfile = await directorProfileRequest.json();
+        return directorProfile;
     }
-}
 
-export default new directorDataController();
+}
