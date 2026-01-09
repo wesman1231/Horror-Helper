@@ -5,8 +5,6 @@ import MovieCard from "../UI-Elements/movieCard";
 import styles from "../pages/pages_css/director.module.css";
 
 export default function Director(){
-
-
     const { directorName } = useParams();
     const [directorMovies, setDirectorMovies] = useState<Movie[]>([]);
     const [directorImage, setDirectorImage] = useState<string>();
@@ -16,7 +14,6 @@ export default function Director(){
 
     useEffect(() => {
         async function getDirectorInfo(){
-
             try{
                 const directorRequest = await fetch(`http://localhost:3000/api/directors/${directorName}`);
                 const directorResponse = await directorRequest.json();

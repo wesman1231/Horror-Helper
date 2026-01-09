@@ -6,6 +6,8 @@ import MediaSearch from './pages/mediaSearch';
 import MoviePage from './pages/moviePage';
 import ShowPage from './pages/showPage';
 import Director from './pages/director';
+import Signup from './pages/signup';
+import Login from './pages/login';
 
 import NewReleases from './pages/newReleases';
 import ProvenClassics from './pages/provenClassics';
@@ -20,7 +22,9 @@ function App() {
       <BrowserRouter>
         <Header/>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/home" element={<Home />}/>
 
           {/*header routes*/}
           <Route path="/search/:mediaType" element={<MediaSearch />} />
@@ -30,6 +34,7 @@ function App() {
           <Route path="/proven-classics" element={<ProvenClassics />} />
           <Route path="/hidden-gems" element={<HiddenGems />} />
           
+          {/*media routes*/}
           <Route path='/movies/:id' element={<MoviePage/>}/>
           <Route path='/shows/:id' element={<ShowPage/>}/>
           <Route path='/directors/:directorName' element={<Director />}></Route>
