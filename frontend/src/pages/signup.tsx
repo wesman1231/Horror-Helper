@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import styles from '../pages/pages_css/signup.module.css'
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { app } from '../firebase/firebase';
 
 interface SignupData{
     email: string;
@@ -9,7 +11,7 @@ interface SignupData{
 export default function Signup(){
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-
+    const [error, setError] = useState();
 
     function handleEmailValue(event: React.ChangeEvent<HTMLInputElement>){
         setEmail(event.target.value);
@@ -35,7 +37,26 @@ export default function Signup(){
             body: JSON.stringify(signupData)
         });
             const signupResponse = await signupRequest.json();
-            console.log(signupResponse);
+            if(Object.hasOwn(signupResponse, 'errors')){
+                setError(signupResponse.errors[0].msg.replaceAll('value', signupResponse.errors[0].path));
+            }
+
+            else{
+                const auth = getAuth(app);
+                createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed up 
+                    const user = userCredential.user;
+                    console.log(user);
+                    // ...
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.log(errorCode, errorMessage);
+                    // ..
+                });
+            }
         }
         catch(error){
             console.error(error);
@@ -50,6 +71,7 @@ export default function Signup(){
             <label htmlFor="password">Password: </label>
             <input type="password" name="password" onChange={handlePasswordValue} required></input>
             <button type='button' className={styles.signupButton} onClick={() => signupAttempt(email, password)}>Sign Up</button>
+            <span>{error !== undefined ? `${error}` : null}</span>
         </div>    
     )
 }

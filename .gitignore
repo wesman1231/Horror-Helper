@@ -1,2 +1,4 @@
 .env
+.gitignore
+firebase
 node_modules
