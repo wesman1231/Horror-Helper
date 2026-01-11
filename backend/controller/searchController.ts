@@ -233,6 +233,7 @@ export default async function SearchController(req: Request, res: Response){
                                   FROM ${mediaType}
                                   WHERE MATCH (keywords)
                                   AGAINST (? IN BOOLEAN MODE)
+                                  ORDER BY ${sortMode === 'newest' ? 'releasedate DESC' : sortMode}
                                   LIMIT ${limit}
                                   OFFSET ${offset}`;
 
