@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import type { Movie } from "../UI-Elements/movieCard";
 import MovieCard from "../UI-Elements/movieCard";
 import styles from "../pages/pages_css/director.module.css";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "../firebase/firebase";
+import { useNavigate } from "react-router";
 
 export default function Director(){
     const { directorName } = useParams();
@@ -11,6 +14,16 @@ export default function Director(){
     const [directorBirthday, setDirectorBirthday] = useState<string>();
     const [directorDeathDate, setDirectorDeathDate] = useState<string>();
     const [directorBio, setDirectorBio] = useState<string>();
+
+    const navigate = useNavigate();
+
+    //check if user is logged in, if they are not, redirect them to log in page
+    const auth = getAuth(app);
+    onAuthStateChanged(auth, (user) => {
+        if(!user){
+            navigate('/');
+        }
+    });
 
     useEffect(() => {
         async function getDirectorInfo(){

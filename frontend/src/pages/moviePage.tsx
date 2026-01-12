@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import type { Movie } from '../UI-Elements/movieCard';
 import MovieInfo from '../UI-Elements/movieInfo';
 import MovieShowPageError from "../UI-Elements/movieShowPageError";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "../firebase/firebase";
+import { useNavigate } from "react-router";
 
 export default function MoviePage(){
     const { id } = useParams();
@@ -10,7 +13,15 @@ export default function MoviePage(){
     const [errorState, setErrorState] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>('');
     
-    
+    const navigate = useNavigate();
+
+    //check if user is logged in, if they are not, redirect them to log in page
+    const auth = getAuth(app);
+    onAuthStateChanged(auth, (user) => {
+        if(!user){
+            navigate('/');
+        }
+    });
 
     useEffect(() => {
         //fetch movie info to render on the page
