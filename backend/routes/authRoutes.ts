@@ -1,5 +1,6 @@
 import express from "express";
-import signup from "../controller/authController.ts";
+import { validateSignup } from "../controller/authController.ts";
+import { validateLogin } from "../controller/authController.ts";
 import { body } from 'express-validator';
 
 const validateEmail = () => body('email')
@@ -10,6 +11,7 @@ const validatePassword = () => body('password')
                                 .notEmpty();
 const router = express.Router();
 
-router.post('/signup', validateEmail(), validatePassword(), signup);
+router.post('/signup', validateEmail(), validatePassword(), validateSignup);
+router.post('/login', validateEmail(), validatePassword(), validateLogin);
 
 export default router;

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import styles from '../pages/pages_css/signup.module.css'
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { app } from '../firebase/firebase';
@@ -12,6 +13,7 @@ export default function Signup(){
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState();
+    const redirect = useNavigate();
 
     function handleEmailValue(event: React.ChangeEvent<HTMLInputElement>){
         setEmail(event.target.value);
@@ -48,6 +50,7 @@ export default function Signup(){
                     // Signed up 
                     const user = userCredential.user;
                     console.log(user);
+                    redirect('/');
                     // ...
                 })
                 .catch((error) => {
