@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import styles from '../pages/pages_css/signup.module.css'
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { app } from '../firebase/firebase';
 
 interface SignupData{
@@ -30,6 +30,7 @@ export default function Signup(){
             email: email,
             password: password
         }
+        
         try{
             const signupRequest = await fetch(`http://localhost:3000/api/auth/signup`, {
             method: 'POST',
@@ -38,27 +39,31 @@ export default function Signup(){
             },
             body: JSON.stringify(signupData)
         });
+            
             const signupResponse = await signupRequest.json();
+            
             if(Object.hasOwn(signupResponse, 'errors')){
                 setError(signupResponse.errors[0].msg.replaceAll('value', signupResponse.errors[0].path));
             }
 
             else{
-                const auth = getAuth(app);
-                createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Signed up 
+                try{
+                    const auth = getAuth(app);
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     const user = userCredential.user;
-                    console.log(user);
-                    redirect('/');
-                    // ...
-                })
-                .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    console.log(errorCode, errorMessage);
-                    // ..
-                });
+                    
+                    try{
+                        await sendEmailVerification(user); //send email verification link
+                    }
+                    catch(error){
+                        console.error(error);
+                    }
+                    
+                    redirect('/'); //redirect to login page  
+                }
+                catch(error){
+                    console.error(error);
+                }
             }
         }
         catch(error){
