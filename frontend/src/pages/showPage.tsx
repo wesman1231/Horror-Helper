@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import type { Show }  from '../UI-Elements/tvCard';
 import MovieShowPageError from "../UI-Elements/movieShowPageError";
 import ShowInfo from '../UI-Elements/showInfo';
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../firebase/firebase";
-import { useNavigate } from "react-router";
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
+import { app } from '../firebase/firebase';
+import { useNavigate } from 'react-router';
 
 export default function ShowPage(){
     const { id } = useParams();
@@ -13,15 +13,17 @@ export default function ShowPage(){
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [errorState, setErrorState] = useState<boolean>(false);
 
-    const navigate = useNavigate();
-
-    //check if user is logged in, if they are not, redirect them to log in page
+    //check if user is logged in, if not, redirect them to log in page
+    const navigate = useNavigate();    
     const auth = getAuth(app);
-    onAuthStateChanged(auth, (user) => {
-        if(!user){
-            navigate('/');
-        }
-    });
+
+    useEffect(() => {
+            onAuthStateChanged(auth, (user) => {
+            if(!user){
+                navigate('/');
+            }
+        });
+        }, []);
 
     useEffect(() => {
         //fetch movie info to render on the page

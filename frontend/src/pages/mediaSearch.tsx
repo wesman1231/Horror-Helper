@@ -4,27 +4,30 @@ import NoResultsFound from "../UI-Elements/noResultsFound";
 import SearchBar from "../UI-Elements/searcBar";
 import PageButtons from "../UI-Elements/pageButtons";
 import SortMenu from "../UI-Elements/sortMenu";
+import { useEffect } from "react";
 import { useParams } from "react-router";
 import type { Movie } from "../UI-Elements/movieCard";
 import type { Show } from "../UI-Elements/tvCard";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../firebase/firebase";
-import { useNavigate } from "react-router";
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
+import { app } from '../firebase/firebase';
+import { useNavigate } from 'react-router';
 
 export type mediaType = 'movies' | 'shows';
 
 export default function MediaSearch(){
     const { mediaType } = useParams<{ mediaType: mediaType }>();
     const searchHook = useSearch();
-    const navigate = useNavigate();
-
-    //check if user is logged in, if they are not, redirect them to log in page
+    const navigate = useNavigate();    
     const auth = getAuth(app);
-    onAuthStateChanged(auth, (user) => {
+
+    //check if user is logged in, if not, redirect them to log in page
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
         if(!user){
             navigate('/');
         }
     });
+    }, []);
     
     if (!mediaType) {
         return <div>Invalid media type</div>;
