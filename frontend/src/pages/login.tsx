@@ -21,6 +21,14 @@ interface LoginData {
     password: string;
 }
 
+interface Error {
+    type: string;
+    value: string;
+    msg: string;
+    path: string;
+    location: string;
+}
+
 /**
  * Login Component
  * ----------------
@@ -41,7 +49,7 @@ export default function Login() {
     const [password, setPassword] = useState<string>('');
 
     // Stores backend validation error messages
-    const [error, setError] = useState();
+    const [error, setError] = useState<Error[] | null>([]);
 
     // Stores Firebase authentication errors
     const [loginError, setLoginError] = useState<string>('');
@@ -79,7 +87,7 @@ export default function Login() {
      * 4. Redirects user on success
      */
     async function loginAttempt(email: string, password: string) {
-    
+        setLoginError('');
         // Payload sent to backend
         const loginData: LoginData = {
             email: email,
@@ -101,15 +109,12 @@ export default function Login() {
 
             // If backend returns validation errors, display them
             if (Object.hasOwn(loginResponse, 'errors')) {
-                setError(
-                    loginResponse.errors[0].msg.replaceAll(
-                        'value',
-                        loginResponse.errors[0].path
-                    )
-                );
+                setError(loginResponse.errors);
+                console.log(error);
             }
             else {
                 try {
+                    setError(null);
                     // Attempt Firebase login
                     await signInWithEmailAndPassword(auth, email, password);
 
@@ -133,7 +138,7 @@ export default function Login() {
                 catch (error) {
                     // Firebase authentication error
                     console.error(error);
-                    setLoginError(String(error));
+                    setLoginError("Invalid Email/Password");
                 }
             }
         }
@@ -148,17 +153,20 @@ export default function Login() {
      */
     return (
         <div className={styles.loginWrapper}>
-            <label htmlFor="email">Email: </label>
+            <label htmlFor="Email">Email: </label>
             <input
-                type="email"
-                name="email"
+                id="Email"
+                type="Email"
+                name="Email"
+                autoComplete="true"
                 onChange={handleEmailValue}
             />
 
-            <label htmlFor="password">Password: </label>
+            <label htmlFor="Password">Password: </label>
             <input
-                type="password"
-                name="password"
+                id="Password"
+                type="Password"
+                name="Password"
                 onChange={handlePasswordValue}
             />
 
@@ -172,10 +180,23 @@ export default function Login() {
             </button>
 
             {/* Backend validation error */}
-            <span>{error !== undefined ? `${error}` : null}</span>
+            <span>{error !== undefined 
+            ? <ul className={styles.errorsList}>
+                {error?.map((error: Error) => 
+                    <li key={error.msg}>{`${error.msg}`}</li>
+                )}
+              </ul> 
+              : null}</span>
 
             {/* Firebase authentication error */}
-            <span>{loginError !== undefined ? `${loginError}` : null}</span>
+            <span>{loginError !== '' 
+            ? `${loginError}`
+            : null}
+            </span>
+
+            <span>
+                <Link to="/forgot-password">Forgot Password</Link>
+            </span>
 
             {/* Navigation to signup page */}
             <span>

@@ -8,49 +8,119 @@ import { useEffect } from "react";
 import { useParams } from "react-router";
 import type { Movie } from "../UI-Elements/movieCard";
 import type { Show } from "../UI-Elements/tvCard";
-import { onAuthStateChanged, getAuth } from 'firebase/auth';
-import { app } from '../firebase/firebase';
-import { useNavigate } from 'react-router';
+import { onAuthStateChanged, getAuth } from "firebase/auth";
+import { app } from "../firebase/firebase";
+import { useNavigate } from "react-router";
 
-export type mediaType = 'movies' | 'shows';
+/**
+ * Supported media types for the search page.
+ */
+export type mediaType = "movies" | "shows";
 
-export default function MediaSearch(){
+/**
+ * MediaSearch Component
+ *
+ * Provides a searchable, sortable, and paginated list of movies or TV shows.
+ * The media type (movies or shows) is determined by the route parameter.
+ *
+ * Features:
+ * - Search input with persistent search state
+ * - Sorting options based on media type
+ * - Pagination support
+ * - Authentication guard (redirects unauthenticated users)
+ *
+ * Route examples:
+ * `/search/movies`
+ * `/search/shows`
+ *
+ * @component
+ * @returns {JSX.Element} Media search page UI
+ */
+export default function MediaSearch() {
+    /**
+     * Media type read from the URL parameters.
+     * Determines whether movies or TV shows are displayed.
+     */
     const { mediaType } = useParams<{ mediaType: mediaType }>();
+
+    /**
+     * Custom search hook that manages:
+     * - Query state
+     * - Sorting mode
+     * - Pagination
+     * - Displayed results
+     */
     const searchHook = useSearch();
-    const navigate = useNavigate();    
+
+    const navigate = useNavigate();
     const auth = getAuth(app);
 
-    //check if user is logged in, if not, redirect them to log in page
+    /**
+     * Authentication Guard
+     *
+     * Redirects users to the home page if they are not logged in.
+     * Runs once on component mount.
+     */
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
-        if(!user){
-            navigate('/');
-        }
-    });
+            if (!user) {
+                navigate("/");
+            }
+        });
     }, []);
-    
+
+    /**
+     * Guard clause for invalid or missing media types.
+     */
     if (!mediaType) {
         return <div>Invalid media type</div>;
     }
 
-    return(
+    return (
         <>
-            <SearchBar searchHook={searchHook}  />
-            {searchHook.sortMenuVisible ? <SortMenu mediaType={mediaType} 
-                                                    sortMode={searchHook.sortMode} 
-                                                    relevanceSort={searchHook.relevanceSort} 
-                                                    titleSort={searchHook.titleSort} 
-                                                    oldestSort={searchHook.oldestSort} 
-                                                    newestSort={searchHook.newestSort} 
-                                                    directorSort={searchHook.directorSort}
-                                                    franchiseSort={searchHook.franchiseSort}
-                                                    firstAiredSort={searchHook.firstAiredSort}
-                                                    lastAiredSort={searchHook.lastAiredSort}
-                                                    creatorSort={searchHook.creatorSort}  /> : null}
+            {/* Search input field */}
+            <SearchBar searchHook={searchHook} />
+
+            {/* Sort menu (conditionally rendered) */}
+            {searchHook.sortMenuVisible ? (
+                <SortMenu
+                    mediaType={mediaType}
+                    sortMode={searchHook.sortMode}
+                    relevanceSort={searchHook.relevanceSort}
+                    titleSort={searchHook.titleSort}
+                    oldestSort={searchHook.oldestSort}
+                    newestSort={searchHook.newestSort}
+                    directorSort={searchHook.directorSort}
+                    franchiseSort={searchHook.franchiseSort}
+                    firstAiredSort={searchHook.firstAiredSort}
+                    lastAiredSort={searchHook.lastAiredSort}
+                    creatorSort={searchHook.creatorSort}
+                />
+            ) : null}
+
+            {/* No results state */}
             {searchHook.pages === undefined ? <NoResultsFound /> : null}
-            {mediaType === "movies" ? <CardList mediaType="movies" results={searchHook.displayedResults as Movie[]} /> : <CardList mediaType="shows" results={searchHook.displayedResults as Show[]} />}       
-            <PageButtons pages={searchHook.pages} changePage={searchHook.changePage} previousSearch={searchHook.previousSearch} sortMode={searchHook.sortMode} />
+
+            {/* Search results */}
+            {mediaType === "movies" ? (
+                <CardList
+                    mediaType="movies"
+                    results={searchHook.displayedResults as Movie[]}
+                />
+            ) : (
+                <CardList
+                    mediaType="shows"
+                    results={searchHook.displayedResults as Show[]}
+                />
+            )}
+
+            {/* Pagination controls */}
+            <PageButtons
+                pages={searchHook.pages}
+                changePage={searchHook.changePage}
+                previousSearch={searchHook.previousSearch}
+                sortMode={searchHook.sortMode}
+            />
         </>
     );
 }
-
