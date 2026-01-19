@@ -4,14 +4,11 @@ import { getAuth, onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { app } from "../firebase/firebase";
 import { useEffect, useState } from "react";
 
-//TODO: CONDITIONALLY RENDER HEADER ONLY IF USER IS LOGGED IN
-
 export default function Header(){
     const [headerVisible, setHeaderVisible] = useState<boolean>(false);
     const [currentUser, setCurrentUser] = useState<User | null>();
     const auth = getAuth(app);
 
-    //CURRENT USER NEEDS TO BE STATEFUL
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if(user){
@@ -22,7 +19,7 @@ export default function Header(){
             }
         });
     }, []);
-    
+
     useEffect(() => {
         if(currentUser === null){
             setHeaderVisible(false);
@@ -44,7 +41,7 @@ export default function Header(){
     return(
         <>
             {headerVisible ?
-            <header>
+            <header className={styles.header}>
                 <h1>Horror Helper</h1>
                 <nav>
                     <NavLink to = '/' className={styles.headerLink}>Home</NavLink>

@@ -1,8 +1,13 @@
+body{
+    display: block;
+}
+
 .searchBarContainer{
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    margin-top: 15vh;
 }
 
 .searchBar{
@@ -14,7 +19,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 5%;
+    margin-top: 2%;
     border: 5px solid red;
 }
 

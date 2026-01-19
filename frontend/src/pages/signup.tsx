@@ -1,85 +1,169 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import styles from '../pages/pages_css/signup.module.css'
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-import { app } from '../firebase/firebase';
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import styles from "../pages/pages_css/signup.module.css";
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    sendEmailVerification,
+} from "firebase/auth";
+import { app } from "../firebase/firebase";
 
-interface SignupData{
+/**
+ * Payload sent to the backend signup endpoint.
+ */
+interface SignupData {
     email: string;
     password: string;
 }
 
-export default function Signup(){
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [error, setError] = useState();
+/**
+ * Signup Component
+ *
+ * Handles user account creation.
+ *
+ * Flow:
+ * 1. Collect email and password from the user
+ * 2. Send credentials to backend for validation
+ * 3. Create Firebase authentication user
+ * 4. Send email verification link
+ * 5. Redirect user to the login page
+ *
+ * @component
+ * @returns {JSX.Element} Signup form UI
+ */
+export default function Signup() {
+    /** User-entered email address */
+    const [email, setEmail] = useState<string>("");
+
+    /** User-entered password */
+    const [password, setPassword] = useState<string>("");
+
+    /** Error message returned from the backend or Firebase */
+    const [error, setError] = useState<string | undefined>();
+
+    /** Navigation helper for redirecting after successful signup */
     const redirect = useNavigate();
 
-    function handleEmailValue(event: React.ChangeEvent<HTMLInputElement>){
+    /**
+     * Updates email state when the email input changes.
+     */
+    function handleEmailValue(event: React.ChangeEvent<HTMLInputElement>) {
         setEmail(event.target.value);
     }
 
-
-    function handlePasswordValue(event: React.ChangeEvent<HTMLInputElement>){
+    /**
+     * Updates password state when the password input changes.
+     */
+    function handlePasswordValue(event: React.ChangeEvent<HTMLInputElement>) {
         setPassword(event.target.value);
     }
 
-
-    async function signupAttempt(email: string, password: string){
+    /**
+     * Attempts to create a new user account.
+     *
+     * - Validates input via backend API
+     * - Creates Firebase auth user on success
+     * - Sends email verification
+     * - Redirects to login page
+     *
+     * @param {string} email - User email
+     * @param {string} password - User password
+     */
+    async function signupAttempt(email: string, password: string) {
         const signupData: SignupData = {
-            email: email,
-            password: password
-        }
-        
-        try{
-            const signupRequest = await fetch(`http://localhost:3000/api/auth/signup`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(signupData)
-        });
-            
-            const signupResponse = await signupRequest.json();
-            
-            if(Object.hasOwn(signupResponse, 'errors')){
-                setError(signupResponse.errors[0].msg.replaceAll('value', signupResponse.errors[0].path));
-            }
+            email,
+            password,
+        };
 
-            else{
-                try{
-                    const auth = getAuth(app);
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    const user = userCredential.user;
-                    
-                    try{
-                        await sendEmailVerification(user); //send email verification link
-                    }
-                    catch(error){
-                        console.error(error);
-                    }
-                    
-                    redirect('/'); //redirect to login page  
+        try {
+            const signupRequest = await fetch(
+                `http://localhost:3000/api/auth/signup`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(signupData),
                 }
-                catch(error){
-                    console.error(error);
+            );
+
+            const signupResponse = await signupRequest.json();
+
+            // Backend validation error TODO: UPDATE TO MATCH SIGNUP LOGIC RENDERING THE ERROR MESSAGES FROM THE ERRORS ARRAY AS AN UNORDERED LIST
+            if (Object.hasOwn(signupResponse, "errors")) {
+                setError(
+                    signupResponse.errors[0].msg.replaceAll(
+                        "value",
+                        signupResponse.errors[0].path
+                    )
+                );
+            } else {
+                try {
+                    const auth = getAuth(app);
+                    const userCredential =
+                        await createUserWithEmailAndPassword(
+                            auth,
+                            email,
+                            password
+                        );
+
+                    const user = userCredential.user;
+
+                    // Send email verification link
+                    try {
+                        await sendEmailVerification(user);
+                    } catch (error) {
+                        console.error(
+                            "Failed to send verification email:",
+                            error
+                        );
+                    }
+
+                    // Redirect to login page
+                    redirect("/");
+                } catch (error) {
+                    console.error(
+                        "Firebase signup failed:",
+                        error
+                    );
                 }
             }
-        }
-        catch(error){
-            console.error(error);
+        } catch (error) {
+            console.error("Signup request failed:", error);
         }
     }
 
-
-    return(
+    return (
         <div className={styles.signupWrapper}>
-            <label htmlFor="email">Email: </label>
-            <input type="email" name="email" onChange={handleEmailValue} required></input>
-            <label htmlFor="password">Password: </label>
-            <input type="password" name="password" onChange={handlePasswordValue} required></input>
-            <button type='button' className={styles.signupButton} onClick={() => signupAttempt(email, password)}>Sign Up</button>
-            <span>{error !== undefined ? `${error}` : null}</span>
-        </div>    
-    )
+            <label htmlFor="Email">Email:</label>
+            <input
+                id="Email"
+                type="Email"
+                name="Email"
+                autoComplete="True"
+                onChange={handleEmailValue}
+                required
+            />
+
+            <label htmlFor="Password">Password:</label>
+            <input
+                id="Password"
+                type="Password"
+                name="Password"
+                onChange={handlePasswordValue}
+                required
+            />
+
+            <button
+                type="button"
+                className={styles.signupButton}
+                onClick={() => signupAttempt(email, password)}
+            >
+                Sign Up
+            </button>
+
+            {/* Error message display */}
+            <span>{error !== undefined ? error : null}</span>
+        </div>
+    );
 }

@@ -1,4 +1,9 @@
 import './App.css'
+
+import Signup from './pages/signup';
+import Login from './pages/login';
+import ForgotPassword from './pages/forgotPassword';
+
 import Header from './UI-Elements/Header';
 import Home from "./pages/Home";
 
@@ -6,8 +11,6 @@ import MediaSearch from './pages/mediaSearch';
 import MoviePage from './pages/moviePage';
 import ShowPage from './pages/showPage';
 import Director from './pages/director';
-import Signup from './pages/signup';
-import Login from './pages/login';
 
 import NewReleases from './pages/newReleases';
 import ProvenClassics from './pages/provenClassics';
@@ -22,8 +25,11 @@ function App() {
       <BrowserRouter>
         <Header/>
         <Routes>
+          {/*auth routes*/}
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          
           <Route path="/home" element={<Home />}/>
 
           {/*header routes*/}

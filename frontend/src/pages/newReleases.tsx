@@ -10,13 +10,17 @@ export default function NewReleases(){
 
     //check if user is logged in, if not, redirect them to log in page
     useEffect(() => {
-        
         onAuthStateChanged(auth, (user) => {
         if(!user){
             navigate('/');
         }
     });
     }, []);
+
+    //fetch all movies and shows with current year release date
+    useEffect(() => {
+
+    });
 
     return(
         <>

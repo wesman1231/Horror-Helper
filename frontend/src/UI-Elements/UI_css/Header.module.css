@@ -3,6 +3,13 @@ body{
     font-family: "Nosifer", sans-serif;
 }
 
+.header{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
 h1{    
     display: flex;
     justify-content: center;
