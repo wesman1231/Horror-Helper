@@ -16,6 +16,14 @@ interface SignupData {
     password: string;
 }
 
+interface Error {
+    type: string;
+    value: string;
+    msg: string;
+    path: string;
+    location: string;
+}
+
 /**
  * Signup Component
  *
@@ -38,8 +46,10 @@ export default function Signup() {
     /** User-entered password */
     const [password, setPassword] = useState<string>("");
 
-    /** Error message returned from the backend or Firebase */
-    const [error, setError] = useState<string | undefined>();
+    /** Error message returned from the backend */
+    const [error, setError] = useState<Error[] | undefined>([]);
+
+    const [signupError, setSignupError] = useState<string>('');
 
     /** Navigation helper for redirecting after successful signup */
     const redirect = useNavigate();
@@ -74,7 +84,8 @@ export default function Signup() {
             email,
             password,
         };
-
+            setSignupError('');
+            setError(undefined);
         try {
             const signupRequest = await fetch(
                 `http://localhost:3000/api/auth/signup`,
@@ -89,14 +100,8 @@ export default function Signup() {
 
             const signupResponse = await signupRequest.json();
 
-            // Backend validation error TODO: UPDATE TO MATCH SIGNUP LOGIC RENDERING THE ERROR MESSAGES FROM THE ERRORS ARRAY AS AN UNORDERED LIST
             if (Object.hasOwn(signupResponse, "errors")) {
-                setError(
-                    signupResponse.errors[0].msg.replaceAll(
-                        "value",
-                        signupResponse.errors[0].path
-                    )
-                );
+                setError(signupResponse.errors);
             } else {
                 try {
                     const auth = getAuth(app);
@@ -112,7 +117,8 @@ export default function Signup() {
                     // Send email verification link
                     try {
                         await sendEmailVerification(user);
-                    } catch (error) {
+                    } 
+                    catch (error) {
                         console.error(
                             "Failed to send verification email:",
                             error
@@ -121,11 +127,18 @@ export default function Signup() {
 
                     // Redirect to login page
                     redirect("/");
-                } catch (error) {
+                } 
+                catch (error) {
                     console.error(
                         "Firebase signup failed:",
-                        error
+                        error,
                     );
+                    if(String(error).includes("Password")){
+                        setSignupError("Password should contain at least 6 characters");
+                    }
+                    else{
+                        setSignupError("Email already in use");
+                    }
                 }
             }
         } catch (error) {
@@ -163,7 +176,20 @@ export default function Signup() {
             </button>
 
             {/* Error message display */}
-            <span>{error !== undefined ? error : null}</span>
+            {error !== undefined
+            ? <ul className={styles.errorList}>
+                {error?.map((error: Error) =>
+                    <li key={error.msg}>
+                        {`${error.msg}`}
+                    </li>
+                )}
+              </ul>
+            : null}
+
+            {/* display firebase signup error (email already in use) */}
+            {signupError !== ''
+            ? <span>{`${signupError}`}</span>
+            : null}
         </div>
     );
 }
