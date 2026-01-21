@@ -1,152 +1,28 @@
 // React Router utilities for navigation and links
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 
 // CSS module for scoped component styles
 import styles from '../pages/pages_css/login.module.css';
 
 // React state management
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-// Firebase app instance
-import { app } from '../firebase/firebase';
+//import login hook
+import useLogin from '../hooks/useLogin'; 
 
-// Firebase authentication methods
-import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+//import input validation error interface from login hook
+import type { Error } from '../hooks/useLogin';
 
-/**
- * Shape of the login payload sent to the backend API
- */
-interface LoginData {
-    email: string;
-    password: string;
-}
 
-interface Error {
-    type: string;
-    value: string;
-    msg: string;
-    path: string;
-    location: string;
-}
-
-/**
- * Login Component
- * ----------------
- * Handles user authentication by:
- * 1. Sending credentials to the backend for validation
- * 2. Signing the user into Firebase Authentication
- * 3. Enforcing email verification
- * 4. Redirecting authenticated users to /home
- */
 export default function Login() {
-    // Initialize Firebase Auth
-    const auth = getAuth(app);
+    const loginLogic = useLogin();
 
-    // Stores the user's email input
-    const [email, setEmail] = useState<string>('');
-
-    // Stores the user's password input
-    const [password, setPassword] = useState<string>('');
-
-    // Stores backend validation error messages
-    const [error, setError] = useState<Error[] | null>([]);
-
-    // Stores Firebase authentication errors
-    const [loginError, setLoginError] = useState<string>('');
-
-    // React Router navigation hook
-    const redirect = useNavigate();
-
-    /**
-     * Updates email state when the user types in the email input
-     */
-    function handleEmailValue(event: React.ChangeEvent<HTMLInputElement>) {
-        setEmail(event.target.value);
-    }
-
-    /**
-     * Updates password state when the user types in the password input
-     */
-    function handlePasswordValue(event: React.ChangeEvent<HTMLInputElement>) {
-        setPassword(event.target.value);
-    }
-
-    //if user is logged in and they attempt to navigate to login page, redirect them to home page
+     //if user is logged in and they attempt to navigate to login page, redirect them to home page
     useEffect(() => {
-        if(auth.currentUser !== null){
-            redirect('/home');
+        if(loginLogic.currentUser !== null){
+            loginLogic.redirect('/home');
         }
     }, []);
-
-    /**
-     * Attempts to log the user in
-     * ---------------------------
-     * 1. Sends credentials to backend for validation
-     * 2. If valid, signs user into Firebase Auth
-     * 3. Confirms email is verified
-     * 4. Redirects user on success
-     */
-    async function loginAttempt(email: string, password: string) {
-        setLoginError('');
-        // Payload sent to backend
-        const loginData: LoginData = {
-            email: email,
-            password: password
-        };
-
-        try {
-            // Send login request to backend API
-            const loginRequest = await fetch(`http://localhost:3000/api/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(loginData)
-            });
-
-            // Parse backend response
-            const loginResponse = await loginRequest.json();
-
-            // If backend returns validation errors, display them
-            if (Object.hasOwn(loginResponse, 'errors')) {
-                setError(loginResponse.errors);
-                console.log(error);
-            }
-            else {
-                try {
-                    setError(null);
-                    // Attempt Firebase login
-                    await signInWithEmailAndPassword(auth, email, password);
-
-                    // Block login if email is not verified
-                    if (!auth.currentUser?.emailVerified) {
-                        try {
-                            // Immediately sign user out
-                            await signOut(auth);
-                            console.log("Verify email to log in");
-                        }
-                        catch (error) {
-                            console.error(error);
-                        }
-                    }
-                    else {
-                        // Successful login → redirect to home
-                        redirect('/home');
-                        console.log("logged in");
-                    }
-                }
-                catch (error) {
-                    // Firebase authentication error
-                    console.error(error);
-                    setLoginError("Invalid Email/Password");
-                }
-            }
-        }
-        catch (error) {
-            // Network or server error
-            console.error(error);
-        }
-    }
 
     /**
      * Component Render
@@ -159,7 +35,7 @@ export default function Login() {
                 type="Email"
                 name="Email"
                 autoComplete="true"
-                onChange={handleEmailValue}
+                onChange={loginLogic.handleEmailValue}
             />
 
             <label htmlFor="Password">Password: </label>
@@ -167,30 +43,30 @@ export default function Login() {
                 id="Password"
                 type="Password"
                 name="Password"
-                onChange={handlePasswordValue}
+                onChange={loginLogic.handlePasswordValue}
             />
 
             {/* Trigger login attempt */}
             <button
                 type='button'
                 className={styles.loginButton}
-                onClick={() => loginAttempt(email, password)}
+                onClick={() => loginLogic.loginAttempt(loginLogic.email, loginLogic.password)}
             >
                 Log in
             </button>
 
             {/* Backend validation error */}
-            <span>{error !== undefined 
+            <span>{loginLogic.error !== undefined 
             ? <ul className={styles.errorsList}>
-                {error?.map((error: Error) => 
+                {loginLogic.error?.map((error: Error) => 
                     <li key={error.msg}>{`${error.msg}`}</li>
                 )}
               </ul> 
               : null}</span>
 
             {/* Firebase authentication error */}
-            <span>{loginError !== '' 
-            ? `${loginError}`
+            <span>{loginLogic.loginError !== '' 
+            ? `${loginLogic.loginError}`
             : null}
             </span>
 
