@@ -59,19 +59,19 @@ export default function Login() {
             <span>{loginLogic.error !== undefined 
             ? <ul className={styles.errorsList}>
                 {loginLogic.error?.map((error: Error) => 
-                    <li key={error.msg}>{`${error.msg}`}</li>
+                    <li key={error.msg} className={styles.error}>{`${error.msg}`}</li>
                 )}
               </ul> 
               : null}</span>
 
             {/* Firebase authentication error */}
-            <span>{loginLogic.loginError !== '' 
+            <span className={styles.error}>{loginLogic.loginError !== '' 
             ? `${loginLogic.loginError}`
             : null}
             </span>
 
             <span>
-                <Link to="/forgot-password">Forgot Password</Link>
+                <Link to="/forgot-password" className={styles.forgotPassword}>Forgot Password</Link>
             </span>
 
             {/* Navigation to signup page */}
