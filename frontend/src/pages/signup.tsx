@@ -60,7 +60,7 @@ export default function Signup(){
             {signupLogic.error !== undefined
             ? <ul className={styles.errorList}>
                 {signupLogic.error?.map((error: Error) =>
-                    <li key={error.msg}>
+                    <li key={error.msg} className={styles.error}>
                         {`${error.msg}`}
                     </li>
                 )}
@@ -69,7 +69,7 @@ export default function Signup(){
 
             {/* Display firebase signup error (email already in use) */}
             {signupLogic.signupError !== ''
-            ? <span>{`${signupLogic.signupError}`}</span>
+            ? <span key={signupLogic.signupError} className={styles.error}>{`${signupLogic.signupError}`}</span>
             : null}
         </div>
     );

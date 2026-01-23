@@ -9,6 +9,7 @@
     border-radius: 15px;
     padding: 25px;
     margin-top: 32vh;
+    height: 210px;
 }
 
 .errorList{
@@ -22,3 +23,20 @@
     margin-bottom: 5%;
 }
 
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.error{
+    display: inline-block;
+    height: 0;
+    animation-name: fadeOut;
+    animation-duration: 3s; 
+    animation-fill-mode: forwards;
+    animation-delay: 2s;
+}

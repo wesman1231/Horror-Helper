@@ -2,13 +2,15 @@
 import { useNavigate, type NavigateFunction } from 'react-router';
 
 // React state management
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // Firebase app instance
 import { app } from '../firebase/firebase';
 
 // Firebase authentication methods
 import { getAuth, signInWithEmailAndPassword, signOut, type User } from "firebase/auth";
+
+import { FirebaseError } from 'firebase/app';
 
 /**
  * Shape of the login payload sent to the backend API
@@ -53,6 +55,7 @@ export default function useLogin(){
     // Initialize Firebase Auth
     const auth = getAuth(app);
 
+    //The current signed in user
     const currentUser = auth.currentUser;
 
     // Stores the user's email input
@@ -67,8 +70,22 @@ export default function useLogin(){
     // Stores Firebase authentication errors
     const [loginError, setLoginError] = useState<string>('');
 
+    //Potential log in authentication errors
+    const loginErrors: Record<string, string> = {
+        "auth/invalid-credential": "Invalid credentrials",
+        "default": "An unknown error occured, please try again later"
+    };
+
     // React Router navigation hook
     const redirect = useNavigate();
+
+    //When login error is set, set it to empty string after 5 seconds
+    //TO DO: FIX SPACING ON LOGIN ERROR SO IT IS NOT BEHIND LINKS, MAKE SURE ANIMATION DELAY WORKS PROPERLY
+        useEffect(() => {
+            setTimeout(() => {
+                setLoginError('');
+            }, 5000);
+        }, [loginError]);
 
     /**
      * Updates email state when the user types in the email input
@@ -142,9 +159,16 @@ export default function useLogin(){
                         }
                     }
                     catch (error) {
-                        // Firebase authentication error
+                        // Handle potential Firebase authentication errors
                         console.error(error);
-                        setLoginError("Invalid Email/Password");
+                        if(error instanceof FirebaseError){
+                            if(error.code in loginErrors){
+                                setLoginError(loginErrors[error.code]);
+                            }
+                            else{
+                                setLoginError(loginErrors["default"]);
+                            }
+                        }
                     }
                 }
             }
@@ -153,6 +177,8 @@ export default function useLogin(){
                 console.error(error);
             }
         }
+
+    //Object containing all methods of the login hook
     const loginHook: LoginHook = {
         currentUser: currentUser,
         email: email,

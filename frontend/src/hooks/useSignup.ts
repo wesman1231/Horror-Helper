@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut, } from "firebase/auth";
 import { app } from "../firebase/firebase";
+import { FirebaseError } from "firebase/app";
 
 /**
 * Payload sent to the backend signup endpoint.
@@ -63,9 +64,22 @@ export default function useSignUp(){
     /** Firebase authentication error */
     const [signupError, setSignupError] = useState<string>('');
 
+    //Potential sign up authentication errors
+    const signupErrors: Record<string, string> = {
+        "auth/email-already-in-use": "Email already exists",
+        "auth/weak-password": "Password must have at least 6 characters",
+        "default": "An unknown error occured, please try again later"
+    };
 
     /** Navigation helper for redirecting after successful signup */
     const redirect = useNavigate();
+
+    //When sign up error is set, set it to an empty string
+    useEffect(() => {
+        setTimeout(() => {
+            setSignupError('');
+        }, 5000);
+    }, [signupError]);
 
     /**
      * Updates email state when the email input changes.
@@ -125,7 +139,7 @@ export default function useSignUp(){
                             password
                         );
                     
-                    //sign user out right away upon successful login, enforces email validation requirement to log in
+                    //sign user out right away upon successful sign up, enforces email validation requirement to log in
                     try{
                         signOut(auth);
                     }
@@ -148,18 +162,18 @@ export default function useSignUp(){
 
                     // Redirect to login page
                     redirect("/");
-                } 
+                }
+                // Handle potential Firebase authentication errors 
                 catch (error) {
-                    console.error(
-                        "Firebase signup failed:",
-                        error,
-                    );
-                    if(String(error).includes("Password")){
-                        setSignupError("Password should contain at least 6 characters");
+                    if(error instanceof FirebaseError){
+                        if(error.code in signupErrors){
+                            setSignupError(signupErrors[error.code]);
+                        }
+                        else{
+                            setSignupError(signupErrors["default"]);
+                        }
                     }
-                    else{
-                        setSignupError("Email already in use");
-                    }
+                    console.error(error);
                 }
             }
         } catch (error) {
@@ -167,6 +181,7 @@ export default function useSignUp(){
         }
     }
 
+    //Object containing all methods in the signup hook
     const signupHook: SignupHook = {
         email: email,
         password: password,
