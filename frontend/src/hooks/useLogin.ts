@@ -80,12 +80,25 @@ export default function useLogin(){
     const redirect = useNavigate();
 
     //When login error is set, set it to empty string after 5 seconds
-    //TO DO: FIX SPACING ON LOGIN ERROR SO IT IS NOT BEHIND LINKS, MAKE SURE ANIMATION DELAY WORKS PROPERLY
         useEffect(() => {
-            setTimeout(() => {
+           if (!loginError) return;
+           
+            const timer = setTimeout(() => {
                 setLoginError('');
             }, 5000);
+
+            return () => clearTimeout(timer);
         }, [loginError]);
+
+        useEffect(() => {
+            if(!error) return;
+            
+            const timer = setTimeout(() => {
+                setError(null);
+            }, 5000);
+
+            return () => clearTimeout(timer);
+        }, [error]);
 
     /**
      * Updates email state when the user types in the email input

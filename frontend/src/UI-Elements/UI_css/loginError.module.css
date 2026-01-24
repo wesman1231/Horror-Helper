@@ -1,0 +1,24 @@
+.errorsList{
+    list-style: none;
+    padding: 0;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.error{
+    height: 0;
+    display: block;
+    animation-name: fadeOut;
+    animation-duration: 3s; 
+    animation-fill-mode: forwards;
+    animation-delay: 2s;
+    text-align: center;
+    margin: 0;
+}
