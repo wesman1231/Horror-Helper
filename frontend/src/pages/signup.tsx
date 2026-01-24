@@ -1,3 +1,5 @@
+//TO DO: MODIFY STRUCTURE OF SIGNUP COMPONENT TO MATCH THAT OF LOGIN COMPONENT TO PROPERLY STYLE ELEMENTS
+
 import styles from "../pages/pages_css/signup.module.css";
 
 //import signup hook

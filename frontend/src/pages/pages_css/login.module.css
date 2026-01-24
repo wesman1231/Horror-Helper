@@ -1,9 +1,8 @@
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;     
-  height: 95vh;           
-  margin: 0;          
+.pageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
 .loginWrapper{
@@ -14,20 +13,8 @@ body {
     color: red;
     border: 5px solid red;
     border-radius: 15px;
-    margin-top: 32vh;
-}
-
-.loginButton{
-    margin-top: 5%;
-}
-
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+    gap: 3.5rem;
+    width: 100%;
 }
 
 .errorsList{
@@ -35,11 +22,24 @@ body {
     padding: 0;
 }
 
-.error{
-    display: inline-block;
-    height: 0;
-    animation-name: fadeOut;
-    animation-duration: 3s; 
-    animation-fill-mode: forwards;
-    animation-delay: 2s;
+.inputsWrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.errorWrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: -1.5rem;
+}
+
+.linksWrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }

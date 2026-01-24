@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut, } from "firebase/auth";
 import { app } from "../firebase/firebase";
@@ -73,13 +73,6 @@ export default function useSignUp(){
 
     /** Navigation helper for redirecting after successful signup */
     const redirect = useNavigate();
-
-    //When sign up error is set, set it to an empty string
-    useEffect(() => {
-        setTimeout(() => {
-            setSignupError('');
-        }, 5000);
-    }, [signupError]);
 
     /**
      * Updates email state when the email input changes.
