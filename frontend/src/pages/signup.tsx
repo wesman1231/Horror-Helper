@@ -1,12 +1,10 @@
-//TO DO: MODIFY STRUCTURE OF SIGNUP COMPONENT TO MATCH THAT OF LOGIN COMPONENT TO PROPERLY STYLE ELEMENTS
+import InputValidationError from '../UI-Elements/inputValidationError';
+import SignupError from '../UI-Elements/signupError';
 
 import styles from "../pages/pages_css/signup.module.css";
 
 //import signup hook
 import useSignUp from "../hooks/useSignup";
-
-//import input validation error interface from signup ghook
-import type { Error } from "../hooks/useSignup";
 
 /**
  * Signup Component
@@ -30,49 +28,47 @@ export default function Signup(){
     const signupLogic = useSignUp();
 
     return (
-        <div className={styles.signupWrapper}>
-            <label htmlFor="Email">Email:</label>
-            <input
-                id="Email"
-                type="Email"
-                name="Email"
-                autoComplete="True"
-                onChange={signupLogic.handleEmailValue}
-                required
-            />
+        <div className={styles.pageContainer}>
+            
+            {/* Wrapper for signup component */}
+            <div className={styles.signupWrapper}>
+                <label htmlFor="Email">Email:</label>
+                <input
+                    id="Email"
+                    type="Email"
+                    name="Email"
+                    autoComplete="True"
+                    onChange={signupLogic.handleEmailValue}
+                    required
+                />
 
-            <label htmlFor="Password">Password:</label>
-            <input
-                id="Password"
-                type="Password"
-                name="Password"
-                onChange={signupLogic.handlePasswordValue}
-                required
-            />
+                <label htmlFor="Password">Password:</label>
+                <input
+                    id="Password"
+                    type="Password"
+                    name="Password"
+                    onChange={signupLogic.handlePasswordValue}
+                    required
+                />
 
-            <button
-                type="button"
-                className={styles.signupButton}
-                onClick={() => signupLogic.signupAttempt(signupLogic.email, signupLogic.password)}
-            >
-                Sign Up
-            </button>
+                <button
+                    type="button"
+                    className={styles.signupButton}
+                    onClick={() => signupLogic.signupAttempt(signupLogic.email, signupLogic.password)}
+                >
+                    Sign Up
+                </button>
 
-            {/* Error message display */}
-            {signupLogic.error !== undefined
-            ? <ul className={styles.errorList}>
-                {signupLogic.error?.map((error: Error) =>
-                    <li key={error.msg} className={styles.error}>
-                        {`${error.msg}`}
-                    </li>
-                )}
-              </ul>
-            : null}
+                {/* Error message display */}
+                {signupLogic.error !== undefined
+                ? <InputValidationError inputError={signupLogic.error}/>
+                : null}
 
-            {/* Display firebase signup error (email already in use) */}
-            {signupLogic.signupError !== ''
-            ? <span key={signupLogic.signupError} className={styles.error}>{`${signupLogic.signupError}`}</span>
-            : null}
+                {/* Display firebase signup error (email already in use) */}
+                {signupLogic.signupError !== ''
+                ? <SignupError signupError={signupLogic.signupError}/>
+                : null}
+            </div>
         </div>
     );
 }

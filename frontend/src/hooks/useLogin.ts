@@ -90,6 +90,7 @@ export default function useLogin(){
             return () => clearTimeout(timer);
         }, [loginError]);
 
+        //When input validation error is set, set it to empty string after 5 seconds
         useEffect(() => {
             if(!error) return;
             

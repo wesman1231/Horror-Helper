@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, type NavigateFunction } from "react-router";
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut, } from "firebase/auth";
 import { app } from "../firebase/firebase";
@@ -26,7 +26,7 @@ export interface Error {
 interface SignupHook {
     email: string;
     password: string;
-    error?: Error[] | undefined;
+    error?: Error[] | null;
     signupError: string;
     redirect: NavigateFunction;
     handleEmailValue: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -59,7 +59,7 @@ export default function useSignUp(){
     const [password, setPassword] = useState<string>("");
 
     /** Error message returned from the backend */
-    const [error, setError] = useState<Error[] | undefined>([]);
+    const [error, setError] = useState<Error[] | null>([]);
 
     /** Firebase authentication error */
     const [signupError, setSignupError] = useState<string>('');
@@ -73,6 +73,28 @@ export default function useSignUp(){
 
     /** Navigation helper for redirecting after successful signup */
     const redirect = useNavigate();
+
+    //When login error is set, set it to empty string after 5 seconds
+        useEffect(() => {
+           if (!signupError) return;
+           
+            const timer = setTimeout(() => {
+                setSignupError('');
+            }, 5000);
+    
+            return () => clearTimeout(timer);
+        }, [signupError]);
+    
+        //When input validation error is set, set it to empty string after 5 seconds
+        useEffect(() => {
+            if(!error) return;
+            
+            const timer = setTimeout(() => {
+                setError(null);
+            }, 5000);
+    
+            return () => clearTimeout(timer);
+        }, [error]);
 
     /**
      * Updates email state when the email input changes.
@@ -105,7 +127,7 @@ export default function useSignUp(){
             password,
         };
             setSignupError('');
-            setError(undefined);
+            setError(null);
         try {
             const signupRequest = await fetch(
                 `http://localhost:3000/api/auth/signup`,
@@ -139,7 +161,8 @@ export default function useSignUp(){
                     catch(error){
                         console.error(error);
                     }
-
+                    
+                    //the user signing up
                     const user = userCredential.user;
 
                     // Send email verification link

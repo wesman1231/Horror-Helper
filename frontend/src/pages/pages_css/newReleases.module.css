@@ -2,4 +2,11 @@
     color: white;
     font-size: 1.4em;
     text-align: center;
+    position: relative;
+    top: 5.5em;
+}
+
+.contentNav{
+    position: relative;
+    top: 7.5em;
 }
