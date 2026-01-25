@@ -1,9 +1,12 @@
 import express from 'express';
-import movieDataController from '../controller/movieDataController.ts';
+import { fetchMovieInfo } from '../controller/movieDataController.ts';
+import { fetchNewReleases } from '../controller/movieDataController.ts';
 
 const router = express.Router();
 
-router.get('/:id', movieDataController.fetchMovieInfo);
+router.get('/new-releases', fetchNewReleases);
+router.get('/:id', fetchMovieInfo);
+
 
 export default router;
 

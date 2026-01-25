@@ -1,11 +1,11 @@
 import type { Error } from "../hooks/useSignup";
 import styles from '../UI-Elements/UI_css/inputValidationError.module.css';
 
-interface SignupErrorProps{
-    inputError: Error[];
+interface ValidationError{
+    inputError: Error[] | null;
 }
 
-export default function InputValidationError(props: SignupErrorProps){
+export default function InputValidationError(props: ValidationError){
     
         return(
             <ul className={styles.errorsList}>
