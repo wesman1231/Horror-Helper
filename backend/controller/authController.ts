@@ -22,4 +22,3 @@ export async function validateLogin(req: Request, res: Response){
     return res.status(200).json('valid email and password'); 
 }
 
-

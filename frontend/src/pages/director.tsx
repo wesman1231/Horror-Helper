@@ -3,10 +3,6 @@ import { useParams } from "react-router-dom";
 import type { Movie } from "../UI-Elements/movieCard";
 import MovieCard from "../UI-Elements/movieCard";
 import styles from "../pages/pages_css/director.module.css";
-import { onAuthStateChanged, getAuth } from "firebase/auth";
-import { app } from "../firebase/firebase";
-import { useNavigate } from "react-router";
-
 /**
  * Director Component
  *
@@ -49,23 +45,6 @@ export default function Director() {
 
     /** Director biography text */
     const [directorBio, setDirectorBio] = useState<string>();
-
-    const navigate = useNavigate();
-    const auth = getAuth(app);
-
-    /**
-     * Authentication Guard
-     *
-     * Redirects users to the home page if they are not logged in.
-     * Firebase auth state is monitored on component mount.
-     */
-    useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                navigate("/");
-            }
-        });
-    }, []);
 
     /**
      * Fetch Director Information

@@ -1,6 +1,5 @@
 import express from "express";
-import { validateSignup } from "../controller/authController.ts";
-import { validateLogin } from "../controller/authController.ts";
+import { validateSignup, validateLogin } from "../controller/authController.ts";
 import { body } from 'express-validator';
 
 const validateEmail = () => body('email')

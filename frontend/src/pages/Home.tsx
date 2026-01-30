@@ -1,23 +1,8 @@
-import { onAuthStateChanged, getAuth } from 'firebase/auth';
-import { app } from '../firebase/firebase';
 import styles from '../pages/pages_css/Home.module.css';
 import { useNavigate } from 'react-router'
-import { useEffect } from 'react';
-
-
 
 export default function Home(){
     const navigate = useNavigate();
-    const auth = getAuth(app);
-
-    //check if user is logged in, if not, redirect them to log in page
-    useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-        if(!user){
-            navigate('/');
-        }
-    });
-    }, []);
 
     const navigateToNewReleases = () =>{
         navigate('/new-releases');
