@@ -3,9 +3,6 @@ import { useEffect, useState } from "react";
 import type { Movie } from "../UI-Elements/movieCard";
 import MovieInfo from "../UI-Elements/movieInfo";
 import MovieShowPageError from "../UI-Elements/movieShowPageError";
-import { onAuthStateChanged, getAuth } from "firebase/auth";
-import { app } from "../firebase/firebase";
-import { useNavigate } from "react-router";
 
 /**
  * MoviePage Component
@@ -43,22 +40,6 @@ export default function MoviePage() {
     /** Error message returned from the server */
     const [errorMessage, setErrorMessage] = useState<string>("");
 
-    const navigate = useNavigate();
-    const auth = getAuth(app);
-
-    /**
-     * Authentication Guard
-     *
-     * Redirects users to the home page if they are not logged in.
-     * Runs once when the component mounts.
-     */
-    useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                navigate("/");
-            }
-        });
-    }, []);
 
     /**
      * Fetch Movie Information

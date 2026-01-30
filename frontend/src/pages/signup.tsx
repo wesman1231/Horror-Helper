@@ -1,10 +1,5 @@
-import InputValidationError from '../UI-Elements/inputValidationError';
-import SignupError from '../UI-Elements/signupError';
-
 import styles from "../pages/pages_css/signup.module.css";
 
-//import signup hook
-import useSignUp from "../hooks/useSignup";
 
 /**
  * Signup Component
@@ -25,7 +20,6 @@ export default function Signup(){
     /** * Custom hook containing state management, input handlers, 
      * and the Firebase/Backend submission logic.
      */
-    const signupLogic = useSignUp();
 
     return (
         <div className={styles.pageContainer}>
@@ -38,7 +32,6 @@ export default function Signup(){
                     type="Email"
                     name="Email"
                     autoComplete="True"
-                    onChange={signupLogic.handleEmailValue}
                     required
                 />
 
@@ -47,27 +40,21 @@ export default function Signup(){
                     id="Password"
                     type="Password"
                     name="Password"
-                    onChange={signupLogic.handlePasswordValue}
                     required
                 />
 
                 <button
                     type="button"
                     className={styles.signupButton}
-                    onClick={() => signupLogic.signupAttempt(signupLogic.email, signupLogic.password)}
                 >
                     Sign Up
                 </button>
 
                 {/* Error message display */}
-                {signupLogic.error !== undefined
-                ? <InputValidationError inputError={signupLogic.error}/>
-                : null}
+
 
                 {/* Display firebase signup error (email already in use) */}
-                {signupLogic.signupError !== ''
-                ? <SignupError signupError={signupLogic.signupError}/>
-                : null}
+
             </div>
         </div>
     );
