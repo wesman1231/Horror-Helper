@@ -7,8 +7,6 @@ import SortMenu from "../UI-Elements/sortMenu";
 import { useParams } from "react-router";
 import type { Movie } from "../UI-Elements/movieCard";
 import type { Show } from "../UI-Elements/tvCard";
-import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect } from "react";
 
 
 /**
@@ -36,7 +34,6 @@ export type mediaType = "movies" | "shows";
  * @returns {JSX.Element} Media search page UI
  */
 export default function MediaSearch() {
-    //TODO: IMPLEMENT LOGIC TO SEND ACCESS TOKEN JWT TO BACKEND FOR VALIDATION WHEN THE PAGE LOADS
     
     /**
      * Media type read from the URL parameters.
