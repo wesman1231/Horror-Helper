@@ -6,8 +6,6 @@ import movieRoutes from './routes/movieRoutes.ts';
 import showRoutes from './routes/showRoutes.ts';
 import directorRoutes from './routes/directorRoutes.ts';
 import authRoutes from './routes/authRoutes.ts';
-import { db } from './db/pool.ts';
-import type { Request, Response } from 'express';
 
 
 const app = express();
