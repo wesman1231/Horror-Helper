@@ -6,9 +6,8 @@ import styles from '../pages/pages_css/login.module.css';
 
 export default function Login() {
     const navigate = useNavigate();
-    const { loginWithRedirect } = useAuth0();
-    const { isAuthenticated } = useAuth0();
-    const { isLoading } = useAuth0();
+    const { loginWithRedirect, isAuthenticated, isLoading, error } = useAuth0();
+    const isVerificationError = error?.message.includes("verify your email");
 
     if(isAuthenticated){
         navigate('/home');
@@ -19,8 +18,12 @@ export default function Login() {
      */
     return (
         <div className={styles.pageContainer}>
-            <button type="button" onClick={() => loginWithRedirect()}>Sign up or log in</button>
+            <button type="button" className={styles.button} onClick={() => loginWithRedirect()}>Sign up or log in</button>
             <div>{isLoading ? 'loading...' : null}</div>
+            {isVerificationError ?
+                <span>Please verify email address to log in</span>
+            : 
+                null}
         </div>
     );
 }
