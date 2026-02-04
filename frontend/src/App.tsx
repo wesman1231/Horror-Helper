@@ -1,6 +1,5 @@
 import './App.css'
 
-import Signup from './pages/signup';
 import Login from './pages/login';
 import ForgotPassword from './pages/forgotPassword';
 
@@ -27,7 +26,6 @@ function App() {
         <Routes>
           {/*auth routes*/}
           <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           
           <Route path="/home" element={<Home />}/>

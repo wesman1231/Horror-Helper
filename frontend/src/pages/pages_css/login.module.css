@@ -3,43 +3,12 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    color: white;
 }
 
-.loginWrapper{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: red;
-    border: 5px solid red;
-    border-radius: 15px;
-    gap: 3.5rem;
-    width: 100%;
+.button{
+    position: relative;
+    bottom: 10rem;
 }
 
-.errorsList{
-    list-style: none;
-    padding: 0;
-}
 
-.inputsWrapper{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.errorWrapper{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-top: -1.5rem;
-}
-
-.linksWrapper{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
