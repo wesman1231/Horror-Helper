@@ -1,5 +1,6 @@
 .pageContainer {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -9,6 +10,10 @@
 .button{
     position: relative;
     bottom: 10rem;
+}
+
+.verifyEmail{
+    text-align: center;
 }
 
 

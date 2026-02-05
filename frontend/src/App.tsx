@@ -1,6 +1,7 @@
 import './App.css'
 
 import Login from './pages/login';
+import LoginRedirect from './pages/loginRedirect';
 import ForgotPassword from './pages/forgotPassword';
 
 import Header from './UI-Elements/Header';
@@ -26,6 +27,7 @@ function App() {
         <Routes>
           {/*auth routes*/}
           <Route path="/" element={<Login />} />
+          <Route path='/login' element={<LoginRedirect />}/>
           <Route path="/forgot-password" element={<ForgotPassword />} />
           
           <Route path="/home" element={<Home />}/>
