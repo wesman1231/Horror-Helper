@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import type { Movie } from "../UI-Elements/movieCard";
 import type { Show } from "../UI-Elements/tvCard";
 import { useParams } from "react-router";
-import { useAuth0 } from "@auth0/auth0-react";
 
 import type { mediaType } from "../pages/mediaSearch";
 export type sortModes = 'relevance' | 'releasedate' | 'newest' | 'title' | 'director' | 'franchise' | 'firstairdate' | 'lastairdate' | 'creator';
@@ -41,7 +40,6 @@ export default function useSearch(){
     const [pages, setPages] = useState<number[]>([]);
     const [keywords, setKeywords] = useState<string[]>([]);
 
-    const { getAccessTokenSilently } = useAuth0();
 
     //run sort function when sortMode changes
     useEffect(() => {
@@ -87,15 +85,8 @@ export default function useSearch(){
             const keywordString = encodeURIComponent(keywords.join('+'));
             console.log(keywordString);
             try{
-                const getToken = await getAccessTokenSilently();
 
-                const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`, {
-                    method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${getToken}`, 
-                        'Content-Type': 'application/json'
-                    }
-                });
+                const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
                 console.log(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
                 const response = await request.json();
                     
