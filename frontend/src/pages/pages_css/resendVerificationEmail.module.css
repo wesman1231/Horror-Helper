@@ -1,26 +1,28 @@
-.pageContainer {
+
+.pageContainer{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    color: white;
 }
 
-.button{
-    position: relative;
-    bottom: 10rem;
-}
-
-.verificationDiv{
+.resendVerificationWrapper{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    color: red;
+    border: 5px solid red;
+    border-radius: 15px;
+    position: relative;
+    bottom: 7.5em;
 }
 
-.verifyEmail{
+.button{
+    margin-top: 5%;
+}
+
+.verificationError{
     text-align: center;
 }
-
-

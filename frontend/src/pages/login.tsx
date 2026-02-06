@@ -33,9 +33,9 @@ export default function Login() {
             :
                 null}
             {isVerificationError ?
-                <div>
+                <div className={styles.verificationDiv}>
                     <p className={styles.verifyEmail}>Please verify email address to log in</p>
-                    <button type='button' className={styles.button}>resend email verification</button>
+                    <button type='button' className={styles.button} onClick={() => navigate('/forgot-password')}>resend email verification</button>
                 </div>
             : 
                 null}
