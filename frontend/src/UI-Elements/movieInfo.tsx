@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ExtraMovieInfo from "./extraMovieInfo";
 import type { Movie } from "../UI-Elements/movieCard";
 import styles from "../UI-Elements/UI_css/movieInfo.module.css";
+import Review from "./review";
 
 /**
  * Props for the MovieInfo component.
@@ -85,6 +86,7 @@ export default function MovieInfo(props: MovieDataProps) {
             </button>
 
             {infoDropdown ? <ExtraMovieInfo movieData={props.movieData} /> : null}
+            <Review />
         </section>
     );
 }
