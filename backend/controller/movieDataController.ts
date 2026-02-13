@@ -26,6 +26,27 @@ export async function fetchMovieInfo(req: Request, res: Response): Promise<void>
     }
 };
 
+export async function fetchFranchiseInfo(req: Request, res: Response){
+    const franchiseName = String(req.params.franchiseName).replaceAll('+', ' ');
+        
+    try{
+        //query database to get all movies in a franchise
+        const [fetchMoviesFromDB]: any[] = await db.execute(`SELECT * FROM movies WHERE franchise = ? ORDER BY releasedate `, [franchiseName]);
+
+        //if franchise cannot be found, return 404 error
+        if(fetchMoviesFromDB === null || fetchMoviesFromDB.length === 0){
+            return res.status(404).json({error: "Franchise does not exist"});
+        }
+        
+        //if no errors, return movies
+        return res.status(200).json({movies: fetchMoviesFromDB});
+    }
+    catch(error){
+        return res.status(500).json({error: error});
+    }
+    
+}
+
 export async function fetchNewReleases(req: Request, res: Response){
     const currentDate: Date = new Date();
     const stringCurrentYear = String(currentDate.getFullYear());

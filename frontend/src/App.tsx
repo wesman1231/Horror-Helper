@@ -13,6 +13,7 @@ import MediaSearch from './pages/mediaSearch';
 import MoviePage from './pages/moviePage';
 import ShowPage from './pages/showPage';
 import Director from './pages/director';
+import Franchise from './pages/franchise';
 
 import NewReleases from './pages/newReleases';
 import ProvenClassics from './pages/provenClassics';
@@ -78,6 +79,12 @@ function App() {
               <MoviePage/>
             </ProtectedRoute>
           }/>
+          <Route path='/franchises/:franchiseName' element={
+            <ProtectedRoute>
+              <Franchise />
+            </ProtectedRoute>
+          }>
+          </Route>
           <Route path='/shows/:id' element={
             <ProtectedRoute>
               <ShowPage/>
