@@ -48,6 +48,9 @@ export interface Movie {
  * @returns {JSX.Element} Card showing movie information
  */
 export default function MovieCard(props: Movie) {
+    const formatDirector = props?.director?.replaceAll(" ", "+");
+    const formatFranchise = props?.franchise?.replaceAll(" ", "+");
+    
     return (
         <div className={styles.movieCard}>
             {/* Poster image */}
@@ -71,7 +74,7 @@ export default function MovieCard(props: Movie) {
 
                 <ul className={styles.info}>
                     <li className={styles.releaseDate}>
-                        <span className={styles.infoHeader}>Release date: </span>{" "}
+                        <span className={styles.infoHeader}>Release date: </span>
                         {props.releasedate}
                     </li>
                     <li className={styles.subgenre}>
@@ -79,16 +82,19 @@ export default function MovieCard(props: Movie) {
                         {props.keywords}
                     </li>
                     <li className={styles.director}>
-                        <span className={styles.infoHeader}>Director: </span>
-                        {props.director}
+                        <span className={styles.infoHeader}> 
+                            Director: <Link to={`/directors/${formatDirector}`}>{props.director}</Link>
+                        </span>
                     </li>
                     <li className={styles.synopsis}>
                         <span className={styles.infoHeader}>Synopsis: </span>{" "}
                         {props.synopsis}
                     </li>
                     <li className={styles.franchise}>
-                        <span className={styles.infoHeader}>Franchise: </span>
-                        {props.franchise === null ? "none" : props.franchise}
+                        <span className={styles.infoHeader}>
+                            Franchise:
+                        </span>
+                        {props.franchise !== "none" ? <Link to={`/franchises/${formatFranchise}`}>{" " + props.franchise}</Link> : " none"}
                     </li>
                 </ul>
             </div>
