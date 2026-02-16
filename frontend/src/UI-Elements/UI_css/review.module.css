@@ -4,3 +4,24 @@
     justify-content: center;
     align-items: center;
 }
+
+.reviewScoreButton {
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: none; /* Removes the focus outline, but remember accessibility */
+    -webkit-appearance: none; /* For Safari/iOS specific styling issues */
+    appearance: none;
+    width: 4em;
+    height: 4em;
+    background-image: url('/buttonImages/pngtree-skull-clip-art-png-image_6616004.png');
+    background-size: cover;
+    background-color: transparent;
+    background-position: center;
+    position: relative;
+}
+
+
+
