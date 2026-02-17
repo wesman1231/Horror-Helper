@@ -86,7 +86,7 @@ export default function MovieInfo(props: MovieDataProps) {
             </button>
 
             {infoDropdown ? <ExtraMovieInfo movieData={props.movieData} /> : null}
-            <Review />
+            <Review mediaID={props.movieData?.tmdbid} mediaType='movies'/>
         </section>
     );
 }

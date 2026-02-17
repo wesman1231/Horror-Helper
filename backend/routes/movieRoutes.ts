@@ -10,5 +10,6 @@ router.get('/:id', fetchMovieInfo);
 router.get('/franchises/:franchiseName', fetchFranchiseInfo);
 
 
+
 export default router;
 
