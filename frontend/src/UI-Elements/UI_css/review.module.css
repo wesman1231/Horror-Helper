@@ -14,12 +14,22 @@
     outline: none; /* Removes the focus outline, but remember accessibility */
     -webkit-appearance: none; /* For Safari/iOS specific styling issues */
     appearance: none;
-    width: 4em;
-    height: 4em;
-    background-image: url('/buttonImages/pngtree-skull-clip-art-png-image_6616004.png');
-    background-size: cover;
+    width: 50px;
+    height: 50px;
+    background-image: url('/buttonImages/20241116_002.png');
+    background-size: contain;
     background-color: transparent;
     background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.active{
+    background-image: url('/buttonImages/20241116_001.png');
+    background-size: contain;
+    background-color: transparent;
+    background-position: center;
+    background-repeat: no-repeat;
     position: relative;
 }
 

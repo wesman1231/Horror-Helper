@@ -6,6 +6,7 @@ import movieRoutes from './routes/movieRoutes.ts';
 import showRoutes from './routes/showRoutes.ts';
 import directorRoutes from './routes/directorRoutes.ts';
 import resendVerificationRoutes from './routes/resendVerificationRoute.ts';
+import reviewRoutes from './routes/reviewRoutes.ts';
 
 
 const app = express();
@@ -20,6 +21,7 @@ app.use('/api/movies', movieRoutes);
 app.use('/api/shows', showRoutes);
 app.use('/api/directors', directorRoutes);
 app.use('/api', resendVerificationRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 
 app.listen(3000, () => {

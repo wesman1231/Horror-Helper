@@ -108,7 +108,7 @@ export default function Director() {
                         keywords={movie.keywords}
                         director={movie.director}
                         releasedate={movie.releasedate}
-                        franchise={movie?.franchise}
+                        franchise={movie.franchise === null ? 'none' : movie.franchise}
                         synopsis={movie.synopsis}
                         cast={movie.cast}
                     />
