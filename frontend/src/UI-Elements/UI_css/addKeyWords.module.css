@@ -1,10 +1,99 @@
 .keywordsList{
     color: #FFF6E5;
     margin: 0;
-    border: 5px solid white;
+    border: 5px solid red;
+    border-radius: 15px;
     list-style: none;
     font-size: 0.7em;
     padding: 10px;
     max-height: 20vh;
     overflow: scroll;
+}
+
+.bloodDropContainer{
+    display: flex;
+    column-gap: 1em;
+}
+
+.bloodDrop1{
+    border-radius: 0 50% 50% 50%;
+    background-color: hsl(0, 92%, 30%);
+    width: 0.90em;
+    height: 0.80em;
+    transform: rotate(45deg);
+    margin-top: 0.3em;
+    position: relative;
+}
+
+.sheen{
+    background-color: antiquewhite;
+    border-radius: 50%;
+    width: 20%;
+    height: 35%;
+    position: absolute;
+    left: 40%;
+    transform: rotate(110deg)
+}
+
+.bloodDrop2{
+    border-radius: 0 50% 50% 50%;
+    background-color: hsl(0, 92%, 30%);
+    width: 0.80em;
+    height: 1em;
+    transform: rotate(45deg);
+    margin-top: 3em;
+}
+
+.bloodDrop3{
+    border-radius: 0 50% 50% 50%;
+    background-color: hsl(0, 92%, 30%);
+    width: 0.95em;
+    height: 1em;
+    transform: rotate(45deg);
+    margin-top: 1em;
+}
+
+.bloodDrop4{
+    border-radius: 0 50% 50% 50%;
+    background-color: hsl(0, 92%, 30%);
+    width: 0.85em;
+    height: 1em;
+    transform: rotate(45deg);
+    margin-top: 0.5em;
+}
+
+.bloodDrop5{
+    border-radius: 0 50% 50% 50%;
+    background-color: hsl(0, 92%, 30%);
+    width: 0.75em;
+    height: 1em;
+    transform: rotate(45deg);
+    margin-top: 5em;
+}
+
+.bloodDrop6{
+    border-radius: 0 50% 50% 50%;
+    background-color: hsl(0, 92%, 30%);
+    width: 0.90em;
+    height: 1em;
+    transform: rotate(45deg);
+    margin-top: 0.6em;
+}
+
+.bloodDrop7{
+    border-radius: 0 50% 50% 50%;
+    background-color: hsl(0, 92%, 30%);
+    width: 1.3em;
+    height: 1em;
+    transform: rotate(45deg);
+    margin-top: 2em;
+}
+
+.bloodDrop8{
+    border-radius: 0 50% 50% 50%;
+    background-color: hsl(0, 92%, 30%);
+    width: 1.2em;
+    height: 1em;
+    transform: rotate(45deg);
+    margin-top: 0.5em;
 }

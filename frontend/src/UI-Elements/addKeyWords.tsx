@@ -105,6 +105,32 @@ export default function AddKeywords(props: KeywordsProps) {
                     werewolf
                 </li>
             </ul>
+            <div className={styles.bloodDropContainer}>
+                <div className={styles.bloodDrop1}>
+                    <div className={styles.sheen}></div>
+                </div>
+                <div className={styles.bloodDrop2}>
+                    <div className={styles.sheen}></div>
+                </div>
+                <div className={styles.bloodDrop3}>
+                    <div className={styles.sheen}></div>
+                </div>
+                <div className={styles.bloodDrop4}>
+                    <div className={styles.sheen}></div>
+                </div>
+                <div className={styles.bloodDrop5}>
+                    <div className={styles.sheen}></div>
+                </div>
+                <div className={styles.bloodDrop6}>
+                    <div className={styles.sheen}></div>
+                </div>
+                <div className={styles.bloodDrop7}>
+                    <div className={styles.sheen}></div>
+                </div>
+                <div className={styles.bloodDrop8}>
+                    <div className={styles.sheen}></div>
+                </div>
+            </div>
         </div>
     );
 }
