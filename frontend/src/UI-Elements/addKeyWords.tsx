@@ -11,6 +11,8 @@ interface KeywordsProps {
     handleCheckboxChange: (
         event: React.ChangeEvent<HTMLInputElement>
     ) => void;
+        keywordsOpen: boolean;
+        onAnimationEnd: () => void;
 }
 
 /**
@@ -39,7 +41,8 @@ interface KeywordsProps {
 export default function AddKeywords(props: KeywordsProps) {
     return (
         <div className={styles.keywordsWrapper}>
-            <ul className={styles.keywordsList}>
+            <ul className={props.keywordsOpen ? styles.keywordsList : styles.keywordsListReverse} onAnimationEnd={props.onAnimationEnd}>
+                <h2>Keywords</h2>
                 <li>
                     <input
                         type="checkbox"
@@ -105,6 +108,7 @@ export default function AddKeywords(props: KeywordsProps) {
                     werewolf
                 </li>
             </ul>
+            {props.keywordsOpen ? 
             <div className={styles.bloodDropContainer}>
                 <div className={styles.bloodDrop1}>
                     <div className={styles.sheen}></div>
@@ -130,7 +134,8 @@ export default function AddKeywords(props: KeywordsProps) {
                 <div className={styles.bloodDrop8}>
                     <div className={styles.sheen}></div>
                 </div>
-            </div>
+            </div> : 
+            null}
         </div>
     );
 }

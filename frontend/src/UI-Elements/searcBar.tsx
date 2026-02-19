@@ -26,13 +26,15 @@ interface SearchBarProps {
  * @returns {JSX.Element} Search bar UI with optional keyword filter section
  */
 export default function SearchBar(props: SearchBarProps) {
-    const [toggleAddKeywords, setToggleAddKeywords] = useState<boolean>(false);
+    const [keywordsOpen, setKeywordsOpen] = useState<boolean>(false);
+    const [hidden, setHidden] = useState<boolean>(true);
 
     /**
      * Toggles the visibility of the AddKeywords component
      */
     function toggleKeyWords() {
-        setToggleAddKeywords((prev) => !prev);
+        setKeywordsOpen((prev) => !prev);
+        setHidden(false);
     }
 
     return (
@@ -60,15 +62,12 @@ export default function SearchBar(props: SearchBarProps) {
                     className={styles.addKeywords}
                     onClick={toggleKeyWords}
                 >
-                    {toggleAddKeywords
+                    {keywordsOpen
                         ? String.fromCodePoint(128315)
                         : String.fromCodePoint(128314)}
                 </button>
             </div>
-
-            {toggleAddKeywords && (
-                <AddKeywords handleCheckboxChange={props.searchHook.handleCheckboxChange} />
-            )}
+                {hidden ? null : <AddKeywords keywordsOpen={keywordsOpen} handleCheckboxChange={props.searchHook.handleCheckboxChange} onAnimationEnd={() => {if (!keywordsOpen) setHidden(true);}} />}
         </div>
     );
 }
