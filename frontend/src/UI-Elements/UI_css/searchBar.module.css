@@ -20,10 +20,36 @@ body{
     justify-content: center;
     align-items: center;
     margin-top: 2%;
-    border: 5px solid red;
+    column-gap: 10%;
 }
 
 .searchButton{
     font-size: 1.2em;
     border-radius: 15px;
+    transition: 0.3s ease-in-out;
+    background-color: whitesmoke;
+}
+
+.searchButton:hover{
+    font-size: 1.2em;
+    border-radius: 15px;
+    scale: 1.1;
+    background-color: hsl(0, 92%, 30%);
+}
+
+.searchButton:active{
+    scale: 0.8;
+    transition: 0.1s;
+}
+
+.addKeywords{
+    transition: 0.2s ease-in-out;
+}
+
+.addKeywords:hover{
+    scale: 1.1;
+}
+
+.addKeywords:active{
+    scale: 0.6;
 }
