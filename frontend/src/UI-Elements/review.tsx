@@ -1,21 +1,24 @@
 import { useState } from "react";
 import type { mediaType } from "../pages/mediaSearch";
 import styles from './UI_css/review.module.css';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0 } from "@auth0/auth0-react";
+
 
 interface ReviewProps{
     mediaID: number | undefined,
-    mediaType: mediaType
+    mediaType: mediaType,
+    userID?: string;
+    username: string
 }
 
 export default function Review(props: ReviewProps){
-    const { user, getAccessTokenSilently  } = useAuth0();
+    const { getAccessTokenSilently  } = useAuth0();
     const [score, setScore] = useState<number>(0);
     const [reviewValue, setReviewValue] = useState<string>('');
-    const [highlight, setHighlight] = useState<number>();
+    const [highlight, setHighlight] = useState<number>(0);
+    const [scoreError, setScoreError] = useState<string>('');
 
-    const userID = user?.sub;
-    const userName = user?.['https://horror-helper-backend/username'];
+    
 
     interface Review{
         userID: string | undefined,
@@ -36,12 +39,17 @@ export default function Review(props: ReviewProps){
 
     async function postReview(){
         const reviewInfo: Review = {
-            userID: userID,
-            userName: userName,
+            userID: props.userID,
+            userName: props.username,
             reviewScore: score,
             reviewText: reviewValue,
             mediaType: 'movies'
         };
+
+        if(score === 0){
+            setScoreError('Score cannot be 0');
+            return null;
+        }
 
         const token = await getAccessTokenSilently();
 
@@ -60,13 +68,14 @@ export default function Review(props: ReviewProps){
 
     return(
         <div className={styles.reviewContainer}>
+            {scoreError !== '' ? <span>{scoreError}</span> : null}
             <div className={styles.reviewScoreContainer}>
                 <span>
                     {[1, 2, 3, 4, 5].map((num) => (
                         <button 
                             key={num}
                             type='button' 
-                            className={`${styles.reviewScoreButton} ${num <= (highlight ?? 0) ? styles.active : styles.inactive}`}
+                            className={`${styles.reviewScoreButton} ${num <= (highlight) ? styles.active : styles.inactive}`}
                             onClick={() => selectScore(num)}
                         />
                     ))}
