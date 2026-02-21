@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ExtraMovieInfo from "./extraMovieInfo";
 import type { Movie } from "../UI-Elements/movieCard";
 import styles from "../UI-Elements/UI_css/movieInfo.module.css";
 import Review from "./review";
+import PostedreviewsContainer from "./postedReviewsContainer";
+import { useAuth0 } from "@auth0/auth0-react";
 
 /**
  * Props for the MovieInfo component.
@@ -36,8 +38,21 @@ interface MovieDataProps {
  * @param {MovieDataProps} props - Movie data to display
  * @returns {JSX.Element} Movie information section with toggleable extra info
  */
+
+
 export default function MovieInfo(props: MovieDataProps) {
+    const { user, getAccessTokenSilently  } = useAuth0();
     const [infoDropdown, setInfoDropdown] = useState<boolean>(false);
+
+    const userID = user?.sub;
+    const userName = user?.['https://horror-helper-backend/username'];
+
+    useEffect(() => {
+        async function getToken(){
+            await getAccessTokenSilently();
+        }
+        getToken();
+    }, []);
 
     // Format director and franchise names for URLs
     const formatDirector = props.movieData?.director?.replaceAll(" ", "+");
@@ -86,7 +101,8 @@ export default function MovieInfo(props: MovieDataProps) {
             </button>
 
             {infoDropdown ? <ExtraMovieInfo movieData={props.movieData} /> : null}
-            <Review mediaID={props.movieData?.tmdbid} mediaType='movies'/>
+            <Review username={userName} userID={userID} mediaID={props.movieData?.tmdbid} mediaType='movies'/>
+            <PostedreviewsContainer username={userName} userID={userID} mediaType='movies' mediaID={props.movieData?.tmdbid} />
         </section>
     );
 }

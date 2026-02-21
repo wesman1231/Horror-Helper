@@ -24,6 +24,13 @@
     position: relative;
 }
 
+.reviewContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .active{
     background-image: url('/buttonImages/20241116_001.png');
     background-size: contain;

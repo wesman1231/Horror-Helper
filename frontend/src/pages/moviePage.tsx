@@ -54,7 +54,6 @@ export default function MoviePage() {
                     `http://localhost:3000/api/movies/${id}`
                 );
                 const fetchResults = await fetchInfo.json();
-                console.log(fetchResults);
 
                 // If server returns an error response
                 if (Object.hasOwn(fetchResults, "error")) {
@@ -80,7 +79,6 @@ export default function MoviePage() {
                 <MovieShowPageError errorMessage={errorMessage} />
             ) : (
                 <MovieInfo movieData={movieData} />
-                
             )}
         </>
     );
