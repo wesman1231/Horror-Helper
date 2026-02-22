@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import ExtraMovieInfo from "./extraMovieInfo";
 import type { Movie } from "../UI-Elements/movieCard";
 import styles from "../UI-Elements/UI_css/movieInfo.module.css";
-import Review from "./review";
+import Review from "./createReview";
 import PostedreviewsContainer from "./postedReviewsContainer";
-import { useAuth0 } from "@auth0/auth0-react";
+import useGetReviews from '../hooks/useGetReviews';
 
 /**
  * Props for the MovieInfo component.
@@ -39,24 +39,18 @@ interface MovieDataProps {
  * @returns {JSX.Element} Movie information section with toggleable extra info
  */
 
-
 export default function MovieInfo(props: MovieDataProps) {
-    const { user, getAccessTokenSilently  } = useAuth0();
+    
+    const fetchReviews = useGetReviews();
     const [infoDropdown, setInfoDropdown] = useState<boolean>(false);
-
-    const userID = user?.sub;
-    const userName = user?.['https://horror-helper-backend/username'];
-
-    useEffect(() => {
-        async function getToken(){
-            await getAccessTokenSilently();
-        }
-        getToken();
-    }, []);
 
     // Format director and franchise names for URLs
     const formatDirector = props.movieData?.director?.replaceAll(" ", "+");
     const formatFranchise = props.movieData?.franchise?.replaceAll(" ", "+");
+
+    useEffect(() => {
+        fetchReviews.getReviews(props.movieData?.tmdbid, 'movies');
+    }, [props.movieData?.tmdbid]);
 
     /**
      * Toggles the visibility of the extra movie information section.
@@ -101,8 +95,8 @@ export default function MovieInfo(props: MovieDataProps) {
             </button>
 
             {infoDropdown ? <ExtraMovieInfo movieData={props.movieData} /> : null}
-            <Review username={userName} userID={userID} mediaID={props.movieData?.tmdbid} mediaType='movies'/>
-            <PostedreviewsContainer username={userName} userID={userID} mediaType='movies' mediaID={props.movieData?.tmdbid} />
+            <Review mediaID={props.movieData?.tmdbid} mediaType='movies' fetchReviews={fetchReviews}/>
+            <PostedreviewsContainer reviews={fetchReviews.reviews}/>
         </section>
     );
 }

@@ -9,7 +9,6 @@ interface PageProps{
 }
 
 export default function PageButtons(props: PageProps){
-
     const [width, setWidth] = useState(window.innerWidth);
     const [visiblePages, setVisiblePages] = useState<number>(0); //sets how many page numbers are visible
     const [lowestVisiblePage, setLowestVisiblePage] = useState(0); //sets the lowest visible page number
