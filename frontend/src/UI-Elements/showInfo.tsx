@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Show } from "./tvCard";
 import styles from "../UI-Elements/UI_css/showInfo.module.css";
 import ExtraShowInfo from "./extraShowInfo";
+import useGetReviews from '../hooks/useGetReviews';
+import Review from "./createReview";
+import PostedreviewsContainer from "./postedReviewsContainer";
 
 /**
  * Props for the ShowInfo component.
@@ -25,7 +28,13 @@ interface ShowProps {
  * @returns {JSX.Element} TV show information section
  */
 export default function ShowInfo(props: ShowProps) {
+    const fetchReviews = useGetReviews();
     const [infoDropdown, setInfoDropdown] = useState<boolean>(false);
+
+    //Fetch show reviews
+    useEffect(() => {
+            fetchReviews.getReviews(props.showData?.tmdbid, 'shows');
+        }, [props.showData?.tmdbid]);
 
     /**
      * Toggles the visibility of the ExtraShowInfo component
@@ -55,6 +64,8 @@ export default function ShowInfo(props: ShowProps) {
             </button>
 
             {infoDropdown && <ExtraShowInfo showData={props.showData} />}
+            <Review mediaID={props.showData?.tmdbid} mediaType='shows' fetchReviews={fetchReviews}/>
+            <PostedreviewsContainer reviews={fetchReviews.reviews}/>
         </section>
     );
 }

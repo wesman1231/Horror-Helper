@@ -6,22 +6,24 @@
     column-gap: 5px;
     width: 90vw;
     border: 5px solid red;
-    height: 100%;
+    min-height: 100%;
+    position: relative;
+    margin-bottom: 1em;
 }
 
 .username{
-    left: 1.5em;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 .reviewText{
     position: relative;
     text-align: left;
-    font-size: 0.7em;
+    font-size: 1em;
+    margin-top: 2em;
     overflow-wrap: anywhere;
-}
-
-.scoreContainer{
-    right: 5%;
+    border: 5px solid gray;
 }
 
 .reviewScore{

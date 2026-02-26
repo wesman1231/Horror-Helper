@@ -48,6 +48,7 @@ export default function MovieInfo(props: MovieDataProps) {
     const formatDirector = props.movieData?.director?.replaceAll(" ", "+");
     const formatFranchise = props.movieData?.franchise?.replaceAll(" ", "+");
 
+    //Fetch movie reviews
     useEffect(() => {
         fetchReviews.getReviews(props.movieData?.tmdbid, 'movies');
     }, [props.movieData?.tmdbid]);

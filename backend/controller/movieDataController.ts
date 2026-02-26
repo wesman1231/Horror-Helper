@@ -50,14 +50,23 @@ export async function fetchFranchiseInfo(req: Request, res: Response){
 export async function fetchNewReleases(req: Request, res: Response){
     const currentDate: Date = new Date();
     const stringCurrentYear = String(currentDate.getFullYear());
-    console.log(stringCurrentYear);
+    const elementsPerPage: string = '10';
+    const pageNumber: number = Number(req.query.page);
+    const calculateOffset = pageNumber * Number(elementsPerPage);
+    const offset = String(calculateOffset);
     
-    try{
-        const [newMovies] = await db.execute('SELECT * FROM movies WHERE releasedate LIKE ? ORDER BY releasedate DESC LIMIT 10', [`%${stringCurrentYear}%`]);
-        return res.status(200).json({newMovies: newMovies});
-    }
-    catch(error){
-        console.error(error);
-        return res.status(500).json({error: "Internal server error"});
+    await queryDB();
+
+    //TODO: FIND A WAY TO GET THE TOTAL NUMBER OF NEW RELEASES TO COUNT THE NUMBER OF PAGES WITHOUHT DOING 2 QUERIES IF POSSIBLE
+    async function queryDB(){
+        try{
+            const [newMovies]: any[] = await db.execute('SELECT * FROM movies WHERE releasedate LIKE ? ORDER BY releasedate DESC LIMIT ? OFFSET ?', [`%${stringCurrentYear}%`, elementsPerPage, offset]);
+            const numberOfPages = Math.ceil(newMovies.length / Number(elementsPerPage));
+            return res.status(200).json({newReleases: newMovies, numberOfPages: numberOfPages});
+        }
+        catch(error){
+            console.error(error);
+            return res.status(500).json({error: "Internal server error"});
+        }
     }
 }
