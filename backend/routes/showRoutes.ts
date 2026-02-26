@@ -1,8 +1,9 @@
 import express from 'express';
-import showDataController from '../controller/showDataController.ts';
+import { fetchShowInfo, fetchNewReleases } from '../controller/showDataController.ts';
 
 const router = express.Router();
 
-router.get('/:id', showDataController.fetchShowInfo);
+router.get('/new-releases', fetchNewReleases)
+router.get('/:id', fetchShowInfo);
 
 export default router;
