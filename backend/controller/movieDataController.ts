@@ -17,7 +17,7 @@ export async function fetchMovieInfo(req: Request, res: Response): Promise<void>
             return; 
         }
 
-        // Send the movie data (usually the first element if tmdbid is unique)
+        // Send the movie data
         res.status(200).json(rows[0]);
         
     } catch (error) {
@@ -57,15 +57,15 @@ export async function fetchNewReleases(req: Request, res: Response){
     
     await queryDB();
 
-    //TODO: FIND A WAY TO GET THE TOTAL NUMBER OF NEW RELEASES TO COUNT THE NUMBER OF PAGES WITHOUHT DOING 2 QUERIES IF POSSIBLE
     async function queryDB(){
         try{
-            const [newMovies]: any[] = await db.execute('SELECT * FROM movies WHERE releasedate LIKE ? ORDER BY releasedate DESC LIMIT ? OFFSET ?', [`%${stringCurrentYear}%`, elementsPerPage, offset]);
-            const numberOfPages = Math.ceil(newMovies.length / Number(elementsPerPage));
+            const [numberOfResults]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM movies WHERE releasedate LIKE ? AND releasedate <= CURDATE();`, [`%${stringCurrentYear}%`]);
+            const numberOfPages = Math.ceil(numberOfResults[0].total / Number(elementsPerPage));
+            const [newMovies]: any[] = await db.execute('SELECT * FROM movies WHERE releasedate LIKE ? AND releasedate <= CURDATE() ORDER BY releasedate DESC LIMIT ? OFFSET ?', [`%${stringCurrentYear}%`, elementsPerPage, offset]);
+
             return res.status(200).json({newReleases: newMovies, numberOfPages: numberOfPages});
         }
         catch(error){
-            console.error(error);
             return res.status(500).json({error: "Internal server error"});
         }
     }

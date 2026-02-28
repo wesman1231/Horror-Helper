@@ -7,6 +7,7 @@ import showRoutes from './routes/showRoutes.ts';
 import directorRoutes from './routes/directorRoutes.ts';
 import resendVerificationRoutes from './routes/resendVerificationRoute.ts';
 import reviewRoutes from './routes/reviewRoutes.ts';
+import syncDirectors from './routes/getAllDirectors.ts'
 
 
 const app = express();
@@ -22,6 +23,7 @@ app.use('/api/shows', showRoutes);
 app.use('/api/directors', directorRoutes);
 app.use('/api', resendVerificationRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use(syncDirectors);
 
 
 app.listen(3000, () => {
