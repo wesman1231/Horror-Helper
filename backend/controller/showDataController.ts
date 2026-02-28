@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { db } from '../db/pool.ts';
+import type NewReleases from '../../frontend/src/pages/newReleases.tsx';
 
 export async function fetchShowInfo(req: Request, res: Response){
     //take the show id from the url, find that show in the database, and send it back to the client
@@ -25,12 +26,15 @@ export async function fetchNewReleases(req: Request, res: Response){
     const calculateOffset = pageNumber * Number(elementsPerPage);
     const offset = String(calculateOffset);
     
-    await query();
+    await queryDB();
 
-    async function query(){
+    async function queryDB(){
         try{
-            const [newShows] = await db.execute('SELECT * FROM shows WHERE firstairdate LIKE ? ORDER BY firstairdate DESC LIMIT ? OFFSET ?', [`%${stringCurrentYear}%`, elementsPerPage, offset]);
-            return res.status(200).json({newShows: newShows});
+            const [numberOfResults]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM shows WHERE firstairdate LIKE ? AND firstairdate <= CURDATE();`, [`%${stringCurrentYear}%`]);
+            const numberOfPages = Math.ceil(numberOfResults[0].total / Number(elementsPerPage));
+            const [newShows] = await db.execute('SELECT * FROM shows WHERE firstairdate LIKE ? AND firstairdate <= CURDATE() ORDER BY firstairdate DESC LIMIT ? OFFSET ?', [`%${stringCurrentYear}%`, elementsPerPage, offset]);
+
+            return res.status(200).json({newReleases: newShows, numberOfPages: numberOfPages});
         }
         catch(error){
             console.error(error);

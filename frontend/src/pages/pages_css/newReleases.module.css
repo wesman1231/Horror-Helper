@@ -6,7 +6,24 @@
     top: 5.5em;
 }
 
+.contentContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: 6em
+}
+
 .contentNav{
     position: relative;
-    top: 7.5em;
+    top: 8em;
+}
+
+.noResults{
+    color: white;
+}
+
+.errorMessage{
+    color: white;
 }

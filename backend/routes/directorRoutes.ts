@@ -6,4 +6,5 @@ const router = express.Router();
 router.get('/getDirectorInfo', directorDataController);
 router.get(`/:directorName`, directorDataController);
 
+
 export default router;

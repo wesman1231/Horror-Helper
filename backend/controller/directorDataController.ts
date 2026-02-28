@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import { db } from "../db/pool.ts";
-import { directorDB } from "../db/pool.ts";
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -35,7 +34,7 @@ export default async function directorDataController(req: Request, res: Response
    * Express params convert spaces to `+`, so we reverse that
    * to match database values.
    */
-    const fromatDirectorName = String(req.params.directorName).replaceAll('+', ' ');
+    const formatDirectorName = String(req.params.directorName).replaceAll('+', ' ');
 
     /**
    * Fetch all required director data.
@@ -73,7 +72,7 @@ export default async function directorDataController(req: Request, res: Response
     async function getDirectorMovies(){
         
         try{
-            const [getMovies] = await db.execute(`SELECT * FROM movies WHERE director = ? ORDER BY releasedate`, [fromatDirectorName]);
+            const [getMovies] = await db.execute(`SELECT * FROM movies WHERE director = ? ORDER BY releasedate`, [formatDirectorName]);
             return getMovies;
         }
         catch(error){  
@@ -91,8 +90,8 @@ export default async function directorDataController(req: Request, res: Response
      */
     async function getDirectorImage(){
         try{
-            const [directorImagePath]: any[] = await directorDB.execute(`SELECT tmdbprofile AS imgpath FROM directors WHERE name = ?`, [fromatDirectorName]);
-            const image = `https://image.tmdb.org/t/p/w300${directorImagePath[0].imgpath}`;
+            const [directorImagePath]: any[] = await db.execute(`SELECT profilepath FROM directorinfo WHERE name = ?`, [formatDirectorName]);
+            const image = `https://image.tmdb.org/t/p/w300${directorImagePath[0].profilepath}`;
             return image
         }
         catch(error){
@@ -111,7 +110,7 @@ export default async function directorDataController(req: Request, res: Response
      * Requires TMDB_API_KEY to be set in environment variables.
      */
     async function getDirectorProfile(){
-        const [directorID]: any[] = await directorDB.execute(`SELECT tmdbid FROM directors WHERE name = ?`, [fromatDirectorName]);
+        const [directorID]: any[] = await db.execute(`SELECT tmdbid FROM directorinfo WHERE name = ?`, [formatDirectorName]);
         const directorProfileRequest = await fetch(`https://api.themoviedb.org/3/person/${directorID[0].tmdbid}?api_key=${process.env.TMDB_API_KEY}`);
         const directorProfile = await directorProfileRequest.json();
         return directorProfile;
