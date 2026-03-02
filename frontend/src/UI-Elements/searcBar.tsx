@@ -66,6 +66,7 @@ export default function SearchBar(props: SearchBarProps) {
                         ? String.fromCodePoint(128315)
                         : String.fromCodePoint(128314)
                     }
+                    Keywords
                 </button>
             </div>
                 {hidden ? null : <AddKeywords keywordsOpen={keywordsOpen} handleCheckboxChange={props.searchHook.handleCheckboxChange} onAnimationEnd={() => {if (!keywordsOpen) setHidden(true);}} />}

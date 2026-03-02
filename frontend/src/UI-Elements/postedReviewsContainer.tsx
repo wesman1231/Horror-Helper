@@ -5,7 +5,7 @@ import styles from './UI_css/postedReviewsContainer.module.css';
 import PostedReview from './postedReview';
 
 // Import the Review TypeScript interface
-import type { Review } from '../hooks/useGetReviews';
+import type { Review } from '../hooks/useReviews';
 
 // Define props expected by this component
 interface PostedReviewContainerProps {
@@ -14,7 +14,6 @@ interface PostedReviewContainerProps {
 
 // Functional component that displays a list of posted reviews
 export default function PostedreviewsContainer(props: PostedReviewContainerProps) {
-
     return (
         // Wrapper container for styling
         <div className={styles.postedReviewsContainer}>
@@ -31,7 +30,7 @@ export default function PostedreviewsContainer(props: PostedReviewContainerProps
 
                             <PostedReview
                                 // React requires a unique "key" for list items
-                                key={review.reviewText}
+                                key={review.reviewID}
 
                                 // Pass review data down as props to child component
                                 username={review.username}
@@ -40,11 +39,9 @@ export default function PostedreviewsContainer(props: PostedReviewContainerProps
                                 reviewText={review.reviewText}
                             />
                         )
-
                         // If no reviews exist, render nothing
                         : null
                 }
-
             </ul>
         </div>
     );

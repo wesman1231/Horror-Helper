@@ -3,7 +3,7 @@ import styles from './UI_css/postedReview.module.css';
 
 // Define props expected by this component
 interface PostedReviewProps {
-    username: string;        // Name of the user who wrote the review
+    username?: string;        // Name of the user who wrote the review
     reviewText: string;      // The written review content
     reviewScore: number;     // Numeric rating (e.g., 1–5)
     userID?: string;         // user ID

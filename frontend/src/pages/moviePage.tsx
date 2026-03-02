@@ -3,6 +3,11 @@ import { useEffect, useState } from "react";
 import type { Movie } from "../UI-Elements/movieCard";
 import MovieInfo from "../UI-Elements/movieInfo";
 import MovieShowPageError from "../UI-Elements/movieShowPageError";
+import CreateReview from "../UI-Elements/createReview";
+import useReviews from "../hooks/useReviews";
+// Auth0 hook for authentication & token access
+import { useAuth0 } from "@auth0/auth0-react";
+import PostedreviewsContainer from "../UI-Elements/postedReviewsContainer";
 
 /**
  * MoviePage Component
@@ -23,6 +28,12 @@ import MovieShowPageError from "../UI-Elements/movieShowPageError";
  * @returns {JSX.Element} Movie detail page UI
  */
 export default function MoviePage() {
+    const reviewLogic = useReviews();
+    
+    // Get authenticated user info and token helper from Auth0
+    const { user, getAccessTokenSilently } = useAuth0();
+    const [accessToken, setAccessToken] = useState<string>("");
+    
     /**
      * Movie ID retrieved from the URL parameters.
      */
@@ -40,6 +51,27 @@ export default function MoviePage() {
     /** Error message returned from the server */
     const [errorMessage, setErrorMessage] = useState<string>("");
 
+
+    // Fetch the token string on mount/user change
+    useEffect(() => {
+        const fetchToken = async () => {
+            try {
+                const token = await getAccessTokenSilently();
+                setAccessToken(token);
+                console.log(token);
+            } catch (e) {
+                console.error("Error getting token", e);
+            }
+        };
+        if (user) fetchToken();
+    }, [getAccessTokenSilently, user]);
+
+
+    // Extract user ID from Auth0 user object
+    const userID = user?.sub;
+
+    // Extract custom username claim from Auth0 token
+    const userName = user?.['https://horror-helper-backend/username'];
 
     /**
      * Fetch Movie Information
@@ -72,6 +104,10 @@ export default function MoviePage() {
         getMovieInfo();
     }, [id]);
 
+    useEffect(() => {
+        reviewLogic.getReviews(movieData?.tmdbid, 'movies', 0);
+    }, [movieData?.tmdbid]);
+
     return (
         <>
             {/* Conditionally render error or movie information */}
@@ -80,6 +116,15 @@ export default function MoviePage() {
             ) : (
                 <MovieInfo movieData={movieData} />
             )}
+            <CreateReview 
+                mediaData={movieData} 
+                mediaType='movies' 
+                token={accessToken} 
+                username={userName} 
+                userID={userID} 
+                postReview={reviewLogic.postReview}
+            />
+            <PostedreviewsContainer reviews={reviewLogic.reviews}/>
         </>
     );
 }
