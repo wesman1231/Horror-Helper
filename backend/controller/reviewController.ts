@@ -7,22 +7,26 @@ import { db } from '../db/pool.ts';
  */
 export async function postReview(req: Request, res: Response) {
     // Destructure properties from the nested reviewInfo object in the request body
-    const { userID, userName, reviewScore, reviewText, mediaType } = req.body.reviewInfo;
+    const { userID, username, reviewScore, reviewText, mediaType, reviewID } = req.body.reviewData;
     
     // Extract the mediaID from the URL query parameters (e.g., ?mediaID=123)
     const mediaID = req.query.mediaID;
 
-    // Execute validation and ingestion logic
-    verifyMediaType();
+    // Validate input and then attempt to save to DB
+    if(verifyMediaType() === false){
+        return res.status(400).json({ message: 'Invalid media type' });
+    }
     await ingestReview();
 
     /**
-     * Validates that the mediaType is either 'movies' or 'shows'.
-     * If invalid, it sends a 400 Bad Request response immediately.
+     * Ensures the request is querying a valid category.
      */
     function verifyMediaType() {
         if (mediaType !== 'movies' && mediaType !== 'shows') {
-            return res.status(400).json({ message: 'Invalid media type' });
+            return false
+        }
+        else{
+            return true;
         }
     }
 
@@ -34,16 +38,16 @@ export async function postReview(req: Request, res: Response) {
             // Logic for Movie reviews: sets movieID to the mediaID and showID to null
             if (mediaType === 'movies') {
                 await db.execute(
-                    `INSERT INTO reviews (userID, username, reviewScore, reviewText, movieID, showID) VALUES (?, ?, ?, ?, ?, ?)`, 
-                    [userID, userName, reviewScore, reviewText, mediaID, null]
+                    `INSERT INTO reviews (userID, username, reviewScore, reviewText, movieID, showID, reviewID) VALUES (?, ?, ?, ?, ?, ?, ?)`, 
+                    [userID, username, reviewScore, reviewText, mediaID, null, reviewID]
                 );
             }
 
             // Logic for Show reviews: sets showID to the mediaID and movieID to null
             if (mediaType === 'shows') {
                 await db.execute(
-                    `INSERT INTO reviews (userID, username, reviewScore, reviewText, movieID, showID) VALUES (?, ?, ?, ?, ?, ?)`, 
-                    [userID, userName, reviewScore, reviewText, null, mediaID]
+                    `INSERT INTO reviews (userID, username, reviewScore, reviewText, movieID, showID) VALUES (?, ?, ?, ?, ?, ?, ?)`, 
+                    [userID, username, reviewScore, reviewText, null, mediaID, reviewID]
                 );
             }
 
@@ -67,9 +71,14 @@ export async function postReview(req: Request, res: Response) {
 export async function getReviews(req: Request, res: Response) {
     const mediaId = req.query.mediaID;
     const mediaType = req.query.mediaType;
+    const page = req.query.page;
+    const limit = req.query.limit || 10;
+    const offset = Number(page) * Number(limit);
 
     // Validate input and then attempt to fetch from DB
-    verifyMediaType();
+    if(verifyMediaType() === false){
+        return res.status(400).json({ message: 'Invalid media type' });
+    }
     await fetchReviews();
 
     /**
@@ -77,7 +86,10 @@ export async function getReviews(req: Request, res: Response) {
      */
     function verifyMediaType() {
         if (mediaType !== 'movies' && mediaType !== 'shows') {
-            return res.status(400).json({ message: 'Invalid media type' });
+            return false
+        }
+        else{
+            return true;
         }
     }
 
@@ -88,9 +100,12 @@ export async function getReviews(req: Request, res: Response) {
         try {
             // Querying by movie identity
             if (mediaType === 'movies') {
-                // Destructure the first element (the rows) from the db.execute result
-                const [reviews] = await db.execute(`SELECT * FROM reviews WHERE movieID = ?`, [mediaId]);
-                return res.status(200).json({ reviews: reviews });
+                
+                const [totalResults]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM reviews WHERE movieID = ?`, [mediaId]);
+                const numberOfPages = Math.ceil(totalResults[0].total / Number(limit));
+
+                const [reviews] = await db.execute(`SELECT * FROM reviews WHERE movieID = ? LIMIT ? OFFSET ?`, [mediaId, `${limit}`, `${offset}`]);
+                return res.status(200).json({ reviews: reviews, numberOfPages: numberOfPages });
             }
 
             // Querying by show identity
@@ -100,6 +115,7 @@ export async function getReviews(req: Request, res: Response) {
             }
         } catch (error) {
             // General error handling for DB connection issues or query syntax errors
+            console.error(error)
             res.status(500).json({ message: 'Internal Server Error' });
         }
     }

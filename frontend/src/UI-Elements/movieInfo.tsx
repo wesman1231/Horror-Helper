@@ -1,12 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import ExtraMovieInfo from "./extraMovieInfo";
 import type { Movie } from "../UI-Elements/movieCard";
 import styles from "../UI-Elements/UI_css/movieInfo.module.css";
-import Review from "./createReview";
-import PostedreviewsContainer from "./postedReviewsContainer";
-import useGetReviews from '../hooks/useGetReviews';
-
 /**
  * Props for the MovieInfo component.
  */
@@ -41,17 +37,12 @@ interface MovieDataProps {
 
 export default function MovieInfo(props: MovieDataProps) {
     
-    const fetchReviews = useGetReviews();
     const [infoDropdown, setInfoDropdown] = useState<boolean>(false);
 
     // Format director and franchise names for URLs
     const formatDirector = props.movieData?.director?.replaceAll(" ", "+");
     const formatFranchise = props.movieData?.franchise?.replaceAll(" ", "+");
 
-    //Fetch movie reviews
-    useEffect(() => {
-        fetchReviews.getReviews(props.movieData?.tmdbid, 'movies');
-    }, [props.movieData?.tmdbid]);
 
     /**
      * Toggles the visibility of the extra movie information section.
@@ -96,8 +87,6 @@ export default function MovieInfo(props: MovieDataProps) {
             </button>
 
             {infoDropdown ? <ExtraMovieInfo movieData={props.movieData} /> : null}
-            <Review mediaID={props.movieData?.tmdbid} mediaType='movies' fetchReviews={fetchReviews}/>
-            <PostedreviewsContainer reviews={fetchReviews.reviews}/>
         </section>
     );
 }

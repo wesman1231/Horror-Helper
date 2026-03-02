@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import type { Show } from "./tvCard";
 import styles from "../UI-Elements/UI_css/showInfo.module.css";
 import ExtraShowInfo from "./extraShowInfo";
-import useGetReviews from '../hooks/useGetReviews';
+import useGetReviews from '../hooks/useReviews';
 import Review from "./createReview";
 import PostedreviewsContainer from "./postedReviewsContainer";
 
