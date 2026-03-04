@@ -13,21 +13,23 @@ body{
 .searchBar{
     font-size: 1em;
     width: 70%;
+    margin-bottom: 1em;
 }
 
 .buttonsWrapper{
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 2%;
     column-gap: 10%;
 }
 
 .searchButton{
+    font-family: "Creepster", system-ui;
     font-size: 1.2em;
     border-radius: 15px;
     transition: 0.3s ease-in-out;
     background-color: whitesmoke;
+    border: none;
 }
 
 .searchButton:hover{
@@ -43,7 +45,11 @@ body{
 }
 
 .addKeywords{
+    font-size: 01em;
+    font-family: "Creepster", system-ui;
     transition: 0.2s ease-in-out;
+    border: none;
+    border-radius: 15px;
 }
 
 .addKeywords:hover{
@@ -51,5 +57,5 @@ body{
 }
 
 .addKeywords:active{
-    scale: 0.6;
+    scale: 0.8;
 }

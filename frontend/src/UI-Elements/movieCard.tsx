@@ -94,7 +94,7 @@ export default function MovieCard(props: Movie) {
                         <span className={styles.infoHeader}>
                             Franchise:
                         </span>
-                        {props.franchise !== "none" ? <Link to={`/franchises/${formatFranchise}`}>{" " + props.franchise}</Link> : " none"}
+                        {props.franchise !== "none" ? <Link to={`/franchises/${formatFranchise}`} className={styles.franchiseText}>{" " + props.franchise}</Link> : " none"}
                     </li>
                 </ul>
             </div>

@@ -5,7 +5,15 @@
     align-items: center;
 }
 
+.scoreText{
+    margin-top: 1em;
+    font-size: 1.2em;
+    font-family: "Creepster", system-ui;
+    color: white;
+}
+
 .reviewScoreButton {
+    margin-top: 5%;
     color: inherit;
     border: none;
     padding: 0;

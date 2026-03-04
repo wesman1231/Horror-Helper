@@ -100,6 +100,7 @@ export default function MediaSearch() {
                 changePage={searchHook.changePage}
                 previousSearch={searchHook.previousSearch}
                 sortMode={searchHook.sortMode}
+                keywords={searchHook.keywords}
             />
         </>
     );

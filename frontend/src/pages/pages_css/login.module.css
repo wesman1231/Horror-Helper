@@ -10,6 +10,18 @@
 .button{
     position: relative;
     bottom: 10rem;
+    background-color: rgb(124, 10, 10);
+    color: #fde6e6;
+    text-shadow: 0 0 4px #000000, 0 0 8px #000;
+    font-family: "Nosifer", sans-serif;
+    transition: 0.3s ease-in-out;
+    border-radius: 15px;
+    border: none;
+}
+
+.button:hover{
+    color: #59cc0c;
+    border: 1px solid #59cc0c;
 }
 
 .verificationDiv{

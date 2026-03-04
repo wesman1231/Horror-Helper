@@ -26,7 +26,8 @@ export type useSearch = {
         displayedResults: Movie[] | Show[],
         error: boolean,
         sortMenuVisible: boolean,
-        searchValue: string
+        searchValue: string,
+        keywords: string[];
     };
 
 export default function useSearch(){
@@ -212,7 +213,8 @@ export default function useSearch(){
         displayedResults: displayedResults,
         error: error,
         sortMenuVisible: sortMenuVisible,
-        searchValue: searchValue
+        searchValue: searchValue,
+        keywords: keywords
     }
     return searchFunctions;
 }

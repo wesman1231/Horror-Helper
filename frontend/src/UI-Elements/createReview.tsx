@@ -62,6 +62,7 @@ export default function CreateReview(props: CreateReviewProps) {
 
     return (
         <div className={styles.reviewContainer}>
+            <span className={styles.scoreText}>How many skulls out of 5 would you give?</span>
             {/* Rating buttons (1–5 stars style) */}
             <div className={styles.reviewScoreContainer}>
                 <span>

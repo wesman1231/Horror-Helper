@@ -30,20 +30,15 @@ export default function useReviews() {
      * @param mediaID - The ID of the media item (movie, show, etc.)
      * @param mediaType - The type/category of the media
      */
-    async function getReviews(mediaID: number | undefined, mediaType: mediaType, page: number) {
+    async function getReviews(mediaID: number | undefined, mediaType: mediaType) {
         try {
             // Send a GET request to the backend with mediaID and mediaType as query parameters
             const fetchReviews = await fetch(
-                `http://localhost:3000/api/reviews/get?mediaID=${mediaID}&mediaType=${mediaType}&page=${page}`
+                `http://localhost:3000/api/reviews/get?mediaID=${mediaID}&mediaType=${mediaType}`
             );
 
             // Parse the JSON response body
             const reviewsJSON = await fetchReviews.json();
-
-            console.log(mediaID);
-            console.log(page);
-            // Log the response to the console for debugging purposes
-            console.log(reviewsJSON);
 
             if (reviewsJSON.reviews) {
             // ALWAYS use the spread operator to keep the list flat

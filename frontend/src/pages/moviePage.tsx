@@ -105,7 +105,7 @@ export default function MoviePage() {
     }, [id]);
 
     useEffect(() => {
-        reviewLogic.getReviews(movieData?.tmdbid, 'movies', 0);
+        reviewLogic.getReviews(movieData?.tmdbid, 'movies');
     }, [movieData?.tmdbid]);
 
     return (
