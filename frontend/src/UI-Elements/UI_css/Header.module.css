@@ -1,6 +1,7 @@
 /*mobile styling*/
 body{
     font-family: "Nosifer", sans-serif;
+    
 }
 
 .header{
@@ -15,16 +16,38 @@ h1{
     justify-content: center;
     align-items: center;
     color: rgb(124, 10, 10);
+    text-shadow: 2px 2px 4px rgb(49, 78, 52);
     text-align: center;
+    font-style: italic;
 }
 
 nav{
+    font-family: "Creepster", system-ui;
     display: flex;
     justify-content: space-around;
-    font-size: 0.8em;
+    font-size: 1.2em;
 }
 
 .headerLink{
     text-decoration: none;
 }
 
+.signOutButton{
+    font-size: 0.8em;
+    font-family: "Creepster", system-ui;
+    border-radius: 15px;
+    transition: 0.3s ease-in-out;
+    background-color: whitesmoke;
+    border: none;
+}
+
+.signOutButton:hover{
+    border-radius: 15px;
+    scale: 1.1;
+    background-color: rgb(124, 10, 10);
+}
+
+.signOutButton:active{
+    scale: 0.8;
+    transition: 0.1s;
+}

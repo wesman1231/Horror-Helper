@@ -34,7 +34,7 @@ h2{
     font-size: 0.7em;
     padding: 10px;
     max-height: 20vh;
-    overflow: scroll;
+    overflow-y: scroll;
     z-index: 1;
     position: relative;
     min-width: 200px
@@ -50,7 +50,7 @@ h2{
     font-size: 0.7em;
     padding: 10px;
     max-height: 0;
-    overflow: scroll;
+    overflow-y: scroll;
     z-index: 1;
     position: relative;
     min-width: 200px

@@ -6,6 +6,7 @@ interface PageProps{
     changePage: (page: number) => void;
     previousSearch: string;
     sortMode: string;
+    keywords: string[];
 }
 
 export default function PageButtons(props: PageProps){
@@ -51,15 +52,22 @@ export default function PageButtons(props: PageProps){
         setMaxVisiblePage(max => max - visiblePages);
     }
 
+    function scrollToTop(){
+        window.scrollTo({
+            top: 0,
+        behavior: 'instant'
+        });
+    }
+
     //when visible pages updates, update the maximum visible page
     useEffect(() => {
         setMaxVisiblePage(visiblePages);
     }, [visiblePages]);
 
-    //when previous search changes (when the user clicks search) set the highlighted page to page 1
+    //when previous search changes (when the user clicks search) or when keywords change, set the highlighted page to page 1
     useEffect(() => {
         setHighlightedPage(1);
-    }, [props.previousSearch, props.sortMode]);
+    }, [props.previousSearch, props.sortMode, props.keywords]);
 
     
 
@@ -67,7 +75,7 @@ export default function PageButtons(props: PageProps){
         <ul className={styles.pageButtons}>
             {props.pages?.length > 3 && lowestVisiblePage != 0 ? <button type='button' key='left' onClick={previousPageBatch}>&#9664;</button> : null}
             {props.pages?.slice(lowestVisiblePage, maxVisiblePage).map(page => (
-            <button type='button' key={page} onClick={() => {props.changePage(page); setHighlightedPage(page)}} style={{border: highlightedPage === page ? '2px solid red' : 'none'}} >{page}</button>
+            <button type='button' key={page} onClick={() => {props.changePage(page); setHighlightedPage(page); scrollToTop();}} style={{border: highlightedPage === page ? '2px solid red' : 'none'}} >{page}</button>
             ))}
             {props.pages?.length > 3 && maxVisiblePage < props.pages.length ? <button type='button' key='right' onClick={nextPageBatch}>&#9654;</button> : null}
         </ul>

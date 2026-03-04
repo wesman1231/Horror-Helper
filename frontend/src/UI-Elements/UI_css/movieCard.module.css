@@ -32,12 +32,12 @@
 }
 
 .movieTitle{
-    font-size: 1.2em;
+    font-size: 1.3em;
     margin: 0;
 }
 
 .titleText{
-    font-size: 0.8em;
+    font-size: 1.2em;
 }
 
 .releaseDate{
@@ -48,6 +48,10 @@
     font-size: 1.3em;
 }
 
+.franchiseText{
+    font-size: 1.2em;
+}
+
 li{
     margin-bottom: 20px;
 }
@@ -55,4 +59,15 @@ li{
 .info{
     padding: 0;
     list-style: none;
+}
+
+@media screen and (min-width: 1281px) {
+    .infoContainer{
+        max-height: 2em;
+    }
+
+    .movieCard{
+        min-height: 20em;
+        max-height: 25em;
+    }
 }

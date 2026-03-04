@@ -27,7 +27,7 @@ export default function Login() {
      */
     return (
         <div className={styles.pageContainer}>
-            <button type="button" className={styles.button} onClick={() => navigate('/login')}>log in</button>
+            <button type="button" className={styles.button} onClick={() => navigate('/login')}>Join us...(log in)</button>
             {isLoading ?
                 <span>loading...</span>
             :

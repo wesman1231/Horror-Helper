@@ -17,7 +17,7 @@ export default function Header(){
                         <NavLink to = '/search/movies' className={styles.headerLink}>Movies</NavLink>
                         <NavLink to = '/search/shows' className={styles.headerLink}>Television</NavLink>
                         {/*<NavLink to = '/your-list' className={styles.headerLink}>Your List</NavLink> will be implemented at a later date*/}
-                        <button type='button' onClick={() => logout()}>Sign Out</button>
+                        <button className={styles.signOutButton} type='button' onClick={() => logout()}>Sign Out</button>
                     </nav>
                 </header>
             :

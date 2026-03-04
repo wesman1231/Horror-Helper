@@ -1,36 +1,31 @@
 /*mobile styling*/
-
 body{
     background-color: rgb(3, 3, 3);
 }
 
 .buttonContainer{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 5px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .menuButton{
     width: 100%;
+    min-height: 15em;
     border-radius: 15px;
     font-family: "Metal Mania", system-ui;
     font-size: 1.5em;
     color: #ffffff;
     border-color: #59cc0c;
-    text-shadow: 0 0 4px #59cc0c, 0 0 8px #000;
+    text-shadow: 3px 3px 4px rgb(124, 10, 10), 0 0 8px #000;
 }
 
 .newReleases{
     background-image: url('/buttonImages/istockphoto-531360565-612x612.jpg');
     background-size: cover;
     background-position: center;
+    position: relative;
+    top: 10em;
 }
 
 .provenClassics{
@@ -49,4 +44,11 @@ body{
     background-image: url('/buttonImages/question-mark-paint.png');
     background-size: cover;
     background-position: center;
+}
+
+/*desktop styling*/
+@media screen and (min-width: 1281px) {
+  .menuButton{
+    max-width: 20%;
+  }
 }
