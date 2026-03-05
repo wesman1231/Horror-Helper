@@ -22,27 +22,16 @@ interface CreateReviewProps {
     token: string
     postReview: (mediaID: number | undefined, mediaType: mediaType, review: Review) => Promise<void>;
 }
-
+//TODO ADD CHECK FOR ATTEMPTING TO SUBMIT WITH NO TEXT
 export default function CreateReview(props: CreateReviewProps) {
     // Local state for selected review score (1–5)
-    const [score, setScore] = useState<number>(0);
+    const [score, setScore] = useState<number>(1);
 
     // Local state for review text input
     const [reviewValue, setReviewValue] = useState<string>('');
 
     // Controls star/button highlight effect
-    const [highlight, setHighlight] = useState<number>(0);
-
-    const reviewData: Review = {
-        username: props.username,
-        userID: props.userID,
-        reviewScore: score,
-        reviewText: reviewValue,
-        mediaID: props.mediaData?.tmdbid,
-        token: props.token,
-        mediaType: 'movies',
-        reviewID: crypto.randomUUID()
-    };
+    const [highlight, setHighlight] = useState<number>(1);
 
     /**
      * Updates review text as user types in textarea
@@ -58,6 +47,21 @@ export default function CreateReview(props: CreateReviewProps) {
     function selectScore(rating: number) {
         setScore(rating);
         setHighlight(rating);
+    }
+
+    async function submitReview(){
+        const reviewData: Review = {
+            username: props.username,
+            userID: props.userID,
+            reviewScore: score,
+            reviewText: reviewValue,
+            mediaID: props.mediaData?.tmdbid,
+            token: props.token,
+            mediaType: 'movies',
+            reviewID: crypto.randomUUID(),
+            dateTime: new Date().toLocaleString()
+        };
+        await props.postReview(props.mediaData?.tmdbid, props.mediaType, reviewData);
     }
 
     return (
@@ -92,7 +96,7 @@ export default function CreateReview(props: CreateReviewProps) {
             />
 
             {/* Submit button */}
-            <button type='button' onClick={() => props.postReview(props.mediaData?.tmdbid, props.mediaType, reviewData)}>
+            <button type='button' onClick={() => {submitReview(); setScore(0); setHighlight(0);}}>
                 submit review
             </button>
         </div>

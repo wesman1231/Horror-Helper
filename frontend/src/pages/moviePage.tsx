@@ -1,3 +1,4 @@
+import styles from './pages_css/moviePage.module.css';
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Movie } from "../UI-Elements/movieCard";
@@ -106,10 +107,10 @@ export default function MoviePage() {
 
     useEffect(() => {
         reviewLogic.getReviews(movieData?.tmdbid, 'movies');
-    }, [movieData?.tmdbid]);
+    }, [movieData?.tmdbid, reviewLogic.reviews]);
 
     return (
-        <>
+        <div className={styles.moviePage}>
             {/* Conditionally render error or movie information */}
             {errorState ? (
                 <MovieShowPageError errorMessage={errorMessage} />
@@ -125,6 +126,6 @@ export default function MoviePage() {
                 postReview={reviewLogic.postReview}
             />
             <PostedreviewsContainer reviews={reviewLogic.reviews}/>
-        </>
+        </div>
     );
 }
