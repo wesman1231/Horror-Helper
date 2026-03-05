@@ -7,7 +7,7 @@ import { db } from '../db/pool.ts';
  */
 export async function postReview(req: Request, res: Response) {
     // Destructure properties from the nested reviewInfo object in the request body
-    const { userID, username, reviewScore, reviewText, mediaType, reviewID } = req.body.reviewData;
+    const { userID, username, reviewScore, reviewText, mediaType, reviewID, dateTime } = req.body.reviewData;
     
     // Extract the mediaID from the URL query parameters (e.g., ?mediaID=123)
     const mediaID = req.query.mediaID;
@@ -38,16 +38,16 @@ export async function postReview(req: Request, res: Response) {
             // Logic for Movie reviews: sets movieID to the mediaID and showID to null
             if (mediaType === 'movies') {
                 await db.execute(
-                    `INSERT INTO reviews (userID, username, reviewScore, reviewText, movieID, showID, reviewID) VALUES (?, ?, ?, ?, ?, ?, ?)`, 
-                    [userID, username, reviewScore, reviewText, mediaID, null, reviewID]
+                    `INSERT INTO reviews (userID, username, reviewScore, reviewText, movieID, showID, reviewID, dateTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
+                    [userID, username, reviewScore, reviewText, mediaID, null, reviewID, dateTime]
                 );
             }
 
             // Logic for Show reviews: sets showID to the mediaID and movieID to null
             if (mediaType === 'shows') {
                 await db.execute(
-                    `INSERT INTO reviews (userID, username, reviewScore, reviewText, movieID, showID) VALUES (?, ?, ?, ?, ?, ?, ?)`, 
-                    [userID, username, reviewScore, reviewText, null, mediaID, reviewID]
+                    `INSERT INTO reviews (userID, username, reviewScore, reviewText, movieID, showID, dateTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
+                    [userID, username, reviewScore, reviewText, null, mediaID, reviewID, dateTime]
                 );
             }
 
@@ -104,7 +104,7 @@ export async function getReviews(req: Request, res: Response) {
                 const [totalResults]: any[] = await db.execute(`SELECT COUNT(*) AS total FROM reviews WHERE movieID = ?`, [mediaId]);
                 const numberOfPages = Math.ceil(totalResults[0].total / Number(limit));
 
-                const [reviews] = await db.execute(`SELECT * FROM reviews WHERE movieID = ? LIMIT ? OFFSET ?`, [mediaId, `${limit}`, `${offset}`]);
+                const [reviews] = await db.execute(`SELECT * FROM reviews WHERE movieID = ? ORDER BY dateTime DESC`, [mediaId]);
                 return res.status(200).json({ reviews: reviews, numberOfPages: numberOfPages });
             }
 

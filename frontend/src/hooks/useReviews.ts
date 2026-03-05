@@ -14,6 +14,7 @@ export interface Review {
     token: string, 
     mediaType: mediaType,
     reviewID: string;
+    dateTime: string;
 }
 
 // Custom React Hook for fetching and storing reviews
@@ -53,9 +54,8 @@ export default function useReviews() {
         }
     }
 
-
-
     async function postReview(mediaID: number | undefined, mediaType: mediaType, review: Review){
+        
         try{
             // Send POST request to backend with authorization header
             await fetch(`http://localhost:3000/api/reviews/post?mediaID=${mediaID}&mediaType=${mediaType}`,

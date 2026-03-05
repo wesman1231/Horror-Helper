@@ -40,7 +40,7 @@ export default function PostedreviewsContainer(props: PostedReviewContainerProps
                             />
                         )
                         // If no reviews exist, render nothing
-                        : null
+                        : <span>No Reviews...Yet</span>
                 }
             </ul>
         </div>

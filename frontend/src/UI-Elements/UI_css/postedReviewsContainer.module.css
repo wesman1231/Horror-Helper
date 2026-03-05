@@ -3,6 +3,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border: 5px solid white;
+    background-color: rgb(121, 19, 19);
+    width: 90%;
 }
 
 .reviewList{
@@ -11,4 +14,5 @@
     justify-content: center;
     align-items: center;
     padding: 0;
+    width: 90%;
 }
