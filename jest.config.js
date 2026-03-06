@@ -6,20 +6,17 @@ const defaultEsmPreset = createDefaultEsmPreset();
 export default {
   ...defaultEsmPreset,
   testEnvironment: 'node',
-  // This tells ts-jest to treat .ts files as ESM
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
-    // This allows you to use .js extensions in your imports (required by ESM)
-    // while still letting Jest find the .ts source files.
+    // This allows Jest to resolve the .js extension in your imports 
+    // to the actual .ts source files.
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   transform: {
-    ...defaultEsmPreset.transform,
-    // Ensure ts-jest is configured for ESM
     '^.+\\.tsx?$': [
       'ts-jest',
       {
-        useESM: true,
+        useESM: true, // Forces ts-jest to output ESM instead of CJS
       },
     ],
   },
