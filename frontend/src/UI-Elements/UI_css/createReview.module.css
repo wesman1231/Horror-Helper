@@ -48,5 +48,12 @@
     position: relative;
 }
 
+.reviewTextRequired{
+    font-family: "Creepster", system-ui;
+    color: white;
+}
 
-
+.reviewTextBox:focus{
+    outline: none;
+    box-shadow: 0 0 10px #59cc0c;
+}
