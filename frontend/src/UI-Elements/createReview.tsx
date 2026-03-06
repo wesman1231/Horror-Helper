@@ -22,7 +22,7 @@ interface CreateReviewProps {
     token: string
     postReview: (mediaID: number | undefined, mediaType: mediaType, review: Review) => Promise<void>;
 }
-//TODO ADD CHECK FOR ATTEMPTING TO SUBMIT WITH NO TEXT
+
 export default function CreateReview(props: CreateReviewProps) {
     // Local state for selected review score (1–5)
     const [score, setScore] = useState<number>(1);
@@ -32,6 +32,8 @@ export default function CreateReview(props: CreateReviewProps) {
 
     // Controls star/button highlight effect
     const [highlight, setHighlight] = useState<number>(1);
+
+    const [reviewTextError, setReviewTextError] = useState(false);
 
     /**
      * Updates review text as user types in textarea
@@ -50,18 +52,27 @@ export default function CreateReview(props: CreateReviewProps) {
     }
 
     async function submitReview(){
-        const reviewData: Review = {
-            username: props.username,
-            userID: props.userID,
-            reviewScore: score,
-            reviewText: reviewValue,
-            mediaID: props.mediaData?.tmdbid,
-            token: props.token,
-            mediaType: 'movies',
-            reviewID: crypto.randomUUID(),
-            dateTime: new Date().toLocaleString()
-        };
-        await props.postReview(props.mediaData?.tmdbid, props.mediaType, reviewData);
+        if(reviewValue === ''){
+            setReviewTextError(true);
+        }
+        else{
+            const reviewData: Review = {
+                username: props.username,
+                userID: props.userID,
+                reviewScore: score,
+                reviewText: reviewValue,
+                mediaID: props.mediaData?.tmdbid,
+                token: props.token,
+                mediaType: 'movies',
+                reviewID: crypto.randomUUID(),
+                dateTime: new Date().toLocaleString()
+            };
+            await props.postReview(props.mediaData?.tmdbid, props.mediaType, reviewData);
+            setReviewValue('');
+            setScore(0); 
+            setHighlight(0);
+            setReviewTextError(false);
+        }
     }
 
     return (
@@ -83,6 +94,11 @@ export default function CreateReview(props: CreateReviewProps) {
                     ))}
                 </span>
             </div>
+            
+            {reviewTextError ? 
+            <span className={styles.reviewTextRequired}>This field is required</span>
+            : 
+            null}
 
             {/* Text area for writing review */}
             <textarea
@@ -93,10 +109,11 @@ export default function CreateReview(props: CreateReviewProps) {
                 maxLength={1000}
                 value={reviewValue}
                 onChange={handleInput}
+                className={styles.reviewTextBox}
             />
 
             {/* Submit button */}
-            <button type='button' onClick={() => {submitReview(); setScore(0); setHighlight(0);}}>
+            <button type='button' onClick={() => submitReview()}>
                 submit review
             </button>
         </div>
