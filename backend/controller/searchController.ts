@@ -1,3 +1,6 @@
+import { checkSortModeAndMediaType } from './searchUtils/checkSortModeAndMediaType.ts';
+import { removeStopWords } from './searchUtils/removeStopWords.ts';
+
 /**
  * SearchController
  * ----------------
@@ -44,16 +47,17 @@ export default async function SearchController(req: Request, res: Response){
      * Validate media type and sort mode based on media type
      * Prevents SQL injection via ORDER BY
      */
-    if(checkSortMode() === false){
+    if(checkSortModeAndMediaType(mediaType, sortMode) === false){
         return (res.status(400).json({message: 'invalid sort mode or media type'}));
     }
 
     /**
      * Prepare BOOLEAN MODE title query
      * Example:
-     * "Evil Dead" → "+Evil* +Dead*"
+     * "The Evil Dead" → "+Evil* +Dead*"
      */
-    const finalizedTitle = removeStopWords(); 
+    const finalizedTitle = removeStopWords(title);
+    console.log(finalizedTitle);
 
     /**
      * Fetch pagination metadata and search results
@@ -69,74 +73,9 @@ export default async function SearchController(req: Request, res: Response){
     }
 
     // --------------------------------------------------
-    // Helpers
+    // Query functions
     // --------------------------------------------------
 
-    /**
-     * Ensures the provided sortMode is valid for the selected media type.
-     * Prevents arbitrary ORDER BY injection.
-     */
-    function checkSortMode(){
-        if(mediaType === 'movies'){
-            let validSortModes = new Set(['relevance', 'releasedate', 'newest', 'title', 'director', 'franchise']);
-            
-            if(validSortModes.has(sortMode)){
-                return true;
-            }
-            
-            else{
-                return false;
-            }
-
-        }
-        
-        else if(mediaType === 'shows'){
-            let validSortModes = new Set(['relevance', 'firstairdate', 'lastairdate', 'title', 'creator']);
-            
-            if(validSortModes.has(sortMode)){
-                return true;
-            }
-            
-            else{
-                return false;
-            }
-
-        }
-        return false;
-    }
-
-    
-    /**
-     * Removes stop words and formats title input
-     * for MySQL BOOLEAN MODE full-text search.
-     *
-     * - Removes common filler words
-     * - Prefixes each word with "+" for boolean mode strict matching
-     * - Appends "*" for prefix matching
-     */
-    function removeStopWords(){
-        if(title !== ''){
-            const formatTitleQuery = title.replaceAll('+', ' ');
-            const stopWords = ['a','about','an','are','as','at','be','by','com','de','en','for','from','how','i','in','is','it','la','of','on','or','that','the','this','to','und','was','what','when','where','who','will','with','www'];
-            const split = formatTitleQuery.split(' ');
-            const removeStopWords = split.filter(word => !stopWords.includes(word));
-            const finalTitleQueryArray: string[] = [];
-            
-            for(let i = 0; i < removeStopWords.length; i++){
-                const split = removeStopWords[i].split('');
-                split.unshift('+');
-                split.push('*');
-                const join = split.join('');
-                finalTitleQueryArray.push(join);
-            }
-            const finalTitleQuery = finalTitleQueryArray.join(' ');
-            return finalTitleQuery;
-        }
-        
-        return '';
-    }
-
-    
     /**
      * Calculates total pages for pagination.
      * Uses COUNT(*) with the same MATCH condition as the search query.
@@ -188,7 +127,6 @@ export default async function SearchController(req: Request, res: Response){
      * Executes the actual search query.
      * Uses BOOLEAN MODE relevance scoring when sortMode === 'relevance'.
      */
-
     async function search(){
         //initial search queries
         const titleQuery = `SELECT *, 
@@ -261,7 +199,7 @@ export default async function SearchController(req: Request, res: Response){
                     return searchResult;
                 }
 
-                else if(title !== '' && keywordQuery !== ''){
+                else if(title !== '' && keywords !== ''){
                     const [searchResult] = await db.execute(titleAndKeywordQuery, [finalizedTitle, finalizedTitle, formatKeywords]);
                     return searchResult;
                 }
@@ -278,7 +216,7 @@ export default async function SearchController(req: Request, res: Response){
                     return searchResult;
                 }
 
-                else if(title !== '' && keywordQuery !== ''){
+                else if(title !== '' && keywords !== ''){
                     const [searchResult] = await db.execute(titleAndKeywordSortQuery, [finalizedTitle, formatKeywords]);
                     return searchResult;
                 }

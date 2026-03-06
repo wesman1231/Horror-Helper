@@ -11,9 +11,11 @@
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "outDir": "./dist",
     "noEmit": true,
     "target": "esnext",
-    "types": [],
+    "types": ["jest", "node"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
