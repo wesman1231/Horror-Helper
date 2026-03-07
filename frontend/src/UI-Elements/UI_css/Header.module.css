@@ -1,7 +1,6 @@
 /*mobile styling*/
 body{
     font-family: "Nosifer", sans-serif;
-    
 }
 
 .header{
@@ -26,6 +25,7 @@ nav{
     display: flex;
     justify-content: space-around;
     font-size: 1.2em;
+    overflow-x: hidden;
 }
 
 .headerLink{

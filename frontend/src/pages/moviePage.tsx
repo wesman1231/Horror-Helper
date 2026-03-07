@@ -59,7 +59,6 @@ export default function MoviePage() {
             try {
                 const token = await getAccessTokenSilently();
                 setAccessToken(token);
-                console.log(token);
             } catch (e) {
                 console.error("Error getting token", e);
             }
@@ -117,6 +116,7 @@ export default function MoviePage() {
             ) : (
                 <MovieInfo movieData={movieData} />
             )}
+            {/*Component to create reviews*/}
             <CreateReview 
                 mediaData={movieData} 
                 mediaType='movies' 
@@ -125,6 +125,7 @@ export default function MoviePage() {
                 userID={userID} 
                 postReview={reviewLogic.postReview}
             />
+            {/*Component to display user reviews in an unordered list*/}
             <PostedreviewsContainer reviews={reviewLogic.reviews}/>
         </div>
     );
