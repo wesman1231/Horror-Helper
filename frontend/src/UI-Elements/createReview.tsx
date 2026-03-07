@@ -69,8 +69,8 @@ export default function CreateReview(props: CreateReviewProps) {
             };
             await props.postReview(props.mediaData?.tmdbid, props.mediaType, reviewData);
             setReviewValue('');
-            setScore(0); 
-            setHighlight(0);
+            setScore(1); 
+            setHighlight(1);
             setReviewTextError(false);
         }
     }
