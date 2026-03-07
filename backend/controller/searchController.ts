@@ -57,7 +57,6 @@ export default async function SearchController(req: Request, res: Response){
      * "The Evil Dead" → "+Evil* +Dead*"
      */
     const finalizedTitle = removeStopWords(title);
-    console.log(finalizedTitle);
 
     /**
      * Fetch pagination metadata and search results

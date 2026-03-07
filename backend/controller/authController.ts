@@ -42,6 +42,13 @@ export async function resendVerification(req: Request, res: Response) {
     // Extract email from request body
     const email = req.body.email;
 
+    // Simple Regex for basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!email || !emailRegex.test(email)) {
+      return res.status(400).json({ error: "Please provide a valid email address." });
+    }
+
     // Query Auth0 users by email
     const response = await client.users.list({
       q: `email:"${email}"`,
@@ -55,8 +62,8 @@ export async function resendVerification(req: Request, res: Response) {
       return res.status(404).json({ error: "No user found with that email" });
     }
 
-    // Use the first matched user
-    const userID = users[0].user_id;
+    // Use the first matched user (will never be null since if users is undefined or has a length of 0 we return a 404 status before this ever runs)
+    const userID = users[0]!.user_id;
 
     // Sanity check — should never happen, but protects against malformed data
     if (!userID) {
@@ -66,7 +73,7 @@ export async function resendVerification(req: Request, res: Response) {
     // Trigger Auth0 to resend the verification email
     await client.jobs.verificationEmail.create({
       user_id: userID,
-      client_id: process.env.AUTH0_CLIENT_ID
+      client_id: process.env.AUTH0_CLIENT_ID!
     });
 
     return res.status(200).json({
