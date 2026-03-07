@@ -83,7 +83,8 @@ export default function MovieInfo(props: MovieDataProps) {
             )}
 
             <button className={styles.dropdown} onClick={toggleInfo}>
-                Show More {infoDropdown ? String.fromCodePoint(128315) : String.fromCodePoint(128314)}
+                {infoDropdown ? "Show Less" : "Show More"} 
+                <span>{infoDropdown ? String.fromCodePoint(128315) : String.fromCodePoint(128314)}</span>
             </button>
 
             {infoDropdown ? <ExtraMovieInfo movieData={props.movieData} /> : null}

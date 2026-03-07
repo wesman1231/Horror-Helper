@@ -1,8 +1,13 @@
+import styles from './pages_css/showPage.module.css';
+import useReviews from '../hooks/useReviews';
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Show } from "../UI-Elements/tvCard";
 import MovieShowPageError from "../UI-Elements/movieShowPageError";
 import ShowInfo from "../UI-Elements/showInfo";
+import CreateReview from "../UI-Elements/createReview";
+import PostedreviewsContainer from "../UI-Elements/postedReviewsContainer";
+import { useAuth0 } from "@auth0/auth0-react";
 
 /**
  * ShowPage Component
@@ -23,6 +28,12 @@ import ShowInfo from "../UI-Elements/showInfo";
  * @returns {JSX.Element} TV show detail page UI
  */
 export default function ShowPage() {
+    const reviewLogic = useReviews();
+
+    // Get authenticated user info and token helper from Auth0
+    const { user, getAccessTokenSilently } = useAuth0();
+    const [accessToken, setAccessToken] = useState<string>("");
+    
     /**
      * Show ID retrieved from the URL parameters.
      */
@@ -73,14 +84,47 @@ export default function ShowPage() {
         getShowInfo();
     }, [id]);
 
+    // Fetch the token string on mount/user change
+    useEffect(() => {
+        const fetchToken = async () => {
+            try {
+                const token = await getAccessTokenSilently();
+                setAccessToken(token);
+            } catch (e) {
+                console.error("Error getting token", e);
+            }
+        };
+        if (user) fetchToken();
+    }, [getAccessTokenSilently, user]);
+
+    //Fetch reviews when showData or reviews change
+    useEffect(() => {
+        reviewLogic.getReviews(showData?.tmdbid, 'movies');
+    }, [showData?.tmdbid, reviewLogic.reviews]);
+
+    // Extract user ID from Auth0 user object
+    const userID = user?.sub;
+
+    // Extract custom username claim from Auth0 token
+    const userName = user?.['https://horror-helper-backend/username'];
+
     return (
-        <>
+        <div className={styles.showPage}>
             {/* Conditionally render error or show information */}
             {errorState ? (
                 <MovieShowPageError errorMessage={errorMessage} />
             ) : (
                 <ShowInfo showData={showData} />
             )}
-        </>
+            <CreateReview 
+                mediaData={showData} 
+                mediaType='shows' 
+                token={accessToken} 
+                username={userName} 
+                userID={userID} 
+                postReview={reviewLogic.postReview}
+            />
+            <PostedreviewsContainer reviews={reviewLogic.reviews}/>
+        </div>
     );
 }
