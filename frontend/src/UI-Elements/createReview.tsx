@@ -113,7 +113,7 @@ export default function CreateReview(props: CreateReviewProps) {
             />
 
             {/* Submit button */}
-            <button type='button' onClick={() => submitReview()}>
+            <button type='button' className={styles.submitReviewButton} onClick={() => submitReview()}>
                 submit review
             </button>
         </div>
