@@ -57,3 +57,22 @@
     outline: none;
     box-shadow: 0 0 10px #59cc0c;
 }
+
+.submitReviewButton{
+    font-size: 1.5em;
+    font-family: "Creepster", system-ui;
+    text-align: center;
+    border: none;
+    border-radius: 15px;
+    transition: 0.1s ease-in-out;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.submitReviewButton:hover{
+    box-shadow: 0 0 10px #59cc0c;
+}
+
+.submitReviewButton:active{
+    transform: scale(0.8);
+}
