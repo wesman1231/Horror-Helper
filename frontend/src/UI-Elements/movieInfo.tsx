@@ -56,6 +56,7 @@ export default function MovieInfo(props: MovieDataProps) {
             <h2 className={styles.movieTitle}>{props.movieData?.title}</h2>
 
             <img
+            className={styles.poster}
                 src={`https://media.themoviedb.org/t/p/w260_and_h390_face${props.movieData?.poster}`}
                 alt={`Poster for ${props.movieData?.title}`}
             />
