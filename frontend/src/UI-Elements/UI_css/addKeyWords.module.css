@@ -53,7 +53,7 @@ h2{
     overflow-y: scroll;
     z-index: 1;
     position: relative;
-    min-width: 200px
+    min-width: 209px
 }
 
 .keywordsListHidden{
@@ -186,4 +186,42 @@ h2{
     margin-top: 0.3em;
     position: relative;
     top: -2.5vh;
+}
+
+/*tablet styling*/
+@media screen and (min-width: 820px){
+    .keywordsList{
+        min-width: 50vw;
+        font-size: 1em;
+    }
+
+     .keywordsListReverse{
+        min-width: 50vw;
+        font-size: 1em;
+    }
+
+    .bloodDropContainer{
+        column-gap: 10%;
+    }
+}
+
+/*desktop styling*/
+@media screen and (min-width: 1281px) {
+    @keyframes bloodDrip{
+    0%{
+        translate: 0 0;
+    }
+
+    10%{
+        translate: 0 0.5vh;
+    }
+
+    100%{
+        translate: 0 46vh;
+    }
+}
+    
+    .bloodDropContainer{
+        column-gap: 12%;
+    }
 }

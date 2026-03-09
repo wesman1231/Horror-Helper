@@ -26,6 +26,7 @@ body{
     background-position: center;
     position: relative;
     top: 10em;
+    cursor: pointer;
 }
 
 .provenClassics{
@@ -46,8 +47,15 @@ body{
     background-position: center;
 }
 
+/*tablet styling*/
+@media screen and (min-width: 820px){
+    .menuButton{
+        max-width: 50%;
+    }
+}
+
 /*desktop styling*/
-@media screen and (min-width: 1281px) {
+@media screen and (min-width: 1281px){
   .menuButton{
     max-width: 20%;
   }
