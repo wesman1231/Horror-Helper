@@ -1,17 +1,17 @@
-.scrollToTopButton{
-    position: fixed;
-    top: 1em;
+.loadMoreButton{
     border: none;
     border-radius: 15px;
     font-family: "Creepster", system-ui;
     font-size: 1.2em;
+    position: relative;
+    bottom: 0.5em;
     transition: 0.1s ease-in-out;
 }
 
-.scrollToTopButton:hover{
+.loadMoreButton:hover{
     transform: scale(1.1);
 }
 
-.scrollToTopButton:active{
+.loadMoreButton:active{
     transform: scale(0.8);
 }

@@ -59,6 +59,21 @@ body{
     scale: 0.9;
 }
 
+/*tablet styling*/
+@media screen and (min-width: 820px){
+    .searchBar{
+        font-size: 1.5em;
+    }
+
+    .searchButton{
+        font-size: 2em;
+    }
+
+    .addKeywords{
+        font-size: 1.5em;
+    }
+}
+
 /*desktop tyling*/
 @media screen and (min-width: 1281px){
     .searchBar{

@@ -36,7 +36,7 @@
 }
 
 .titleText{
-    font-size: 0.8em;
+    font-size: 1em;
 }
 
 .releaseDate{
@@ -54,4 +54,24 @@ li{
 .info{
     padding: 0;
     list-style: none;
+}
+
+/*tablet styling*/
+@media screen and (min-width: 820px) {
+    .infoContainer{
+        font-size: 1.5em;
+    }
+}
+
+/*desktop styling*/
+@media screen and (min-width: 1281px) {
+    .infoContainer{
+        max-height: 2.5em;
+        font-size: 1.1em;
+    }
+
+    .showCard{
+        min-height: 20em;
+        max-height: 25em;
+    }
 }
