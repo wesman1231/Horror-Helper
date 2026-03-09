@@ -188,17 +188,39 @@ h2{
     top: -2.5vh;
 }
 
-/*desktop styling*/
-@media screen and (min-width: 1281px) {
+/*tablet styling*/
+@media screen and (min-width: 820px){
     .keywordsList{
         min-width: 50vw;
         font-size: 1em;
     }
 
-    .keywordsListReverse{
+     .keywordsListReverse{
         min-width: 50vw;
+        font-size: 1em;
     }
 
+    .bloodDropContainer{
+        column-gap: 10%;
+    }
+}
+
+/*desktop styling*/
+@media screen and (min-width: 1281px) {
+    @keyframes bloodDrip{
+    0%{
+        translate: 0 0;
+    }
+
+    10%{
+        translate: 0 0.5vh;
+    }
+
+    100%{
+        translate: 0 46vh;
+    }
+}
+    
     .bloodDropContainer{
         column-gap: 12%;
     }

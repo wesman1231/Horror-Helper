@@ -34,8 +34,19 @@
     text-decoration: underline;
 }
 
+/*tablet styling*/
+@media screen and (min-width: 820px){
+    .sortBy{
+        font-size: 1em;
+    }
+
+    .dropdown{
+        font-size: 1.5em;
+    }
+}
+
 /*desktop styling*/
-@media screen and (min-width: 1281px) {
+@media screen and (min-width: 1281px){
     .sortBy{
         font-size: 1em;
     }
