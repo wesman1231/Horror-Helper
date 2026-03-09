@@ -33,3 +33,14 @@
     color: inherit;
     text-decoration: underline;
 }
+
+/*desktop styling*/
+@media screen and (min-width: 1281px) {
+    .sortBy{
+        font-size: 1em;
+    }
+    
+    .dropdown{
+        font-size: 1.5em;
+    }
+}
