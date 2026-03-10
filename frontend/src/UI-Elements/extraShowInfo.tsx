@@ -1,5 +1,5 @@
 import type { Show } from "./tvCard";
-import styles from "../UI-Elements/UI_css/extraShowInfo.module.css";
+import styles from './UI_css/extraShowInfo.module.css';
 
 /**
  * Props for the ExtraShowInfo component.

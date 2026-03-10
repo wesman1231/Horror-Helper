@@ -45,6 +45,7 @@ export default function ShowInfo(props: ShowProps) {
         <section className={styles.showWrapper}>
             <h2 className={styles.showTitle}>{props.showData?.title}</h2>
             <img
+                className={styles.poster}
                 src={`https://media.themoviedb.org/t/p/w260_and_h390_face${props.showData?.poster}`}
                 alt={`Poster for ${props.showData?.title}`}
             />
