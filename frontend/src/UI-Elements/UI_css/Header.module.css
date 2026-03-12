@@ -24,7 +24,7 @@ nav{
     font-family: "Creepster", system-ui;
     display: flex;
     justify-content: space-around;
-    font-size: 1.2em;
+    font-size: 1.5em;
     overflow: hidden;
 }
 
@@ -69,6 +69,24 @@ nav{
         font-size: 2.5em;
     }
 
+    nav{
+        font-size: 1.5em;
+    }
+}
+
+/*landscape phone styling*/
+@media screen and (min-width: 900px) and (orientation: landscape){
+    h1{
+        font-size: 2em;
+    }
+
+    nav{
+        font-size: 1.5em;
+    }
+}
+
+/*landscape tablet styling*/
+@media screen and (min-width: 1000px) and (orientation: landscape){
     nav{
         font-size: 1.5em;
     }

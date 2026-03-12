@@ -53,6 +53,10 @@
     color: white;
 }
 
+.reviewTextBox{
+    font-family: sans-serif;
+}
+
 .reviewTextBox:focus{
     outline: none;
     box-shadow: 0 0 10px #59cc0c;
