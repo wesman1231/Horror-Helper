@@ -52,3 +52,55 @@
 }
 
 /*tablet styling*/
+@media screen and (min-width: 820px) {
+    .showTitle{
+        font-size: 3.5em;
+    }
+
+    .poster{
+        width: 25em;
+    }
+
+    .releaseDate{
+        font-size: 3em;
+    }
+
+    .seasons{
+        font-size: 3em;
+    }
+
+    .episodes{
+        font-size: 3em;
+    }
+
+    .dropdown{
+        font-size: 2em;
+    }
+}
+
+/*desktop styling*/
+@media screen and (min-width: 1281px){
+    .showTitle{
+        font-size: 5em;
+    }
+    
+    .poster{
+        width: 25em;
+    }
+
+    .releaseDate{
+        font-size: 2.5em;
+    }
+
+    .seasons{
+        font-size: 2.5em;
+    }
+
+    .episodes{
+        font-size: 2.5em;
+    }
+
+    .dropdown{
+        font-size: 2em;
+    }
+}

@@ -53,6 +53,10 @@
     color: white;
 }
 
+.reviewTextBox{
+    font-family: sans-serif;
+}
+
 .reviewTextBox:focus{
     outline: none;
     box-shadow: 0 0 10px #59cc0c;
@@ -76,3 +80,28 @@
 .submitReviewButton:active{
     transform: scale(0.8);
 }
+
+/*tablet styling*/
+@media screen and (min-width: 820px){
+    .reviewScoreButton{
+        width: 5em;
+        height: 5em;
+    }
+
+    .scoreText{
+        font-size: 2em;
+    }
+
+    .submitReviewButton{
+        font-size: 2em;
+    }
+
+    .reviewTextRequired{
+        font-size: 2em;
+    }
+
+    .reviewTextBox{
+        font-size: 2em;
+    }
+}
+

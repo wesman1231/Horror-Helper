@@ -80,3 +80,53 @@ li{
         max-height: 25em;
     }
 }
+
+/*landscape phone styling*/
+@media screen and (min-width: 900px) and (orientation: landscape){
+    .infoContainer{
+        max-height: 1.5em;
+        font-size: 1em;
+    }
+
+    .movieCard{
+        min-height: 20em;
+        max-height: 30em;
+    }
+
+    .movieTitle{
+        font-size: 1.3em;
+        margin: 0;
+    }
+
+    .titleText{
+        font-size: 1em;
+    }
+
+    .infoHeader{
+        font-size: 1em;
+    }
+
+    .franchiseText{
+        font-size: 1em;
+    }
+}
+
+/*landscape tablet styling*/
+@media screen and (min-width: 100px) and (orientation: landscape){
+    .movieTitle{
+        font-size: 1.3em;
+        margin: 0;
+    }
+
+    .titleText{
+        font-size: 1.3em;
+    }
+
+    .infoHeader{
+        font-size: 1.3em;
+    }
+
+    .franchiseText{
+        font-size: 1.3em;
+    }
+}

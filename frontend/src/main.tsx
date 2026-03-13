@@ -13,7 +13,7 @@ ReactDOM.createRoot(root!).render(
       authorizationParams={{
         redirect_uri: window.location.origin,
         audience: 'https://horror-helper-backend',
-        scope: "openid profile email read:current_user update:user_metadata"
+        scope: "openid profile email read:current_user offline_access update:user_metadata"
       }}
       useRefreshTokens={true}
       cacheLocation="localstorage"

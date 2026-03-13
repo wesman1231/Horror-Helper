@@ -60,3 +60,27 @@ body{
     max-width: 20%;
   }
 }
+
+/*landscape phone styling*/
+@media screen and (min-width: 900px) and (orientation: landscape) {
+    .menuButton{
+        min-height: 0;
+        height: 10em;
+        max-height: 15em;
+
+        position: relative;
+        top: 6em;
+    }
+}
+
+/*landscape tablet styling*/
+@media screen and (min-width: 1000px) and (orientation: landscape){
+    .menuButton{
+        min-height: 0;
+        height: 20em;
+        max-height: 20em;
+
+        position: relative;
+        top: 8em;
+    }
+}

@@ -208,20 +208,97 @@ h2{
 /*desktop styling*/
 @media screen and (min-width: 1281px) {
     @keyframes bloodDrip{
-    0%{
-        translate: 0 0;
-    }
+        0%{
+            translate: 0 0;
+        }
 
-    10%{
-        translate: 0 0.5vh;
-    }
+        10%{
+            translate: 0 0.5vh;
+        }
 
-    100%{
-        translate: 0 46vh;
+        100%{
+            translate: 0 46vh;
+        }
     }
-}
     
     .bloodDropContainer{
         column-gap: 12%;
+    }
+}
+
+/*landscape phone styling*/
+@media screen and (min-width: 900px) and (orientation: landscape){
+    @keyframes bloodDrip{
+        0%{
+            translate: 0 -5vh;
+        }
+
+        100%{
+            translate: 0 3.5em;
+        }
+    }
+
+    @keyframes openKeywords {
+    0%{ 
+        max-height: 0; 
+    }
+
+    100% { 
+        max-height: 15em; 
+    }
+}
+
+@keyframes closeKeywords {
+    0%{ 
+        max-height: 15em;
+         
+    }
+
+    100% { 
+        max-height: 0;
+
+    }
+}
+    .keywordsList{
+        max-height: 15em;
+    }
+
+    .bloodDropContainer{
+        margin-left: 1em;
+    }
+}
+
+
+/*landscape tablet styling*/
+@media screen and (min-width: 1000px) and (orientation: landscape){
+    @keyframes bloodDrip{
+        0%{
+            translate: 0 -1vh;
+        }
+
+        100%{
+            translate: 0 12em;
+        }
+    }
+
+    @keyframes openKeywords {
+        0%{ 
+            max-height: 0; 
+        }
+
+        100% { 
+            max-height: 15em; 
+        }
+    }
+
+    @keyframes closeKeywords {
+        0%{ 
+            max-height: 15em;
+         
+        }
+
+        100% { 
+            max-height: 0;
+        }
     }
 }
