@@ -21,5 +21,5 @@ app.use('/api', resendVerificationRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use(syncDirectors);
 app.listen(8080, '0.0.0.0', () => {
-    console.log("IT'S ALIVE AT http://localhost:3000");
+    console.log("IT'S ALIVE AT http://localhost:8080");
 });
