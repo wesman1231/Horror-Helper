@@ -1,6 +1,6 @@
 import express from "express";
-import { checkJWT } from "../middleware/checkJWT.ts";
-import { postReview, getReviews } from "../controller/reviewController.ts";
+import { checkJWT } from "../middleware/checkJWT.js";
+import { postReview, getReviews } from "../controller/reviewController.js";
 
 const router = express.Router();
 

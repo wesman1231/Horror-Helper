@@ -1,4 +1,4 @@
-import { checkSortModeAndMediaType } from "../controller/searchUtils/checkSortModeAndMediaType.ts";
+import { checkSortModeAndMediaType } from "../controller/searchUtils/checkSortModeAndMediaType.js";
 
 describe('verifies sort mode and media type to prevent sql injection', () => {
     //valid media types: 'movies', 'shows'
