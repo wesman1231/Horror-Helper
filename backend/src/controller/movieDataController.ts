@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { db } from '../db/pool.ts';
+import { db } from '../db/pool.js';
 
 /**
  * Fetches movie details by TMDB ID from the database.

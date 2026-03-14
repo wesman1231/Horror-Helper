@@ -1,6 +1,5 @@
 import type { Request, Response } from 'express';
-import { db } from '../db/pool.ts';
-import type NewReleases from '../../frontend/src/pages/newReleases.tsx';
+import { db } from '../db/pool.js';
 
 export async function fetchShowInfo(req: Request, res: Response){
     //take the show id from the url, find that show in the database, and send it back to the client

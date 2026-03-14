@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { db } from "../db/pool.ts";
+import { db } from "../db/pool.js";
 import dotenv from 'dotenv';
 dotenv.config();
 
