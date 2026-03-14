@@ -1,13 +1,13 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import searchRoutes from './routes/searchRoutes.ts';
-import movieRoutes from './routes/movieRoutes.ts';
-import showRoutes from './routes/showRoutes.ts';
-import directorRoutes from './routes/directorRoutes.ts';
-import resendVerificationRoutes from './routes/resendVerificationRoute.ts';
-import reviewRoutes from './routes/reviewRoutes.ts';
-import syncDirectors from './routes/getAllDirectors.ts'
+import searchRoutes from './routes/searchRoutes.js';
+import movieRoutes from './routes/movieRoutes.js';
+import showRoutes from './routes/showRoutes.js';
+import directorRoutes from './routes/directorRoutes.js';
+import resendVerificationRoutes from './routes/resendVerificationRoute.js';
+import reviewRoutes from './routes/reviewRoutes.js';
+import syncDirectors from './routes/getAllDirectors.js'
 
 
 const app = express();

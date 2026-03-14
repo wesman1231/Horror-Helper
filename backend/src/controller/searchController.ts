@@ -1,5 +1,5 @@
-import { checkSortModeAndMediaType } from './searchUtils/checkSortModeAndMediaType.ts';
-import { removeStopWords } from './searchUtils/removeStopWords.ts';
+import { checkSortModeAndMediaType } from './searchUtils/checkSortModeAndMediaType.js';
+import { removeStopWords } from './searchUtils/removeStopWords.js';
 
 /**
  * SearchController
@@ -18,7 +18,7 @@ import { removeStopWords } from './searchUtils/removeStopWords.ts';
 import dotenv from 'dotenv';
 dotenv.config();
 import type { Request, Response } from "express";
-import { db } from '../db/pool.ts';
+import { db } from '../db/pool.js';
 
 export default async function SearchController(req: Request, res: Response){
 
