@@ -5,8 +5,8 @@ export default {
   ...createDefaultPreset(),
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
-    // This regex catches imports ending in .ts and tells Jest to find the file
-    '^(.+)\\.ts$': '$1',
+    // This is the fix: Map .js imports to their actual .ts sources
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   transform: {
     '^.+\\.tsx?$': [
