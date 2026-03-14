@@ -10,9 +10,11 @@
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.5"
+    "@types/express": "^5.0.5",
+    "typescript": "^5.9.3"
   },
   "scripts": {
+    "tsc": "tsc",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "build": "tsc",
     "start": "node dist/server.js"
