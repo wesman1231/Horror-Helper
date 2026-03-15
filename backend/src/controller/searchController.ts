@@ -35,7 +35,7 @@ export default async function SearchController(req: Request, res: Response){
     const keywords = String(req.query.keywords);
     const sortMode = String(req.query.sortMode);
     const mediaType = String(req.query.mediaType);
-    const currentPage = Number(req.query.page);
+    const currentPage = Number(req.query.page) || 1;
      
     /**
      * Pagination config
