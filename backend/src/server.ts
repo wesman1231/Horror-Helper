@@ -11,8 +11,12 @@ import syncDirectors from './routes/getAllDirectors.js'
 
 
 const app = express();
-
 dotenv.config();
+
+const corsOptions = {
+  origin: ['https://image.tmdb.org', 'https://horrorhelper.com', 'http://localhost:3000', 'https://api.themoviedb.org']
+};
+
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
