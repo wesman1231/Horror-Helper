@@ -21,6 +21,9 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
 //routes
+app.get('/', (req, res) => {
+  res.status(200).send('Horror Helper API is alive!');
+});
 app.use('/api/search', searchRoutes);
 app.use('/api/movies', movieRoutes);
 app.use('/api/shows', showRoutes);
