@@ -83,7 +83,7 @@ export default function MoviePage() {
         async function getMovieInfo() {
             try {
                 const fetchInfo = await fetch(
-                    `http://localhost:3000/api/movies/${id}`
+                    `${import.meta.env.VITE_API_URL}/api/movies/${id}`
                 );
                 const fetchResults = await fetchInfo.json();
 
