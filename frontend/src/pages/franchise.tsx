@@ -11,7 +11,7 @@ export default function Franchise(){
 
     async function fetchFranchise(){
         try{
-            const getFranchise = await fetch(`http://localhost:3000/api/movies/franchises/${franchiseName}`);
+            const getFranchise = await fetch(`${import.meta.env.VITE_API_URL}/api/movies/franchises/${franchiseName}`);
             const franchiseInfo = await getFranchise.json();
             setMovies(franchiseInfo.movies);
         }
