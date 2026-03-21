@@ -35,7 +35,7 @@ export default function useReviews() {
         try {
             // Send a GET request to the backend with mediaID and mediaType as query parameters
             const fetchReviews = await fetch(
-                `http://localhost:3000/api/reviews/get?mediaID=${mediaID}&mediaType=${mediaType}`
+                `${import.meta.env.VITE_API_URL}/api/reviews/get?mediaID=${mediaID}&mediaType=${mediaType}`
             );
 
             // Parse the JSON response body
@@ -58,7 +58,7 @@ export default function useReviews() {
         
         try{
             // Send POST request to backend with authorization header
-            await fetch(`http://localhost:3000/api/reviews/post?mediaID=${mediaID}&mediaType=${mediaType}`,
+            await fetch(`${import.meta.env.VITE_API_URL}/api/reviews/post?mediaID=${mediaID}&mediaType=${mediaType}`,
                 {
                     method: 'POST',
                     headers: {

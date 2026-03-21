@@ -62,7 +62,7 @@ export default function ShowPage() {
         async function getShowInfo() {
             try {
                 const fetchInfo = await fetch(
-                    `http://localhost:3000/api/shows/${id}`
+                    `${import.meta.env.VITE_API_URL}/api/shows/${id}`
                 );
                 const fetchResults = await fetchInfo.json();
 

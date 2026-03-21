@@ -87,8 +87,8 @@ export default function useSearch(){
             console.log(keywordString);
             try{
 
-                const request = await fetch(`http://localhost:8080/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
-                console.log(`http://localhost:8080/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
+                const request = await fetch(`${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
+                console.log(`${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
                 const response = await request.json();
                     
                 setError(false);
@@ -112,7 +112,7 @@ export default function useSearch(){
             const formatSearch = encodeURIComponent(previousSearch);
             const keywordString = encodeURIComponent(keywords.join('+'));
             try{
-                const request = await fetch(`http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
+                const request = await fetch(`${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
                 const response = await request.json();
                 
                 setError(false);
@@ -134,7 +134,7 @@ export default function useSearch(){
             const keywordString = encodeURIComponent(keywords.join('+'));
             try{
                 const request = await fetch(
-                    `http://localhost:3000/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=${page}`
+                    `${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=${page}`
                 );
                 const response = await request.json();
         
