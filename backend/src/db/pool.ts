@@ -21,15 +21,4 @@ export const db = mysql.createPool({
   queueLimit: 0,
 });
 
-// Add this to your main server entry point (e.g., index.ts)
-async function testConnection() {
-  try {
-    const connection = await db.getConnection();
-    console.log('✅ Successfully connected to RDS MySQL!');
-    connection.release();
-  } catch (error) {
-    console.error('❌ Failed to connect to RDS:', error);
-  }
-}
 
-testConnection();

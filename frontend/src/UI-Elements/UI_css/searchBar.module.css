@@ -11,6 +11,7 @@ body{
 }
 
 .searchBar{
+    margin-top: 1.5em;
     font-size: 1em;
     width: 70%;
     margin-bottom: 1em;

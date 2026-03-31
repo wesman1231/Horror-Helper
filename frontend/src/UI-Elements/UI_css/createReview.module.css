@@ -81,6 +81,17 @@
     transform: scale(0.8);
 }
 
+.loginToReview{
+    background-color: white;
+    width: 50%;
+    min-height: 5em;
+    margin-bottom: 1em;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 /*tablet styling*/
 @media screen and (min-width: 820px){
     .reviewScoreButton{

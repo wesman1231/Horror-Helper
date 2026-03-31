@@ -22,7 +22,7 @@ export async function fetchMovieInfo(req: Request, res: Response): Promise<void>
         
     } catch (error) {
         console.error('Error fetching movie info:', error);
-        res.status(500).json({ error: 'Internal server error', req });
+        res.status(500).json({ error: 'Internal server error'});
     }
 };
 
