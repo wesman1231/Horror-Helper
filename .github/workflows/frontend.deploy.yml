@@ -9,7 +9,7 @@ on:
       - '.github/workflows/frontend-deploy.yml' # Also run if the workflow itself changes
 
 permissions:
-  id-token: write # Required for OIDC
+  id-token: write # Required for OIDC.
   contents: read  # Required for checkout
 
 jobs:
