@@ -41,7 +41,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: us-west-1
 
       - name: Deploy to S3
         # --delete ensures files removed from your repo are also removed from S3
