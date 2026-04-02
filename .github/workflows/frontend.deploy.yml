@@ -3,7 +3,7 @@ name: Deploy Frontend to S3
 on:
   push:
     branches:
-      - dev
+      - main
     paths:
       - 'frontend/**' # Only triggers if files in the frontend folder change
       - '.github/workflows/frontend-deploy.yml' # Also run if the workflow itself changes
