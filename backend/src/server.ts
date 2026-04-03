@@ -33,7 +33,7 @@ app.use('/api/shows', showRoutes);
 app.use('/api/directors', directorRoutes);
 app.use('/api', resendVerificationRoutes);
 app.use('/api/reviews', reviewRoutes);
-app.use(syncDirectors);
+app.use(syncDirectors); 
 
 
 app.listen(8080, '0.0.0.0', () => {
