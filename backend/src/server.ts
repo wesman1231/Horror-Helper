@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 app.get('/test', (req, res) => {
   res.status(200).send('deployment workflow is working');
 });
-app.use('/api/search', searchRoutes);
+app.use('/api/search', searchRoutes); 
 app.use('/api/movies', movieRoutes);
 app.use('/api/shows', showRoutes);
 app.use('/api/directors', directorRoutes);
