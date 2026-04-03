@@ -26,6 +26,7 @@ body{
     background-position: center;
     position: relative;
     top: 10em;
+    cursor: pointer;
 }
 
 .provenClassics{
@@ -46,9 +47,40 @@ body{
     background-position: center;
 }
 
+/*tablet styling*/
+@media screen and (min-width: 820px){
+    .menuButton{
+        max-width: 50%;
+    }
+}
+
 /*desktop styling*/
-@media screen and (min-width: 1281px) {
+@media screen and (min-width: 1281px){
   .menuButton{
     max-width: 20%;
   }
+}
+
+/*landscape phone styling*/
+@media screen and (min-width: 900px) and (orientation: landscape) {
+    .menuButton{
+        min-height: 0;
+        height: 10em;
+        max-height: 15em;
+
+        position: relative;
+        top: 6em;
+    }
+}
+
+/*landscape tablet styling*/
+@media screen and (min-width: 1000px) and (orientation: landscape){
+    .menuButton{
+        min-height: 0;
+        height: 20em;
+        max-height: 20em;
+
+        position: relative;
+        top: 8em;
+    }
 }

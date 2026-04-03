@@ -24,3 +24,5 @@ firebase/
 *.sln
 *.sw?
 .env
+.env.dev
+.env.local

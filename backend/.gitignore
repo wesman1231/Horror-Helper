@@ -1,4 +1,6 @@
 .env
+.env.dev
+.env.local
 .gitignore
 firebase/
 node_modules

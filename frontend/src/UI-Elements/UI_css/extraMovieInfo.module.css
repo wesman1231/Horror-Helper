@@ -33,3 +33,69 @@
     font-size: 1.1em;
     text-align: center;
 }
+
+/*tablet styling*/
+@media screen and (min-width: 820px) {
+    .tagsHeader{
+        font-size: 2.5em;
+        text-align: center;
+    }
+
+    .tags{
+        padding-left: 10%;
+        padding-right: 10%;
+        font-size: 2em;
+        text-align: center;
+    }
+
+    .synopsisHeader{
+        font-size: 2.5em;
+        text-align: center;
+    }
+
+    .synopsis{
+        padding-left: 10%;
+        padding-right: 10%;
+        font-size: 2em;
+        text-align: center;
+    }
+
+    .castHeader{
+        font-size: 2.5em;
+        text-align: center;
+    }
+
+    .castText{
+        padding-left: 10%;
+        padding-right: 10%;
+        font-size: 2em;
+        text-align: center;
+    }
+}
+
+/*desktop styling*/
+@media screen and (min-width: 1281px){
+    .tagsHeader{
+        font-size: 2.5em;
+    }
+    
+    .tags{
+        font-size: 1.5em;
+    }
+    
+    .synopsisHeader{
+        font-size: 2.5em;
+    }
+    
+    .synopsis{
+        font-size: 1.5em;
+    }
+    
+    .castHeader{
+        font-size: 2.5em;
+    }
+    
+    .castText{
+        font-size: 1.5em;
+    }
+}

@@ -1,9 +1,10 @@
 .headerText{
+    margin: 0;
     color: white;
-    font-size: 1.4em;
+    font-size: 1.5em;
     text-align: center;
     position: relative;
-    top: 5.5em;
+    top: 6em;
 }
 
 .contentContainer{
@@ -12,12 +13,33 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    top: 6em
+    top: 12em;
 }
 
 .contentNav{
     position: relative;
-    top: 8em;
+    top: 7em;
+    height: 2em;
+    display: flex;
+    align-items: center;
+}
+
+.mediaButton{
+    border: none;
+    height: 60%;
+    border-radius: 15px;
+    font-family: "Creepster", system-ui;
+    font-size: 1em;
+    transition: 0.1s ease-in-out;
+    position: relative;
+}
+
+.mediaButton:hover{
+    transform: scale(1.1);
+}
+
+.mediaButton:active{
+    transform: scale(0.8);
 }
 
 .noResults{
@@ -26,4 +48,39 @@
 
 .errorMessage{
     color: white;
+}
+
+/*tablet styling*/
+@media screen and (min-width: 820px) {
+    .headerText{
+        font-size: 2.5em;
+        top: 4em;
+    }
+
+    .contentNav{
+        top: 5.5em;
+    }
+
+    .contentContainer{
+        top: 12em;
+    }
+
+    .mediaButton{
+        scale: 1.2
+    }
+}
+
+/*desktop styling*/
+@media screen and (min-width: 1281px) {
+    .headerText{
+        top: 5em;
+    }
+
+    .mediaButton{
+        scale: 1.2
+    }
+
+    .contentContainer{
+        top: 10em;
+    }
 }

@@ -3,8 +3,6 @@ import type { Show } from "./tvCard";
 import styles from "../UI-Elements/UI_css/showInfo.module.css";
 import ExtraShowInfo from "./extraShowInfo";
 import useGetReviews from '../hooks/useReviews';
-import Review from "./createReview";
-import PostedreviewsContainer from "./postedReviewsContainer";
 
 /**
  * Props for the ShowInfo component.
@@ -47,6 +45,7 @@ export default function ShowInfo(props: ShowProps) {
         <section className={styles.showWrapper}>
             <h2 className={styles.showTitle}>{props.showData?.title}</h2>
             <img
+                className={styles.poster}
                 src={`https://media.themoviedb.org/t/p/w260_and_h390_face${props.showData?.poster}`}
                 alt={`Poster for ${props.showData?.title}`}
             />
@@ -60,12 +59,11 @@ export default function ShowInfo(props: ShowProps) {
             <h3 className={styles.episodes}>Episodes: {props.showData?.episodes}</h3>
 
             <button className={styles.dropdown} onClick={toggleInfo}>
-                Show More {infoDropdown ? String.fromCodePoint(128315) : String.fromCodePoint(128314)}
+                {infoDropdown ? "Show Less" : "Show More"} 
+                <span>{infoDropdown ? String.fromCodePoint(128315) : String.fromCodePoint(128314)}</span>
             </button>
 
-            {infoDropdown && <ExtraShowInfo showData={props.showData} />}
-            <Review mediaID={props.showData?.tmdbid} mediaType='shows' fetchReviews={fetchReviews}/>
-            <PostedreviewsContainer reviews={fetchReviews.reviews}/>
+            {infoDropdown ? <ExtraShowInfo showData={props.showData} /> : null}
         </section>
     );
 }

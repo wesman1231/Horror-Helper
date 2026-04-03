@@ -1,5 +1,5 @@
 import express from 'express';
-import directorDataController from '../controller/directorDataController.ts';
+import directorDataController from '../controller/directorDataController.js';
 
 const router = express.Router();
 

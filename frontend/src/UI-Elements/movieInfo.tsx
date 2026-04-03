@@ -56,6 +56,7 @@ export default function MovieInfo(props: MovieDataProps) {
             <h2 className={styles.movieTitle}>{props.movieData?.title}</h2>
 
             <img
+            className={styles.poster}
                 src={`https://media.themoviedb.org/t/p/w260_and_h390_face${props.movieData?.poster}`}
                 alt={`Poster for ${props.movieData?.title}`}
             />
@@ -83,7 +84,8 @@ export default function MovieInfo(props: MovieDataProps) {
             )}
 
             <button className={styles.dropdown} onClick={toggleInfo}>
-                Show More {infoDropdown ? String.fromCodePoint(128315) : String.fromCodePoint(128314)}
+                {infoDropdown ? "Show Less" : "Show More"} 
+                <span>{infoDropdown ? String.fromCodePoint(128315) : String.fromCodePoint(128314)}</span>
             </button>
 
             {infoDropdown ? <ExtraMovieInfo movieData={props.movieData} /> : null}

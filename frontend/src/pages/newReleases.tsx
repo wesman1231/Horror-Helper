@@ -79,7 +79,7 @@ export default function NewReleases(){
        try {
             setMediaDisplayed(mediaType);
             
-            const fetchNewMedia = await fetch(`http://localhost:3000/api/${mediaType}/new-releases?page=${page}`);
+            const fetchNewMedia = await fetch(`${import.meta.env.VITE_API_URL}/api/${mediaType}/new-releases?page=${page}`);
             const fetchResults: NewReleasesResponse = await fetchNewMedia.json();
             
             if (fetchNewMedia.ok) {
@@ -126,8 +126,8 @@ export default function NewReleases(){
               * the user starts from the beginning of the new category.
             */}
             <nav className={styles.contentNav}>
-                <button onClick={() => { setPage(0); getNewMedia(0, 'movies'); }}>Movies</button>
-                <button onClick={() => { setPage(0); getNewMedia(0, 'shows'); }}>Shows</button>
+                <button className={styles.mediaButton} onClick={() => { setPage(0); getNewMedia(0, 'movies'); }}>Movies</button>
+                <button className={styles.mediaButton} onClick={() => { setPage(0); getNewMedia(0, 'shows'); }}>Shows</button>
             </nav>
 
             <div className={styles.contentContainer}>

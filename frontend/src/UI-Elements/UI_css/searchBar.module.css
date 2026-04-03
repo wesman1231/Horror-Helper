@@ -11,6 +11,7 @@ body{
 }
 
 .searchBar{
+    margin-top: 1.5em;
     font-size: 1em;
     width: 70%;
     margin-bottom: 1em;
@@ -25,29 +26,28 @@ body{
 
 .searchButton{
     font-family: "Creepster", system-ui;
-    font-size: 1.2em;
-    border-radius: 15px;
+    font-size: 1.5em;
+    border-radius: 25px;
     transition: 0.3s ease-in-out;
     background-color: whitesmoke;
     border: none;
 }
 
 .searchButton:hover{
-    font-size: 1.2em;
     border-radius: 15px;
-    scale: 1.1;
+    transform: scale(1.1);
     background-color: hsl(0, 92%, 30%);
 }
 
 .searchButton:active{
-    scale: 0.8;
-    transition: 0.1s;
+    transform: scale(0.8);
+    transition: 0.1s ease-in-out;
 }
 
 .addKeywords{
-    font-size: 01em;
+    font-size: 1.3em;
     font-family: "Creepster", system-ui;
-    transition: 0.2s ease-in-out;
+    transition: 0.1s ease-in-out;
     border: none;
     border-radius: 15px;
 }
@@ -57,5 +57,49 @@ body{
 }
 
 .addKeywords:active{
-    scale: 0.8;
+    scale: 0.9;
+}
+
+/*tablet styling*/
+@media screen and (min-width: 820px){
+    .searchBar{
+        font-size: 1.5em;
+    }
+
+    .searchButton{
+        font-size: 2em;
+    }
+
+    .addKeywords{
+        font-size: 1.5em;
+    }
+}
+
+/*desktop tyling*/
+@media screen and (min-width: 1281px){
+    .searchBar{
+        margin-top: 1.5em;
+    }
+
+    .searchButton{
+        font-size: 2em;
+    }
+
+    .addKeywords{
+        font-size: 1.5em;
+    }
+}
+
+/*landscape phone styling*/
+@media screen and (min-width: 900px) and (orientation: landscape){
+    .searchBar{
+        margin-top: 3.5em;
+    }
+}
+
+/*landscape tablet styling*/
+@media screen and (min-width: 1000px) and (orientation: landscape){
+    .searchBar{
+        margin-top: 1.5em;
+    }
 }
