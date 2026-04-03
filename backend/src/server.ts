@@ -24,6 +24,9 @@ app.use(express.json({ limit: '10mb' }));
 app.get('/', (req, res) => {
   res.status(200).send('Horror Helper API is alive!');
 });
+app.get('/test', (req, res) => {
+  res.status(200).send('deployment workflow is working');
+});
 app.use('/api/search', searchRoutes);
 app.use('/api/movies', movieRoutes);
 app.use('/api/shows', showRoutes);
