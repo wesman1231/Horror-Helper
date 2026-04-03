@@ -15,6 +15,7 @@ env:
   ECS_SERVICE: horror-helper-api-service         
   ECS_CLUSTER: horrorhelper-backend-cluster
   CONTAINER_NAME: horrorhelper-container
+  TASK_DEFINITION_FAMILY: horrorhelper-api-task
 
 jobs:
   deploy:
@@ -49,7 +50,9 @@ jobs:
 
       - name: Download task definition
         run: |
-          aws ecs describe-task-definition --task-definition ${{ env.ECS_SERVICE }} --query taskDefinition > task-definition.json
+          aws ecs describe-task-definition \
+            --task-definition ${{ env.TASK_DEFINITION_FAMILY }} \
+            --query taskDefinition > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
