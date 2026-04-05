@@ -4,3 +4,5 @@ firebase
 node_modules
 .env.local
 .env.dev
+db/password.txt
+.env.localdev
