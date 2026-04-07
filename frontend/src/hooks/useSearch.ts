@@ -8,7 +8,7 @@ export type sortModes = 'relevance' | 'releasedate' | 'newest' | 'title' | 'dire
 export type useSearch = {
         handleInput: (event: React.ChangeEvent<HTMLInputElement>) => void,
         handleCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
-        search: () => void,
+        newSearch: (page: number) => Promise<void>,
         sort: () => void,
         changePage: (page: number) => void,
         relevanceSort: () => void,
@@ -30,6 +30,12 @@ export type useSearch = {
         keywords: string[];
         loading: boolean;
     };
+
+    interface Response{
+        pages: number[];
+        searchResult: Movie[] | Show[];
+        keywordQuery: string
+    }
 
 export default function useSearch(){
     const { mediaType } = useParams<{ mediaType: mediaType }>();
@@ -60,7 +66,7 @@ export default function useSearch(){
 
     //run search every time keywords change
     useEffect(() => {
-        search();
+        newSearch(1);
     }, [keywords]);
 
     //track search bar value
@@ -80,51 +86,65 @@ export default function useSearch(){
     }
 
     
-    //search for media
-    async function search(){
+    //search function used for new searches (example: if first search was 'Evil Dead' and I then search for 'The Howling,' or if I add or remove keywords, then this code runs)
+    async function newSearch(page: number){
         if(searchValue != '' || keywords.length > 0){
             encodeURIComponent(searchValue);
             const formatSearch = encodeURIComponent(searchValue);
             const keywordString = encodeURIComponent(keywords.join('+'));
-            console.log(keywordString);
             try{
                 setLoading(true);
-                const request = await fetch(`${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
-                console.log(`${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
-                const response = await request.json();
-                setLoading(false);
-                setError(false);
-                setPages(response.pages);
-                setSortMenuVisible(true);
-                setPreviousSearch(searchValue);
-                setDisplayedResults(response.searchResult);
-                console.log(response.keywordQuery);
-                console.log(response);
+                const request = await fetch(`${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=${page}`);
+                const response: Response = await request.json();
+                setPageState(response);
+                setPreviousSearch(searchValue); //track the previous search value for changing pages and sorting
             } 
             catch(error){
-                setLoading(false);
-                setError(true);
+                setErrorState();
                 console.error(error);
             }
         }
     }
 
-    //sort results
-    async function sort(){
-        if(previousSearch !== '' || keywords.length > 0){
+    //search function used for sorting and changing pages
+    async function modifySearch(page: number){
+        encodeURIComponent(previousSearch);
             const formatSearch = encodeURIComponent(previousSearch);
             const keywordString = encodeURIComponent(keywords.join('+'));
             try{
-                const request = await fetch(`${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
-                const response = await request.json();
-                
-                setError(false);
-                setDisplayedResults(response.searchResult);
-                setPages(response.pages);
-                console.log(response);
+                setLoading(true);
+                const request = await fetch(`${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=${page}`);
+                const response: Response = await request.json();
+                setPageState(response);
             } 
             catch(error){
-                setError(true);
+                setErrorState();
+                console.error(error);
+            }
+    }
+
+    //sets page state upon successful search
+    function setPageState(response: Response){
+        setLoading(false);
+        setError(false);
+        setPages(response.pages);
+        setSortMenuVisible(true);
+        setDisplayedResults(response.searchResult);
+    }
+
+    //sets error status when search fails
+    function setErrorState(){
+        setLoading(false);
+        setError(true);
+    }
+
+    //sort results
+    async function sort(){
+        if(previousSearch !== '' || keywords.length > 0){
+            try{
+                await modifySearch(1);
+            } 
+            catch(error){
                 console.error(error);
             }
         }
@@ -133,21 +153,10 @@ export default function useSearch(){
     //move to next or previous page
     async function changePage(page: number){
         if(previousSearch !== '' || keywords.length > 0){
-            const formatSearch = encodeURIComponent(previousSearch);
-            const keywordString = encodeURIComponent(keywords.join('+'));
             try{
-                const request = await fetch(
-                    `${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=${page}`
-                );
-                const response = await request.json();
-        
-                setError(false);
-                setDisplayedResults(response.searchResult);
-                setPages(response.pages);
-                console.log(response);
+                await modifySearch(page);
             }    
             catch(error){
-                setError(true);
                 console.error(error);
             }
         }
@@ -198,7 +207,7 @@ export default function useSearch(){
     const searchFunctions: useSearch = {
         handleInput,
         handleCheckboxChange,
-        search,
+        newSearch,
         sort,
         changePage,
         relevanceSort,
@@ -218,7 +227,7 @@ export default function useSearch(){
         sortMenuVisible: sortMenuVisible,
         searchValue: searchValue,
         keywords: keywords,
-        loading: loading
+        loading: loading,
     }
     return searchFunctions;
 }
