@@ -26,6 +26,8 @@ Horror Helper allows users to search for horror films and shows by title and wit
 
 * Set environment variables for front end and back end (follow .env.example files)
 
+* Change db volume schema from data.sql to init.sql
+
 * In the frontend directory run ```npm run dev``` to start the vite development server
 
 * In the backend directory run ```docker-compose up --build``` to build and start the api and database
