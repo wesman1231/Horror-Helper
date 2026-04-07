@@ -28,6 +28,7 @@ export type useSearch = {
         sortMenuVisible: boolean,
         searchValue: string,
         keywords: string[];
+        loading: boolean;
     };
 
 export default function useSearch(){
@@ -40,6 +41,7 @@ export default function useSearch(){
     const [sortMode, setSortMode] = useState<sortModes>('relevance');
     const [pages, setPages] = useState<number[]>([]);
     const [keywords, setKeywords] = useState<string[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
 
     //run sort function when sortMode changes
@@ -86,11 +88,11 @@ export default function useSearch(){
             const keywordString = encodeURIComponent(keywords.join('+'));
             console.log(keywordString);
             try{
-
+                setLoading(true);
                 const request = await fetch(`${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
                 console.log(`${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=1`);
                 const response = await request.json();
-                    
+                setLoading(false);
                 setError(false);
                 setPages(response.pages);
                 setSortMenuVisible(true);
@@ -100,6 +102,7 @@ export default function useSearch(){
                 console.log(response);
             } 
             catch(error){
+                setLoading(false);
                 setError(true);
                 console.error(error);
             }
@@ -117,7 +120,7 @@ export default function useSearch(){
                 
                 setError(false);
                 setDisplayedResults(response.searchResult);
-                setPages(response.pages); // optionally update pages
+                setPages(response.pages);
                 console.log(response);
             } 
             catch(error){
@@ -214,7 +217,8 @@ export default function useSearch(){
         error: error,
         sortMenuVisible: sortMenuVisible,
         searchValue: searchValue,
-        keywords: keywords
+        keywords: keywords,
+        loading: loading
     }
     return searchFunctions;
 }
