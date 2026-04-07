@@ -53,7 +53,7 @@ export default function SearchBar(props: SearchBarProps) {
                 <button
                     type="button"
                     className={styles.searchButton}
-                    onClick={props.searchHook.search}
+                    onClick={() => props.searchHook.newSearch(1)}
                 >
                     Search
                 </button>
