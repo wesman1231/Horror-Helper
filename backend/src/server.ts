@@ -14,10 +14,10 @@ const app = express();
 dotenv.config();
 
 const corsOptions = {
-  origin: ['https://image.tmdb.org', 'https://horrorhelper.com', 'http://localhost:3000', 'https://api.themoviedb.org']
+  origin: ['https://image.tmdb.org', 'https://horrorhelper.com', 'http://localhost:8080', 'https://api.themoviedb.org', 'https://api.horrorhelper.com', 'http://localhost:5173']
 };
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 
 //routes
