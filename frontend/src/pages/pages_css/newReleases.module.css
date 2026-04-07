@@ -7,6 +7,16 @@
     top: 6em;
 }
 
+.loadingContainer{
+    display: flex;
+    justify-content: center; 
+    align-items: center;     
+    width: 100%;             
+    min-height: 200px; 
+    position: relative;
+    top: 30vh;
+}
+
 .contentContainer{
     display: flex;
     flex-direction: column;

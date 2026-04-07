@@ -26,7 +26,7 @@ services:
     volumes:
       - db-data:/var/lib/mysql
       # Automatically run your schema on startup
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/data.sql:/docker-entrypoint-initdb.d/data.sql
     expose:
       - 3306
     healthcheck:

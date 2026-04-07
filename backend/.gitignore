@@ -6,3 +6,4 @@ firebase/
 node_modules
 db/password.txt
 .env.localdev
+data.sql

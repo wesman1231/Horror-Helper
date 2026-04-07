@@ -1,0 +1,39 @@
+.spinner {
+  display: inline-block;
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  animation: spin 2.5s linear infinite;
+}
+
+/* Outer circle */
+.circle {
+  fill: none;
+  stroke: #ff1a1a;
+  stroke-width: 4;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.7));
+}
+
+/* Pentagram lines */
+.pentagram {
+  fill: none;
+  stroke: #b30000;
+  stroke-width: 3.5;
+  stroke-linejoin: bevel;
+  stroke-linecap: square;
+
+  filter: drop-shadow(0 0 6px rgba(255, 0, 0, 0.6));
+}
+
+/* Smooth rotation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
