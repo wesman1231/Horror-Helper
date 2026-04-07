@@ -109,18 +109,18 @@ export default function useSearch(){
     //search function used for sorting and changing pages
     async function modifySearch(page: number){
         encodeURIComponent(previousSearch);
-            const formatSearch = encodeURIComponent(previousSearch);
-            const keywordString = encodeURIComponent(keywords.join('+'));
-            try{
-                setLoading(true);
-                const request = await fetch(`${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=${page}`);
-                const response: Response = await request.json();
-                setPageState(response);
-            } 
-            catch(error){
-                setErrorState();
-                console.error(error);
-            }
+        const formatSearch = encodeURIComponent(previousSearch);
+        const keywordString = encodeURIComponent(keywords.join('+'));
+        try{
+            setLoading(true);
+            const request = await fetch(`${import.meta.env.VITE_API_URL}/api/search/movies?mediaType=${mediaType}&query=${formatSearch}&sortMode=${sortMode}&keywords=${keywordString}&page=${page}`);
+            const response: Response = await request.json();
+            setPageState(response);
+        } 
+        catch(error){
+            setErrorState();
+            console.error(error);
+        }
     }
 
     //sets page state upon successful search
