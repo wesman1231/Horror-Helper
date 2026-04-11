@@ -44,7 +44,7 @@ export default function AddKeywords(props: KeywordsProps) {
         'giant cockroach', 'giant crocodile', 'giant insect', 'giant monster', 'giant snake', 'giant spider', 'gore', 'gothic', 'grief', 'halloween', 'haunted house', 'hell', 'holiday', 'home invasion', 
         'independent film', 'indie horror', 'infection', 'internet', 'investigation', 'isolation', 'italian', 'kaiju', 'kidnapping', 'killer', 'killer ape', 'killer bees', 'killer car', 'killer cat',
         'killer child', 'killer clown', 'killer dog', 'killer doll', 'killer robot', 'lgtb', 'mask', 'mockumentary', 'monster', 'mummy', 'musical', 'ouija board', 'parody', 'playful', 'post-apocalyptic', 'priest',
-        'proto-slasher', 'psychological', 'puppet', 'religion', 'remake', 'ridiculous', 'romance', 'sea monster', 'sequel', 'shark', 'short film', 'skeleton', 'small town', 'snake', 'space', 'splatter', 
+        'proto-slasher', 'psychological', 'puppet', 'religion', 'remake', 'ridiculous', 'romance', 'sea monster', 'sequel', 'shark', 'short film', 'skeleton', 'small town', 'slasher', 'snake', 'space', 'splatter', 
         'supernatural', 'surreal', 'suspense', 'torture', 'vampire', 'werewolf', 'zombie'];
 
     return (
