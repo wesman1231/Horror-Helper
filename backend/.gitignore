@@ -7,3 +7,4 @@ node_modules
 db/password.txt
 .env.localdev
 data.sql
+TMDB_API_KEY.txt
