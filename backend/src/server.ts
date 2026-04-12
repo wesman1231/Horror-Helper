@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
 import cors from 'cors';
 import searchRoutes from './routes/searchRoutes.js';
 import movieRoutes from './routes/movieRoutes.js';
