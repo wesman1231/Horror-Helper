@@ -38,13 +38,10 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=cache,target=/root/.npm \
     npm ci
 
+ARG TMDB_API_KEY
+
 # Copy the rest of the source files into the image.
 COPY . .
-
-# Mount TMDB API key from github secrets
-RUN --mount=type=secret,id=TMDB_API_KEY \
-    TMDB_API_KEY=$(cat /run/secrets/TMDB_API_KEY)
-
 # Run the build script.
 RUN npm run build
 

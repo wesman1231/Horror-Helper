@@ -42,13 +42,11 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
-          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }} 
         run: |
-          docker build \
-            --secret id=TMDB_API_KEY \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-            
+          # Build a docker container and push it to ECR
+          docker build --build-arg TMDB_API_KEY=${{ secrets.TMDB_API_KEY }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Download task definition
         run: |
@@ -64,8 +62,6 @@ jobs:
           task-definition: ./backend/task-definition.json 
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
-          environment-variables: |
-            TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
