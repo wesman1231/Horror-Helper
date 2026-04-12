@@ -1,10 +1,7 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import { db } from '../db/pool.ts'; 
+import { db } from '../db/pool.js'; 
 import type { RowDataPacket } from 'mysql2';
-
-import dotenv from 'dotenv';
-dotenv.config();
 
 const router = express.Router();
 

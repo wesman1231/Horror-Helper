@@ -24,3 +24,7 @@ firebase/
 *.sln
 *.sw?
 .env
+.env.dev
+.env.local
+.env.localdev
+db/password.txt

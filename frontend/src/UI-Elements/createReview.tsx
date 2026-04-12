@@ -1,6 +1,8 @@
 // React state hook
 import { useState } from "react";
 
+import { useAuth0 } from "@auth0/auth0-react";
+
 import type { Movie } from "./movieCard";
 
 import type { Show } from "./tvCard";
@@ -24,6 +26,8 @@ interface CreateReviewProps {
 }
 
 export default function CreateReview(props: CreateReviewProps) {
+    const { isAuthenticated } = useAuth0();
+    
     // Local state for selected review score (1–5)
     const [score, setScore] = useState<number>(1);
 
@@ -69,53 +73,59 @@ export default function CreateReview(props: CreateReviewProps) {
             };
             await props.postReview(props.mediaData?.tmdbid, props.mediaType, reviewData);
             setReviewValue('');
-            setScore(0); 
-            setHighlight(0);
+            setScore(1); 
+            setHighlight(1);
             setReviewTextError(false);
         }
     }
 
-    return (
-        <div className={styles.reviewContainer}>
-            <span className={styles.scoreText}>How many skulls out of 5 would you give?</span>
-            {/* Rating buttons (1–5 stars style) */}
-            <div className={styles.reviewScoreContainer}>
-                <span>
-                    {[1, 2, 3, 4, 5].map((num) => (
-                        <button
-                            key={num}
-                            type='button'
-                            className={`
-                                ${styles.reviewScoreButton}
-                                ${num <= highlight ? styles.active : styles.inactive}
-                            `}
-                            onClick={() => selectScore(num)}
-                        />
-                    ))}
-                </span>
-            </div>
+    if(isAuthenticated){
+        return(
+            <div className={styles.reviewContainer}>
+                <span className={styles.scoreText}>How many skulls out of 5 would you give?</span>
+                {/* Rating buttons (1–5 stars style) */}
+                <div className={styles.reviewScoreContainer}>
+                    <span>
+                        {[1, 2, 3, 4, 5].map((num) => (
+                            <button
+                                key={num}
+                                type='button'
+                                className={`
+                                    ${styles.reviewScoreButton}
+                                    ${num <= highlight ? styles.active : styles.inactive}
+                                `}
+                                onClick={() => selectScore(num)}
+                            />
+                        ))}
+                    </span>
+                </div>
             
-            {reviewTextError ? 
-            <span className={styles.reviewTextRequired}>This field is required</span>
-            : 
-            null}
+                {reviewTextError ? 
+                <span className={styles.reviewTextRequired}>This field is required</span>
+                : 
+                null}
 
-            {/* Text area for writing review */}
-            <textarea
-                name='review'
-                id='review'
-                rows={10}
-                cols={50}
-                maxLength={1000}
-                value={reviewValue}
-                onChange={handleInput}
-                className={styles.reviewTextBox}
-            />
+                {/* Text area for writing review */}
+                <textarea
+                    name='review'
+                    id='review'
+                    rows={10}
+                    cols={50}
+                    maxLength={1000}
+                    value={reviewValue}
+                    onChange={handleInput}
+                    className={styles.reviewTextBox}
+                />
 
-            {/* Submit button */}
-            <button type='button' onClick={() => submitReview()}>
-                submit review
-            </button>
-        </div>
-    );
+                {/* Submit button */}
+                <button type='button' className={styles.submitReviewButton} onClick={() => submitReview()}>
+                    submit review
+                </button>
+            </div>
+        )
+    }
+
+    return(
+        <div className={styles.loginToReview}>Log in to post a review</div>
+    )
 }

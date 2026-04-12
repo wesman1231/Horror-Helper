@@ -31,7 +31,7 @@ export default function ResendEmailVerification() {
     try {
       // Send POST request to backend API
       const requestResend = await fetch(
-        'http://localhost:3000/api/resend-verification',
+        `${import.meta.env.VITE_API_URL}/api/resend-verification`,
         {
           method: 'POST',
           headers: {

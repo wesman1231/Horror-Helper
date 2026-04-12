@@ -2,6 +2,7 @@ import { useState } from "react";
 import styles from "../UI-Elements/UI_css/searchBar.module.css";
 import AddKeywords from "../UI-Elements/addKeyWords";
 import type { useSearch } from "../hooks/useSearch";
+import PentagramSpinner from "./loading";
 
 /**
  * Props for the SearchBar component.
@@ -52,7 +53,7 @@ export default function SearchBar(props: SearchBarProps) {
                 <button
                     type="button"
                     className={styles.searchButton}
-                    onClick={props.searchHook.search}
+                    onClick={() => props.searchHook.newSearch(1)}
                 >
                     Search
                 </button>
@@ -70,6 +71,7 @@ export default function SearchBar(props: SearchBarProps) {
                 </button>
             </div>
                 {hidden ? null : <AddKeywords keywordsOpen={keywordsOpen} handleCheckboxChange={props.searchHook.handleCheckboxChange} onAnimationEnd={() => {if (!keywordsOpen) setHidden(true);}} />}
+                {props.searchHook.loading ? <PentagramSpinner /> : null}
         </div>
     );
 }

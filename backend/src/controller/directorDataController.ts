@@ -1,7 +1,5 @@
 import type { Request, Response } from "express";
-import { db } from "../db/pool.ts";
-import dotenv from 'dotenv';
-dotenv.config();
+import { db } from "../db/pool.js";
 
 /**
  * directorDataController

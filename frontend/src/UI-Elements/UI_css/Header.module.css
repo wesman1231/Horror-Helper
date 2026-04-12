@@ -1,7 +1,6 @@
 /*mobile styling*/
 body{
     font-family: "Nosifer", sans-serif;
-    
 }
 
 .header{
@@ -25,7 +24,8 @@ nav{
     font-family: "Creepster", system-ui;
     display: flex;
     justify-content: space-around;
-    font-size: 1.2em;
+    font-size: 1.5em;
+    overflow: hidden;
 }
 
 .headerLink{
@@ -43,11 +43,51 @@ nav{
 
 .signOutButton:hover{
     border-radius: 15px;
-    scale: 1.1;
+    transform: scale(1.1);
     background-color: rgb(124, 10, 10);
 }
 
 .signOutButton:active{
-    scale: 0.8;
+    transform: scale(0.8);
     transition: 0.1s;
+}
+
+/*tablest styling*/
+@media screen and (min-width: 820px){
+    h1{
+        font-size: 2.5em;
+    }
+
+    nav{
+        font-size: 2em;
+    }
+}
+
+/*desktop styling*/
+@media screen and (min-width: 1281px){
+    h1{
+        font-size: 2.5em;
+    }
+
+    nav{
+        font-size: 1.5em;
+    }
+}
+
+/*landscape phone styling*/
+@media screen and (min-width: 900px) and (orientation: landscape){
+    h1{
+        font-size: 2em;
+    }
+
+    nav{
+        font-size: 1.5em;
+    }
+}
+
+/*landscape tablet styling*/
+@media screen and (min-width: 1000px) and (orientation: landscape){
+    nav{
+        font-size: 1.5em;
+    }
 }

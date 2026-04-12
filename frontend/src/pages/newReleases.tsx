@@ -1,5 +1,6 @@
 import styles from '../pages/pages_css/newReleases.module.css'
 import { useEffect, useState } from 'react';
+import PentagramSpinner from '../UI-Elements/loading';
 import type { Movie } from '../UI-Elements/movieCard';
 import type { Show } from '../UI-Elements/tvCard';
 import type { mediaType } from './mediaSearch';
@@ -30,6 +31,7 @@ export default function NewReleases(){
     const [fetchOK, setFetchOK] = useState<boolean>(false);
     const [scrollPosition, setScrollPosition] = useState<number>(0);
     const [toTopButtonVisible, setToTopButtonVisible] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     
     /**
      * Effect: Scroll Listener
@@ -78,10 +80,10 @@ export default function NewReleases(){
     async function getNewMedia(page: number, mediaType: mediaType){
        try {
             setMediaDisplayed(mediaType);
-            
-            const fetchNewMedia = await fetch(`http://localhost:3000/api/${mediaType}/new-releases?page=${page}`);
+            setLoading(true);
+            const fetchNewMedia = await fetch(`${import.meta.env.VITE_API_URL}/api/${mediaType}/new-releases?page=${page}`);
             const fetchResults: NewReleasesResponse = await fetchNewMedia.json();
-            
+            setLoading(false);
             if (fetchNewMedia.ok) {
                 // Reset error states upon a successful fetch
                 setFetchOK(true);
@@ -112,6 +114,7 @@ export default function NewReleases(){
        }
        catch (error) {
             // Catches network interruptions (offline) or JSON parsing failures
+            setLoading(false);
             setFetchOK(false);
             setErrorMessage(String(error));
        }
@@ -126,10 +129,15 @@ export default function NewReleases(){
               * the user starts from the beginning of the new category.
             */}
             <nav className={styles.contentNav}>
-                <button onClick={() => { setPage(0); getNewMedia(0, 'movies'); }}>Movies</button>
-                <button onClick={() => { setPage(0); getNewMedia(0, 'shows'); }}>Shows</button>
+                <button className={styles.mediaButton} onClick={() => { setPage(0); getNewMedia(0, 'movies'); }}>Movies</button>
+                <button className={styles.mediaButton} onClick={() => { setPage(0); getNewMedia(0, 'shows'); }}>Shows</button>
             </nav>
-
+            {loading ?
+                <div className={styles.loadingContainer}>
+                    <PentagramSpinner />
+                </div>
+             : 
+             null}
             <div className={styles.contentContainer}>
             {/* * Type-Safe Rendering:
               * Using a ternary to ensure 'results' is cast to the specific type 

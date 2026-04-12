@@ -1,5 +1,5 @@
-import { checkSortModeAndMediaType } from './searchUtils/checkSortModeAndMediaType.ts';
-import { removeStopWords } from './searchUtils/removeStopWords.ts';
+import { checkSortModeAndMediaType } from './searchUtils/checkSortModeAndMediaType.js';
+import { removeStopWords } from './searchUtils/removeStopWords.js';
 
 /**
  * SearchController
@@ -15,10 +15,8 @@ import { removeStopWords } from './searchUtils/removeStopWords.ts';
  *
  * Uses MySQL FULLTEXT indexes via MATCH ... AGAINST.
  */
-import dotenv from 'dotenv';
-dotenv.config();
 import type { Request, Response } from "express";
-import { db } from '../db/pool.ts';
+import { db } from '../db/pool.js';
 
 export default async function SearchController(req: Request, res: Response){
 
@@ -35,7 +33,7 @@ export default async function SearchController(req: Request, res: Response){
     const keywords = String(req.query.keywords);
     const sortMode = String(req.query.sortMode);
     const mediaType = String(req.query.mediaType);
-    const currentPage = Number(req.query.page);
+    const currentPage = Number(req.query.page) || 1;
      
     /**
      * Pagination config
@@ -57,7 +55,6 @@ export default async function SearchController(req: Request, res: Response){
      * "The Evil Dead" → "+Evil* +Dead*"
      */
     const finalizedTitle = removeStopWords(title);
-    console.log(finalizedTitle);
 
     /**
      * Fetch pagination metadata and search results

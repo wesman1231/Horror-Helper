@@ -1,0 +1,46 @@
+services:
+  server:
+    build:
+      context: .
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env.dev
+    ports:
+      - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    restart: always
+    # MySQL uses these specific environment variables
+    environment:
+      - MYSQL_DATABASE=movies_shows
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db-password
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/mysql
+      # Automatically run your schema on startup
+      - ./db/data.sql:/docker-entrypoint-initdb.d/data.sql
+    expose:
+      - 3306
+    healthcheck:
+      # This checks if the port is open and the server is responding, 
+      # without needing to worry about the password file permissions.
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  db-data:
+
+secrets:
+  db-password:
+    file: db/password.txt

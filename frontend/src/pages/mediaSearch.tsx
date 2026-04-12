@@ -77,7 +77,7 @@ export default function MediaSearch() {
                     creatorSort={searchHook.creatorSort}
                 />
             ) : null}
-
+            
             {/* No results state */}
             {searchHook.pages === undefined ? <NoResultsFound /> : null}
 
