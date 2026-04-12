@@ -58,7 +58,9 @@ export default function Director() {
                 const directorRequest = await fetch(
                     `${import.meta.env.VITE_API_URL}/api/directors/${directorName}`
                 );
+                console.log(directorRequest);
                 const directorResponse = await directorRequest.json();
+                console.log(directorResponse);
 
                 setDirectorMovies(directorResponse.movies);
                 setDirectorImage(directorResponse.image);
@@ -71,7 +73,7 @@ export default function Director() {
         }
 
         getDirectorInfo();
-    }, []);
+    }, [directorName]);
 
     return (
         <>
