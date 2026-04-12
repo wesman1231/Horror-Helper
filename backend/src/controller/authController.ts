@@ -1,8 +1,5 @@
 import { type Request, type Response } from "express";
 import { ManagementClient } from "auth0";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 /**
  * Auth0 Management Client
